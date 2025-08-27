@@ -1,0 +1,38 @@
+{
+  "nav": {
+    "overview": "Overview",
+    "treasures": "Treasures",
+    "addBook": "Add Book",
+    "logout": "Log out"
+  },
+  "overview": {
+    "welcome": "Welcome, {email}!",
+    "subtitle": "Manage your books to continue your reading journey.",
+    "stats": {
+      "totalBooks": "Total Books",
+      "readThisMonth": "Read This Month",
+      "totalPages": "Total Pages",
+      "favoriteBooks": "Favorite Books"
+    },
+    "recentBooks": "Recent Books",
+    "noBooks": "No books yet.",
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In progress"
+    },
+    "yearlyStats": "Yearly Reading Statistics",
+    "cover": "Cover",
+    "title": "Title",
+    "author": "Author",
+    "pages": "Pages",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "favorite": "Favorite"
+  },
+  "treasures": {
+    "title": "Your Literary Treasures",
+    "subtitle": "Discover your favorite books and the quotes that touched your soul"
+  }
+}
+
+

@@ -1,0 +1,38 @@
+{
+  "nav": {
+    "overview": "Genel Bakış",
+    "treasures": "Hazinem",
+    "addBook": "+ Kitap Ekle",
+    "logout": "Çıkış Yap"
+  },
+  "overview": {
+    "welcome": "Hoş geldin, {email}!",
+    "subtitle": "Okuma yolculuğuna devam etmek için kitaplarını yönet.",
+    "stats": {
+      "totalBooks": "Toplam Kitap",
+      "readThisMonth": "Bu Ay Okunan",
+      "totalPages": "Toplam Sayfa",
+      "favoriteBooks": "Favori Kitaplar"
+    },
+    "recentBooks": "Son Kitaplar",
+    "noBooks": "Henüz kitap yok.",
+    "status": {
+      "completed": "Tamamlandı",
+      "inProgress": "Devam ediyor"
+    },
+    "yearlyStats": "Yıllık Okuma İstatistikleri",
+    "cover": "Kapak",
+    "title": "Başlık",
+    "author": "Yazar",
+    "pages": "Sayfa",
+    "startDate": "Başlama",
+    "endDate": "Bitiş",
+    "favorite": "Favori"
+  },
+  "treasures": {
+    "title": "Edebi Hazinelerin",
+    "subtitle": "Favori kitaplarını ve seni etkileyen alıntıları keşfet"
+  }
+}
+
+

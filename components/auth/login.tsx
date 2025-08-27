@@ -57,50 +57,52 @@ export function Login({ onCancel }: { onCancel?: () => void }) {
   }
 
   return (
-    <div className="w-full mx-auto self-center sm:max-w-md md:max-w-lg lg:max-w-xl border-white/30 bg-white/30 p-6 sm:p-8 shadow-lg backdrop-blur-md">
-      <h2 className="mb-4 text-xl font-semibold text-slate-900">Giriş Yap</h2>
-      {error && (
-        <div className="mb-4 rounded-md border border-red-500/30 bg-red-50 px-3 py-2 text-sm text-red-700">
-          {error}
-        </div>
-      )}
+    <div className="min-h-dvh flex items-center justify-center p-4">
+      <div className="w-full mx-auto sm:max-w-md md:max-w-lg lg:max-w-xl border-white/30 bg-white/30 p-6 sm:p-8 shadow-lg backdrop-blur-md">
+        <h2 className="mb-4 text-xl font-semibold text-slate-900">Giriş Yap</h2>
+        {error && (
+          <div className="mb-4 rounded-md border border-red-500/30 bg-red-50 px-3 py-2 text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
-      <form onSubmit={onSubmit} className="space-y-4">
-        <div className="grid gap-2">
-          <label htmlFor="email" className="text-sm text-slate-700">E-posta</label>
-          <input
-            id="email"
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="ornek@site.com"
-            className="rounded-md border border-white/50 bg-white/60 px-3 py-2 text-slate-900 placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div className="grid gap-2">
+            <label htmlFor="email" className="text-sm text-slate-700">E-posta</label>
+            <input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="ornek@site.com"
+              className="rounded-md border border-white/50 bg-white/60 px-3 py-2 text-slate-900 placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-        <div className="grid gap-2">
-          <label htmlFor="password" className="text-sm text-slate-700">Şifre</label>
-          <input
-            id="password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            className="rounded-md border border-white/50 bg-white/60 px-3 py-2 text-slate-900 placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+          <div className="grid gap-2">
+            <label htmlFor="password" className="text-sm text-slate-700">Şifre</label>
+            <input
+              id="password"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              className="rounded-md border border-white/50 bg-white/60 px-3 py-2 text-slate-900 placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-        <div className="flex gap-2">
-          <Button type="submit" className="w-full bg-amber-400 hover:bg-amber-500 text-white px-6 py-3 rounded-lg text-lg font-semibold" disabled={loading}>
-            {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
-          </Button>
-          <Button type="button" variant="outline" onClick={() => onCancel?.()}>
-            Geri
-          </Button>
-        </div>
-      </form>
+          <div className="flex gap-2">
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+            </Button>
+            <Button type="button" variant="outline" onClick={() => onCancel?.()}>
+              Geri
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

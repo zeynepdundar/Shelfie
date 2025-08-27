@@ -1,132 +1,106 @@
 "use client";
-import { Menu, User, LogOut } from "lucide-react";
+import { Menu } from "lucide-react";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
-import { Button, type ButtonProps } from "../../ui/button";
+import { Button } from "../../ui/button";
 import {
   Navbar as NavbarComponent,
   NavbarLeft,
   NavbarRight,
 } from "../../ui/navbar";
-import Navigation from "../../ui/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "../../ui/sheet";
 import Image from "next/image";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "@/lib/store";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+import { useAppDispatch } from "@/lib/hooks";
 import { signOutUser } from "@/lib/authSlice";
-
-interface NavbarLink {
-  text: string;
-  href: string;
-}
-
-interface NavbarActionProps {
-  text: string;
-  href: string;
-  variant?: ButtonProps["variant"];
-  icon?: ReactNode;
-  iconRight?: ReactNode;
-  isButton?: boolean;
-}
+import { useLocale, useTranslations } from "next-intl";
 
 interface NavbarProps {
   logo?: ReactNode;
   name?: string;
   homeUrl?: string;
-  mobileLinks?: NavbarLink[];
-  actions?: NavbarActionProps[];
-  showNavigation?: boolean;
   customNavigation?: ReactNode;
   className?: string;
 }
 
 export default function Navbar({
   logo = <Image
-    className="dark:invert"
-    src="/favicon.png"
-    alt="Shelfie logomark"
+    src="/logo-books.svg"
+    alt="Books on a shelf"
     width={30}
     height={30}
   />,
   name = "shelfie",
   homeUrl = "https://www.launchuicomponents.com/",
-  mobileLinks = [
-    { text: "Getting Started", href: "https://www.launchuicomponents.com/" },
-    { text: "Components", href: "https://www.launchuicomponents.com/" },
-    { text: "Documentation", href: "https://www.launchuicomponents.com/" },
-  ],
-  actions = [
-    { text: "Sign in", href: "https://www.launchuicomponents.com/", isButton: false },
-    {
-      text: "Get Started",
-      href: "https://www.launchuicomponents.com/",
-      isButton: true,
-      variant: "primary",
-    },
-  ],
-  showNavigation = true,
   customNavigation,
   className,
 }: NavbarProps) {
-  const dispatch = useDispatch<AppDispatch>();
-  const user = useSelector((state: RootState) => state.auth.user);
-  const isAuthenticated = useSelector((state: RootState) => state.auth.status === 'authenticated');
+  const pathname = usePathname();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.status === "authenticated");
+  const dispatch = useAppDispatch();
+  const locale = useLocale();
+  const t = useTranslations("nav");
+
+  const otherLocale = locale === "tr" ? "en" : "tr";
+  const withoutLocale = pathname?.replace(/^\/(en|tr)/, "") || "/";
+  const localized = (path: string) => `/${locale}${path}`;
+  const switchLocaleHref = `/${otherLocale}${withoutLocale}`;
+
   return (
-    <header className={cn("sticky top-0 z-50 -mb-4 px-4 bg-[#0a5b6f]", className)}>
+    <header className={cn("sticky top-0 z-50 -mb-4 px-4 bg-[#0a5b6f]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0a5b6f]/80", className)}>
       <div className="max-w-container relative mx-auto">
         <NavbarComponent>
           <NavbarLeft>
             <a
-              href={homeUrl}
-              className="flex items-center gap-2 text-xl font-bold"
+              href={`/${locale}`}
+              className="flex items-center gap-2 text-xl font-bold text-white"
             >
               {logo}
               {name}
             </a>
-            {showNavigation && (customNavigation || <Navigation />)}
+            {isAuthenticated && (
+              <nav className="hidden md:flex items-center gap-2 ml-4">
+                <Link
+                  href={localized("/")}
+                  className={cn(
+                    "px-3 py-1 rounded-md text-sm font-semibold transition-colors border-b-2 border-transparent",
+                    "hover:text-amber-300 hover:border-amber-300",
+                    withoutLocale === "/" ? "text-amber-300 border-amber-300" : "text-white"
+                  )}
+                >
+                  {t("overview")}
+                </Link>
+                <Link
+                  href={localized("/treasures")}
+                  className={cn(
+                    "px-3 py-1 rounded-md text-sm font-semibold transition-colors border-b-2 border-transparent",
+                    "hover:text-amber-300 hover:border-amber-300",
+                    withoutLocale === "/treasures" ? "text-amber-300 border-amber-300" : "text-white"
+                  )}
+                >
+                  {t("treasures")}
+                </Link>
+              </nav>
+            )}
           </NavbarLeft>
           <NavbarRight>
-            {isAuthenticated ? (
-              <div className="flex items-center gap-4">
-                <div className="hidden md:flex items-center gap-2 text-white">
-                  <User className="w-4 h-4" />
-                  <span className="text-sm">{user?.email}</span>
-                </div>
+            <div className="hidden md:flex items-center gap-3 pr-2">
+              <Link href={switchLocaleHref} className="text-white/80 hover:text-white text-sm underline">
+                {otherLocale.toUpperCase()}
+              </Link>
+              {isAuthenticated && (
                 <Button
-                  variant="outline"
-                  size="sm"
+                  variant="secondary"
+                  className="bg-white/10 hover:bg-white/20 text-white"
                   onClick={() => dispatch(signOutUser())}
-                  className="text-white border-white/30 hover:bg-white/10"
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Çıkış
+                  {t("logout")}
                 </Button>
-              </div>
-            ) : (
-              actions.map((action, index) =>
-                action.isButton ? (
-                  <Button
-                    key={index}
-                    variant={action.variant || "default"}
-                    asChild
-                  >
-                    <a href={action.href}>
-                      {action.icon}
-                      {action.text}
-                      {action.iconRight}
-                    </a>
-                  </Button>
-                ) : (
-                  <a
-                    key={index}
-                    href={action.href}
-                    className="hidden text-sm md:block"
-                  >
-                    {action.text}
-                  </a>
-                ),
-              )
-            )}
+              )}
+            </div>
             <Sheet>
               <SheetTrigger asChild>
                 <Button
@@ -139,23 +113,36 @@ export default function Navbar({
                 </Button>
               </SheetTrigger>
               <SheetContent side="right">
-                <nav className="grid gap-6 text-lg font-medium">
-                  <a
-                    href={homeUrl}
-                    className="flex items-center gap-2 text-xl font-bold"
-                  >
-                    <span>{name}</span>
-                  </a>
-                  {mobileLinks.map((link, index) => (
-                    <a
-                      key={index}
-                      href={link.href}
-                      className="text-muted-foreground hover:text-foreground"
+                {isAuthenticated && (
+                  <nav className="grid gap-6 text-lg font-semibold">
+                    <Link
+                      href={localized("/")}
+                      className={cn(
+                        withoutLocale === "/" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                      )}
                     >
-                      {link.text}
-                    </a>
-                  ))}
-                </nav>
+                      {t("overview")}
+                    </Link>
+                    <Link
+                      href={localized("/treasures")}
+                      className={cn(
+                        withoutLocale === "/treasures" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                      )}
+                    >
+                      {t("treasures")}
+                    </Link>
+                    <Button
+                      variant="secondary"
+                      className="justify-start"
+                      onClick={() => dispatch(signOutUser())}
+                    >
+                      {t("logout")}
+                    </Button>
+                    <Link href={switchLocaleHref} className="text-sm underline">
+                      {otherLocale.toUpperCase()}
+                    </Link>
+                  </nav>
+                )}
               </SheetContent>
             </Sheet>
           </NavbarRight>

@@ -8,11 +8,11 @@ export interface HomeLayoutProps {
   showLogin: boolean;
 }
 
-export interface HeroSectionProps {
+export interface WelcomeScreenProps {
   onGetStarted: () => void;
 }
 
-export interface WelcomeDashboardProps {
+export interface OverviewPageProps {
   user: AuthUser | null;
 }
 

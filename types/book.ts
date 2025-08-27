@@ -9,7 +9,33 @@ export interface Book {
   notes?: string;
   isCompleted: boolean;
   pages: number;
-  dateRead?: string;
+  dateRead?: string | null;
+  startDate?: string;
+  endDate?: string;
   dateAdded: string;
   coverUrl?: string;
+  isFavorite?: boolean;
+  quotes?: Quote[];
+}
+
+export interface Quote {
+  id: string;
+  text: string;
+  page?: number;
+  dateAdded: string;
+  notes?: string;
+  bookTitle?: string;
+  bookAuthor?: string;
+}
+
+export interface GoogleBook {
+  id: string;
+  volumeInfo: {
+    title: string;
+    authors?: string[];
+    pageCount?: number;
+    imageLinks?: {
+      thumbnail?: string;
+    };
+  };
 }
