@@ -18,7 +18,8 @@
     "noBooks": "No books yet.",
     "status": {
       "completed": "Completed",
-      "inProgress": "In progress"
+      "inProgress": "In progress",
+      "value": "Status"
     },
     "yearlyStats": "Yearly Reading Statistics",
     "cover": "Cover",

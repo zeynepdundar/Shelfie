@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
 import { WelcomeScreen } from "@/components/pages/welcome-page";
 import { OverviewPage } from "@/components/pages/overview-page";
-import { HomeLayout } from "@/components/layout/HomeLayout";
 
 export default function Home() {
   const [showLogin, setShowLogin] = useState(false);

@@ -33,14 +33,14 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
     try {
       console.log('API Key:', apiKey ? 'Mevcut' : 'Eksik');
       console.log('Aranan kitap:', searchQuery);
-      
+
       const response = await fetch(
         `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchQuery)}&key=${apiKey}&maxResults=4`
       );
       const data = await response.json();
-      
+
       console.log('API Response:', data);
-      
+
       if (data.items) {
         setSearchResults(data.items);
         console.log('Bulunan kitaplar:', data.items.length);
@@ -62,15 +62,13 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
   };
 
   const handleSelectBook = (book: GoogleBook) => {
-    console.log('Kitap seçildi:', book.volumeInfo.title);
     setSelectedBook(book);
     setShowDateForm(true);
-    console.log('showDateForm set to true');
   };
 
   const handleDateFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedBook) return;
 
     const bookData = {
@@ -86,8 +84,15 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
     };
 
     console.log('Kitap ekleniyor:', bookData);
-    onAddBook(bookData);
-    
+    console.log('onAddBook fonksiyonu:', onAddBook);
+
+    try {
+      onAddBook(bookData);
+      console.log('onAddBook çağrısı başarılı');
+    } catch (error) {
+      console.error('onAddBook çağrısında hata:', error);
+    }
+
     // Reset states
     setSelectedBook(null);
     setShowDateForm(false);
@@ -108,23 +113,29 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title || !formData.author || !formData.pages) {
       alert('Lütfen tüm alanları doldurun');
       return;
     }
 
-    onAddBook({
+    const bookData = {
       title: formData.title,
       author: formData.author,
       pages: parseInt(formData.pages),
-      dateRead: formData.dateRead || null, // Boş string yerine null kullan
+      dateRead: formData.dateRead || null,
       startDate: formData.startDate,
       endDate: formData.endDate,
       isCompleted: formData.isCompleted,
       isFavorite: formData.isFavorite,
       dateAdded: new Date().toISOString().split('T')[0]
-    });
+    };
+
+    try {
+      onAddBook(bookData);
+    } catch (error) {
+      console.error('onAddBook çağrısında hata:', error);
+    }
 
     // Reset form
     setFormData({
@@ -146,21 +157,13 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
     setShowDateForm(false);
   };
 
-  useEffect(() => {
-    console.log('showDateForm değişti:', showDateForm);
-  }, [showDateForm]);
-
-  useEffect(() => {
-    console.log('selectedBook değişti:', selectedBook);
-  }, [selectedBook]);
-
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         <h2 className="text-2xl font-bold text-white mb-4">Yeni Kitap Ekle</h2>
-        
+
         {/* Date Form for Selected Book */}
         {showDateForm && selectedBook && (
           <div className="space-y-4">
@@ -214,7 +217,6 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
                   className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-blue-500"
                 />
               </div>
-
               <div className="flex items-center">
                 <input
                   type="checkbox"
@@ -228,7 +230,7 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
                 </label>
               </div>
 
-                              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-4">
                 <Button
                   type="submit"
                   className="flex-1 bg-amber-400 hover:bg-amber-500 text-white px-6 py-3 rounded-lg text-lg font-semibold"
@@ -255,22 +257,20 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
               <button
                 type="button"
                 onClick={() => setActiveTab('form')}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === 'form'
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'form'
                     ? 'bg-amber-400 text-gray-900'
                     : 'text-gray-300 hover:text-white'
-                }`}
+                  }`}
               >
                 Manuel Ekle
               </button>
               <button
                 type="button"
                 onClick={() => setActiveTab('search')}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                  activeTab === 'search'
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'search'
                     ? 'bg-amber-400 text-gray-900'
                     : 'text-gray-300 hover:text-white'
-                }`}
+                  }`}
               >
                 Arama Yap
               </button>

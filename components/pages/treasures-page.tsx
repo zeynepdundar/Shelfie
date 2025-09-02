@@ -106,22 +106,24 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
       {/* Gentle radial glow layers */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(600px_400px_at_20%_15%,rgba(255,200,150,0.35),transparent_70%)]"
+        className="pointer-events-none -z-10 bg-[radial-gradient(600px_400px_at_20%_15%,rgba(255,200,150,0.35),transparent_70%)]"
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-amber-800 mb-4">
+          <h1 className="text-4xl font-bold text-white mb-4">
             📚 Your Literary Treasures
           </h1>
-          <p className="text-lg text-amber-700">
+          <p className="text-xl text-gray-200">
             Discover your favorite books and the quotes that touched your soul
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Favorite Books Section */}
+        {/* Stack Layout - Vertical Sections */}
+        <div className="space-y-12">
+          
+          {/* Section 1: Favorite Books - Horizontal Scroll */}
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
               <Heart className="h-8 w-8 text-red-500 fill-current" />
@@ -140,73 +142,76 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-4">
-                {favoriteBooks.map((book) => (
-                  <Card key={book.id} className="bg-white/80 backdrop-blur-sm hover:shadow-lg transition-shadow">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="text-lg text-amber-800 flex items-center gap-2">
-                            <Heart className="h-5 w-5 text-red-500 fill-current" />
-                            {book.title}
-                          </CardTitle>
-                          <CardDescription className="text-amber-600">
-                            by {book.author}
-                          </CardDescription>
+              <div className="overflow-x-auto pb-4">
+                <div className="flex gap-6 min-w-max">
+                  {favoriteBooks.map((book) => (
+                    <Card key={book.id} className="w-72 bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+                      {/* Cover Image - Centered with proper book ratio */}
+                      {book.coverUrl ? (
+                        <div className="w-full h-48  relative group flex justify-center items-center">
+                          <div className="w-32 h-48 rounded-lg shadow-lg overflow-hidden">
+                            <img
+                              src={book.coverUrl}
+                              alt={`Cover of ${book.title}`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                              }}
+                            />
+                          </div>
+                          {/* Overlay gradient */}
+                          <div className="absolute inset-0" />
                         </div>
-                        <div className="flex items-center gap-2">
-                          {book.rating && (
-                            <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                              <span className="text-sm text-amber-700">{book.rating}/5</span>
-                            </div>
-                          )}
+                      ) : (
+                        <div className="w-full h-48 relative group flex justify-center items-center">
+                          <div className="w-32 h-48 bg-gray-600 rounded-lg shadow-lg flex items-center justify-center">
+                            <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
                         </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="flex items-center gap-4 text-sm text-amber-600">
-                        {book.genre && (
-                          <span className="bg-amber-100 px-2 py-1 rounded-full">
-                            {book.genre}
-                          </span>
-                        )}
-                        {book.publishedYear && (
-                          <span>{book.publishedYear}</span>
-                        )}
-                        {book.pages && (
-                          <span>{book.pages} pages</span>
-                        )}
-                      </div>
-                      {book.notes && (
-                        <p className="mt-3 text-amber-700 text-sm italic">
-                          "{book.notes}"
-                        </p>
                       )}
-                      <div className="mt-4 flex gap-2">
-                        <button
-                          onClick={() => openQuoteForm(book)}
-                          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm transition-colors"
-                        >
-                          <Plus className="h-4 w-4" />
-                          Add Quote
-                        </button>
-                        <button
-                          onClick={() => toggleFavorite(book.id, book.isFavorite || false)}
-                          className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm transition-colors"
-                        >
-                          <X className="h-4 w-4" />
-                          Remove from Favorites
-                        </button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      <CardHeader className="pb-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <CardTitle className="text-lg text-gray-200 font-bold flex items-center gap-2 bg-gradient-to-r  bg-clip-text">
+                              {book.title}
+                            </CardTitle>
+                            <CardDescription className="font-medium text-gray-300">
+                              by {book.author}
+                            </CardDescription>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <div className="flex items-center gap-3 text-sm text-amber-700 mb-4 flex-wrap">
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => openQuoteForm(book)}
+                            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                          >
+                            <Plus className="h-4 w-4" />
+                            Add Quote
+                          </button>
+                          <button
+                            onClick={() => toggleFavorite(book.id, book.isFavorite || false)}
+                            className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                          >
+                            <X className="h-4 w-4" />
+                            Remove
+                          </button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
             )}
           </div>
 
-          {/* Quotes Section */}
+          {/* Section 2: Memorable Quotes */}
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
               <QuoteIcon className="h-8 w-8 text-blue-500" />
@@ -252,6 +257,33 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Section 3: Stats */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Star className="h-8 w-8 text-green-500" />
+              <h2 className="text-2xl font-bold text-amber-800">Your Reading Stats</h2>
+            </div>
+            
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                  <div>
+                    <div className="text-3xl font-bold text-amber-800">{favoriteBooks.length}</div>
+                    <div className="text-amber-600">Favorite Books</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-blue-600">{allQuotes.length}</div>
+                    <div className="text-blue-600">Saved Quotes</div>
+                  </div>
+                  <div>
+                    <div className="text-3xl font-bold text-green-600">{books.length}</div>
+                    <div className="text-green-600">Total Books</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
@@ -329,28 +361,6 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
             </Card>
           </div>
         )}
-
-        {/* Stats Section */}
-        <div className="mt-12">
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-                <div>
-                  <div className="text-3xl font-bold text-amber-800">{favoriteBooks.length}</div>
-                  <div className="text-amber-600">Favorite Books</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-blue-600">{allQuotes.length}</div>
-                  <div className="text-blue-600">Saved Quotes</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-green-600">{books.length}</div>
-                  <div className="text-green-600">Total Books</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   );

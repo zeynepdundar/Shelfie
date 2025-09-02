@@ -78,10 +78,17 @@ export function OverviewPage({ user }: OverviewPageProps) {
 
   const handleAddBookSubmit = async (newBook: Omit<Book, 'id' | 'dateAdded'>) => {
     try {
-      await dispatch(addBook(newBook)).unwrap();
+
+      const result = await dispatch(addBook(newBook)).unwrap();
+      console.log('Kitap başarıyla eklendi:', result);
       setShowAddBookModal(false);
     } catch (error) {
       console.error('Kitap eklenirken hata oluştu:', error);
+      console.error('Hata detayları:', {
+        message: error?.message,
+        code: error?.code,
+        stack: error?.stack
+      });
     }
   };
 
@@ -147,15 +154,13 @@ export function OverviewPage({ user }: OverviewPageProps) {
       {/* Soft radial overlays that don't cover entire page */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-64 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(0,0,0,0.35),transparent_70%)]"
+        className="pointer-events-none -z-10 bg-[radial-gradient(600px_400px_at_20%_15%,rgba(255,200,150,0.35),transparent_70%)]"
       />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 -bottom-24 h-64 -z-10 bg-[radial-gradient(ellipse_at_bottom,rgba(0,0,0,0.22),transparent_70%)]"
-      />
-      <div className="text-center w-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="text-center mb-12">
       <h1 className="text-4xl font-bold text-white mb-4">
-        {t('welcome', { email: user?.email || '' })}
+         👋 {t('welcome', { email: user?.email || '' })}
       </h1>
       <p className="text-xl text-gray-200 mb-6">
         {t('subtitle')}
@@ -223,7 +228,7 @@ export function OverviewPage({ user }: OverviewPageProps) {
               <div>{t('pages')}</div>
               <div>{t('startDate')}</div>
               <div>{t('endDate')}</div>
-              <div>{t('status')}</div>
+              <div>{t('status.value')}</div>
               <div>{t('favorite')}</div>
             </div>
 
@@ -267,10 +272,10 @@ export function OverviewPage({ user }: OverviewPageProps) {
                     <div className="font-medium">{b.title}</div>
                     <div className="text-gray-200">{b.author}</div>
                     <div className="text-gray-200">{b.pages}</div>
-                    <div className="text-gray-300">
+                    <div className="text-gray-200">
                       {b.startDate ? new Date(b.startDate).toLocaleDateString('tr-TR') : "-"}
                     </div>
-                    <div className="text-gray-300">
+                    <div className="text-gray-200">
                       {b.endDate ? new Date(b.endDate).toLocaleDateString('tr-TR') : "-"}
                     </div>
                     <div className={b.isCompleted ? "text-green-400" : "text-amber-300"}>
@@ -328,6 +333,7 @@ export function OverviewPage({ user }: OverviewPageProps) {
         />
       )}
       </div>
+    </div>
     </div>
   );
 }

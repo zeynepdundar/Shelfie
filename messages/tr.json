@@ -18,7 +18,8 @@
     "noBooks": "Henüz kitap yok.",
     "status": {
       "completed": "Tamamlandı",
-      "inProgress": "Devam ediyor"
+      "inProgress": "Devam ediyor",
+      "value": "Durum"
     },
     "yearlyStats": "Yıllık Okuma İstatistikleri",
     "cover": "Kapak",
