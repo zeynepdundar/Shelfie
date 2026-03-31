@@ -216,6 +216,9 @@
   body {
     @apply bg-[linear-gradient(rgba(0,0,0,0.35),rgba(0,0,0,0.35)),url('/bookshelf.jpg')] bg-no-repeat bg-cover bg-center bg-fixed;
   }
+  h2 {
+    @apply text-2xl font-bold text-primary;
+  }
 }
 
 @layer base {

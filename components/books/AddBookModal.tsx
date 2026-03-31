@@ -162,7 +162,7 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold text-white mb-4">Yeni Kitap Ekle</h2>
+        <h2 className="mb-4">Yeni Kitap Ekle</h2>
 
         {/* Date Form for Selected Book */}
         {showDateForm && selectedBook && (

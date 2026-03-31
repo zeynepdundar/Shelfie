@@ -127,7 +127,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
               <Heart className="h-8 w-8 text-red-500 fill-current" />
-              <h2 className="text-2xl font-bold text-amber-800">Favorite Books</h2>
+              <h2>Favorite</h2>
             </div>
             
             {favoriteBooks.length === 0 ? (
@@ -215,7 +215,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
               <QuoteIcon className="h-8 w-8 text-blue-500" />
-              <h2 className="text-2xl font-bold text-amber-800">Memorable Quotes</h2>
+              <h2>Memorable Quotes</h2>
             </div>
             
             {allQuotes.length === 0 ? (
@@ -263,7 +263,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
           <div className="space-y-6">
             <div className="flex items-center gap-3 mb-6">
               <Star className="h-8 w-8 text-green-500" />
-              <h2 className="text-2xl font-bold text-amber-800">Your Reading Stats</h2>
+              <h2>Your Reading Stats</h2>
             </div>
             
             <Card className="bg-white/80 backdrop-blur-sm">
