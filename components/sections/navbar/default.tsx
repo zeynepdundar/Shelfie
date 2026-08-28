@@ -48,38 +48,53 @@ export default function Navbar({
   const withoutLocale = pathname?.replace(/^\/(en|tr)/, "") || "/";
   const localized = (path: string) => `/${locale}${path}`;
   const switchLocaleHref = `/${otherLocale}${withoutLocale}`;
+  const navLinkClass = (path: string) =>
+    cn(
+      "rounded-full px-3 py-1.5 text-sm font-medium transition-colors duration-200",
+      withoutLocale === path
+        ? "bg-white/10 text-white"
+        : "text-white/60 hover:bg-white/5 hover:text-white"
+    );
 
   return (
-    <header className={cn("sticky top-0 z-50 -mb-4 px-4 bg-[#0a5b6f]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0a5b6f]/80", className)}>
+    <header
+      className={cn(
+        "sticky top-0 z-50 px-4 pt-4",
+        className
+      )}
+    >
       <div className="max-w-container relative mx-auto">
-        <NavbarComponent>
-          <NavbarLeft>
-            <a
+        <NavbarComponent className="rounded-[1.75rem] border border-white/10 bg-[#0a5b6f] px-4 py-3 shadow-2xl shadow-black/20 sm:px-5">
+          <NavbarLeft className="gap-6">
+            <Link
               href={`/${locale}`}
-              className="flex items-center gap-2 text-xl font-bold text-white"
+              className="group flex shrink-0 items-center gap-2 text-white"
             >
-              {logo}
-              {name}
-            </a>
+              <Image
+                src="/logo-books.svg"
+                alt=""
+                width={28}
+                height={28}
+                className="transition-transform duration-200 group-hover:scale-105"
+              />
+
+              <span className="text-[15px] font-semibold tracking-[-0.02em]">
+                {name}
+              </span>
+            </Link>
+
             {isAuthenticated && (
-              <nav className="hidden md:flex items-center gap-2 ml-4">
+              <nav className="hidden items-center gap-1 md:flex">
                 <Link
                   href={localized("/")}
-                  className={cn(
-                    "px-3 py-1 rounded-md text-sm font-semibold transition-colors border-b-2 border-transparent",
-                    "hover:text-amber-300 hover:border-amber-300",
-                    withoutLocale === "/" ? "text-amber-300 border-amber-300" : "text-white"
-                  )}
+                  className={navLinkClass("/")}
                 >
                   {t("overview")}
                 </Link>
+
                 <Link
                   href={localized("/treasures")}
-                  className={cn(
-                    "px-3 py-1 rounded-md text-sm font-semibold transition-colors border-b-2 border-transparent",
-                    "hover:text-amber-300 hover:border-amber-300",
-                    withoutLocale === "/treasures" ? "text-amber-300 border-amber-300" : "text-white"
-                  )}
+                  className={navLinkClass("/treasures")}
                 >
                   {t("treasures")}
                 </Link>
@@ -87,14 +102,20 @@ export default function Navbar({
             )}
           </NavbarLeft>
           <NavbarRight>
-            <div className="hidden md:flex items-center gap-3 pr-2">
-              <Link href={switchLocaleHref} className="text-white/80 hover:text-white text-sm underline">
+            <div className="hidden items-center gap-3 md:flex">
+              <Link
+                href={switchLocaleHref}
+                className={cn(
+                  "rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold tracking-[0.2em] text-white/85",
+                  "transition-all duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white"
+                )}
+              >
                 {otherLocale.toUpperCase()}
               </Link>
               {isAuthenticated && (
                 <Button
-                  variant="secondary"
-                  className="bg-white/10 hover:bg-white/20 text-white"
+                  variant="outline"
+                  className="border-white/10 bg-white/5 text-white hover:border-white/20 hover:bg-white/10"
                   onClick={() => dispatch(signOutUser())}
                 >
                   {t("logout")}
@@ -106,39 +127,38 @@ export default function Navbar({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="shrink-0 md:hidden"
+                  className="shrink-0 rounded-full border border-white/10 bg-white/5 text-white md:hidden"
                 >
                   <Menu className="size-5" />
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right">
+              <SheetContent side="right" className="border-white/10 bg-slate-950 text-white">
                 {isAuthenticated && (
-                  <nav className="grid gap-6 text-lg font-semibold">
+                  <nav className="grid gap-4 pt-8 text-base font-medium">
                     <Link
                       href={localized("/")}
-                      className={cn(
-                        withoutLocale === "/" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                      )}
+                      className={navLinkClass("/")}
                     >
                       {t("overview")}
                     </Link>
                     <Link
                       href={localized("/treasures")}
-                      className={cn(
-                        withoutLocale === "/treasures" ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-                      )}
+                      className={navLinkClass("/treasures")}
                     >
                       {t("treasures")}
                     </Link>
                     <Button
-                      variant="secondary"
-                      className="justify-start"
+                      variant="outline"
+                      className="justify-start border-white/10 bg-white/5 text-white hover:border-white/20 hover:bg-white/10"
                       onClick={() => dispatch(signOutUser())}
                     >
                       {t("logout")}
                     </Button>
-                    <Link href={switchLocaleHref} className="text-sm underline">
+                    <Link
+                      href={switchLocaleHref}
+                      className="w-fit rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold tracking-[0.2em] text-white/85"
+                    >
                       {otherLocale.toUpperCase()}
                     </Link>
                   </nav>

@@ -14,14 +14,24 @@
       "totalPages": "Toplam Sayfa",
       "favoriteBooks": "Favori Kitaplar"
     },
+    "completionRate": "Tamamlama Oranı",
+    "inProgressBooks": "Devam Eden",
+    "completedThisYear": "Bu Yıl Tamamlanan",
+    "pagesThisYear": "Bu Yıl Okunan Sayfa",
     "recentBooks": "Son Kitaplar",
+    "recentBooksHint": "Kitaplığındaki en son kayıtlar.",
     "noBooks": "Henüz kitap yok.",
+    "emptyTitle": "Kitaplığın ilk kitabını bekliyor.",
+    "emptyBody": "Kartını ve okuma listenin canlanmasını görmek için bir kitap ekle.",
+    "emptyAction": "İlk kitabını ekle",
     "status": {
       "completed": "Tamamlandı",
       "inProgress": "Devam ediyor",
       "value": "Durum"
     },
     "yearlyStats": "Yıllık Okuma İstatistikleri",
+    "yearlyStatsHint": "Yıl boyunca tamamlanan kitaplar ve okunan sayfalar.",
+    "chartYear": "Yıl",
     "cover": "Kapak",
     "title": "Başlık",
     "author": "Yazar",
@@ -35,5 +45,3 @@
     "subtitle": "Favori kitaplarını ve seni etkileyen alıntıları keşfet"
   }
 }
-
-

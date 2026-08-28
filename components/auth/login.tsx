@@ -6,103 +6,169 @@ import { useDispatch } from "react-redux";
 import { signInWithEmailPassword } from "@/lib/authSlice";
 import { AppDispatch } from "@/lib/store";
 
+function getAuthErrorMessage(errorCode?: string) {
+  switch (errorCode) {
+    case "auth/invalid-credential":
+      return "E-posta veya şifre hatalı.";
+
+    case "auth/user-not-found":
+      return "Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı.";
+
+    case "auth/wrong-password":
+      return "Şifre hatalı.";
+
+    case "auth/too-many-requests":
+      return "Çok fazla başarısız deneme. Lütfen daha sonra tekrar deneyin.";
+
+    case "auth/user-disabled":
+      return "Bu hesap devre dışı bırakılmış.";
+
+    case "auth/invalid-email":
+      return "Geçersiz e-posta adresi.";
+
+    case "auth/network-request-failed":
+      return "Ağ bağlantısı hatası. İnternet bağlantınızı kontrol edin.";
+
+    default:
+      return "Bilinmeyen bir hata oluştu.";
+  }
+}
+
+const inputClassName =
+  "w-full rounded-xl border border-white/20 bg-white/70 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-slate-300 focus:ring-2 focus:ring-slate-300/40";
+
 export function Login({ onCancel }: { onCancel?: () => void }) {
   const dispatch = useDispatch<AppDispatch>();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
     setError(null);
     setLoading(true);
+
     try {
-      const result = await dispatch(signInWithEmailPassword({ email, password })).unwrap();
-      console.log("Giriş başarılı:", result);
+      await dispatch(
+        signInWithEmailPassword({
+          email,
+          password,
+        })
+      ).unwrap();
+
       onCancel?.();
-    } catch (err: any) {
-        const errorCode = err?.code;
-        let msg = "Giriş yapılamadı.";
-        
-        switch (errorCode) {
-          case "auth/invalid-credential":
-            msg = "E-posta veya şifre hatalı.";
-            break;
-          case "auth/user-not-found":
-            msg = "Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı.";
-            break;
-          case "auth/wrong-password":
-            msg = "Şifre hatalı.";
-            break;
-          case "auth/too-many-requests":
-            msg = "Çok fazla başarısız deneme. Lütfen daha sonra tekrar deneyin.";
-            break;
-          case "auth/user-disabled":
-            msg = "Bu hesap devre dışı bırakılmış.";
-            break;
-          case "auth/invalid-email":
-            msg = "Geçersiz e-posta adresi.";
-            break;
-          case "auth/network-request-failed":
-            msg = "Ağ bağlantısı hatası. İnternet bağlantınızı kontrol edin.";
-            break;
-          default:
-            msg = err?.message || "Bilinmeyen bir hata oluştu.";
-        }
-      setError(msg);
+    } catch (err: unknown) {
+      const errorCode =
+        typeof err === "object" &&
+        err !== null &&
+        "code" in err
+          ? String(err.code)
+          : undefined;
+
+      setError(getAuthErrorMessage(errorCode));
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-dvh flex items-center justify-center p-4">
-      <div className="w-full mx-auto sm:max-w-md md:max-w-lg lg:max-w-xl border-white/30 bg-white/30 p-6 sm:p-8 shadow-lg backdrop-blur-md">
-        <h2 className="mb-4 text-xl font-semibold text-slate-900">Giriş Yap</h2>
+    <main className="flex min-h-dvh items-center justify-center px-4 py-8">
+      <section
+        className="w-full max-w-md rounded-2xl border border-white/20 bg-white/60 p-6 shadow-xl backdrop-blur-xl sm:p-8"
+        aria-labelledby="login-title"
+      >
+        <div className="mb-6 space-y-2">
+          <h1
+            id="login-title"
+            className="text-2xl font-semibold tracking-tight text-slate-900"
+          >
+            Giriş Yap
+          </h1>
+
+          <p className="text-sm text-slate-500">
+            Kitap takibine kaldığın yerden devam et.
+          </p>
+        </div>
+
         {error && (
-          <div className="mb-4 rounded-md border border-red-500/30 bg-red-50 px-3 py-2 text-sm text-red-700">
+          <div
+            role="alert"
+            aria-live="polite"
+            className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          >
             {error}
           </div>
         )}
 
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div className="grid gap-2">
-            <label htmlFor="email" className="text-sm text-slate-700">E-posta</label>
+        <form
+          onSubmit={onSubmit}
+          className="space-y-5"
+          aria-busy={loading}
+        >
+          <div className="space-y-2">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-slate-700"
+            >
+              E-posta
+            </label>
+
             <input
               id="email"
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="ornek@site.com"
-              className="rounded-md border border-white/50 bg-white/60 px-3 py-2 text-slate-900 placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClassName}
             />
           </div>
 
-          <div className="grid gap-2">
-            <label htmlFor="password" className="text-sm text-slate-700">Şifre</label>
+          <div className="space-y-2">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-slate-700"
+            >
+              Şifre
+            </label>
+
             <input
               id="password"
               type="password"
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="rounded-md border border-white/50 bg-white/60 px-3 py-2 text-slate-900 placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClassName}
             />
           </div>
 
-          <div className="flex gap-2">
-            <Button type="submit" className="w-full" disabled={loading}>
+          <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+            <Button
+              type="submit"
+              className="w-full transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-70"
+              disabled={loading}
+            >
               {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
             </Button>
-            <Button type="button" variant="outline" onClick={() => onCancel?.()}>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onCancel?.()}
+              className="w-full sm:w-auto"
+            >
               Geri
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

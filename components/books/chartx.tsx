@@ -1,24 +1,29 @@
-import { useEffect, useState } from "react"
-import { Bar, BarChart, XAxis, YAxis } from "recharts"
+import { useMemo } from "react"
+import { Bar, BarChart, CartesianGrid, Legend, XAxis, YAxis } from "recharts"
 import { useSelector } from "react-redux"
 import { RootState } from "@/lib/store"
+import { Book } from "@/types/book"
 
-import { ChartContainer, ChartTooltipContent, ChartTooltip } from "@/components/ui/chart"
+import {
+  ChartContainer,
+  ChartLegendContent,
+  ChartTooltipContent,
+  ChartTooltip,
+} from "@/components/ui/chart"
 
-// Initialize chart data with 0 values for all months
-const initializeChartData = () => [
-  { name: "January", value: 0, pages: 0 },
-  { name: "February", value: 0, pages: 0 },
-  { name: "March", value: 0, pages: 0 },
-  { name: "April", value: 0, pages: 0 },
-  { name: "May", value: 0, pages: 0 },
-  { name: "June", value: 0, pages: 0 },
-  { name: "July", value: 0, pages: 0 },
-  { name: "August", value: 0, pages: 0 },
-  { name: "September", value: 0, pages: 0 },
-  { name: "October", value: 0, pages: 0 },
-  { name: "November", value: 0, pages: 0 },
-  { name: "December", value: 0, pages: 0 },
+const MONTHS = [
+  { name: "Oca", monthIndex: 0 },
+  { name: "Şub", monthIndex: 1 },
+  { name: "Mar", monthIndex: 2 },
+  { name: "Nis", monthIndex: 3 },
+  { name: "May", monthIndex: 4 },
+  { name: "Haz", monthIndex: 5 },
+  { name: "Tem", monthIndex: 6 },
+  { name: "Ağu", monthIndex: 7 },
+  { name: "Eyl", monthIndex: 8 },
+  { name: "Eki", monthIndex: 9 },
+  { name: "Kas", monthIndex: 10 },
+  { name: "Ara", monthIndex: 11 },
 ]
 
 const chartConfig = {
@@ -32,50 +37,74 @@ const chartConfig = {
   },
 }
 
-export function MyChart() {
-  const [chartData, setChartData] = useState(initializeChartData())
+function getBookDate(book: Book) {
+  const rawDate = book.endDate || book.dateRead || book.dateAdded
+  const parsedDate = new Date(rawDate)
+
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate
+}
+
+export function MyChart({ year }: { year: number }) {
   const { books } = useSelector((state: RootState) => state.books)
 
-  useEffect(() => {
-    if (books.length > 0) {
-      // Create a copy of initial data
-      const updatedData = initializeChartData()
-      
-      // Count books completed in each month and sum pages
-      books.forEach(book => {
-        if (book.isCompleted && book.endDate) {
-          const endDate = new Date(book.endDate)
-          const monthIndex = endDate.getMonth()
-          updatedData[monthIndex].value += 1
-          updatedData[monthIndex].pages = (updatedData[monthIndex].pages || 0) + book.pages
+  const chartData = useMemo(
+    () =>
+      MONTHS.map((month) => {
+        const monthlyBooks = books.filter((book) => {
+          if (!book.isCompleted) {
+            return false
+          }
+
+          const bookDate = getBookDate(book)
+
+          return (
+            bookDate !== null &&
+            bookDate.getFullYear() === year &&
+            bookDate.getMonth() === month.monthIndex
+          )
+        })
+
+        return {
+          name: month.name,
+          value: monthlyBooks.length,
+          pages: monthlyBooks.reduce((sum, book) => sum + (book.pages || 0), 0),
         }
-      })
-      
-      setChartData(updatedData)
-    }
-  }, [books])
+      }),
+    [books, year]
+  )
 
   return (
-    <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-      <BarChart data={chartData}>
-        <XAxis 
-          dataKey="name" 
-          label={{ value: "Months", position: "bottom", offset: 0 }}
+    <ChartContainer config={chartConfig} className="h-[320px] w-full">
+      <BarChart data={chartData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
+        <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="rgba(226,232,240,0.18)" />
+        <XAxis
+          dataKey="name"
+          tickLine={false}
+          axisLine={false}
+          tickMargin={12}
+          tick={{ fill: "#e2e8f0", fontSize: 12 }}
         />
-        <YAxis 
+        <YAxis
           yAxisId="left"
-          label={{ value: "Book Read", angle: -90, position: "insideLeft" }}
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
           tickFormatter={(value) => Math.round(value).toString()}
+          tick={{ fill: "#e2e8f0", fontSize: 12 }}
         />
-        <YAxis 
+        <YAxis
           yAxisId="right"
-          label={{ value: "Number of Pages", angle: -90, position: "insideRight" }}
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
           tickFormatter={(value) => Math.round(value).toString()}
           orientation="right"
+          tick={{ fill: "#e2e8f0", fontSize: 12 }}
         />
         <Bar dataKey="value" fill="#f59e0b" yAxisId="left" />
         <Bar dataKey="pages" fill="#3b82f6" yAxisId="right" />
-        <ChartTooltip content={<ChartTooltipContent />} />
+        <ChartTooltip content={<ChartTooltipContent indicator="dashed" />} />
+        <Legend content={<ChartLegendContent />} verticalAlign="bottom" />
       </BarChart>
     </ChartContainer>
   )

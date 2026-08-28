@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-import { Inter_Tight } from 'next/font/google'
 import { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import ReduxProvider from '@/components/providers/redux-provider';
 import '../globals.css';
 import { HomeLayout } from "@/components/layout/HomeLayout";
-
-const interTight = Inter_Tight({
-  subsets: ['latin'],
-  variable: '--font-inter-tight',
-})
 
 
 export const metadata: Metadata = {
@@ -29,7 +23,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={interTight.variable}>
+    <html lang={locale}>
       <body className="font-sans">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ReduxProvider>

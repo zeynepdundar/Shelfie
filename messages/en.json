@@ -14,14 +14,24 @@
       "totalPages": "Total Pages",
       "favoriteBooks": "Favorite Books"
     },
+    "completionRate": "Completion Rate",
+    "inProgressBooks": "In Progress",
+    "completedThisYear": "Completed This Year",
+    "pagesThisYear": "Pages This Year",
     "recentBooks": "Recent Books",
+    "recentBooksHint": "Latest entries from your shelf.",
     "noBooks": "No books yet.",
+    "emptyTitle": "Your shelf is waiting for its first book.",
+    "emptyBody": "Add a title to start seeing your chart and reading list come alive.",
+    "emptyAction": "Add your first book",
     "status": {
       "completed": "Completed",
       "inProgress": "In progress",
       "value": "Status"
     },
     "yearlyStats": "Yearly Reading Statistics",
+    "yearlyStatsHint": "Completed books and pages read across the year.",
+    "chartYear": "Year",
     "cover": "Cover",
     "title": "Title",
     "author": "Author",
@@ -35,5 +45,3 @@
     "subtitle": "Discover your favorite books and the quotes that touched your soul"
   }
 }
-
-

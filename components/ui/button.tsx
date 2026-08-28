@@ -5,35 +5,82 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  [
+    "inline-flex items-center justify-center whitespace-nowrap",
+    "rounded-xl font-medium",
+    "transition-all duration-200 ease-out",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200",
+    "disabled:pointer-events-none disabled:opacity-50",
+    "active:scale-[0.98]",
+    "select-none",
+  ].join(" "),
   {
     variants: {
       variant: {
-        default:
-          "text-black font-semibold relative px-6 py-3 text-lg " +
-          "bg-gradient-to-b from-[#ffd166] to-[#fcbf49] " +
-          "shadow-[inset_0_1px_1px_#0000000d,inset_0_1px_4px_#ffffff80,inset_0_-2px_4px_#000000f0,0_1px_4px_#0003,0_1px_2px_#00000033] " +
-          "hover:scale-105 hover:brightness-110 transition-transform transition-colors duration-200 rounded-md",
-        primary:
-          "bg-amber-400 hover:bg-amber-500 text-white px-6 py-3 rounded-lg text-lg font-semibold",
-        destructive:
-          "bg-destructive text-destructive-foreground shadow-xs hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground",
-        glow: "glass-4 hover:glass-5 shadow-md",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-foreground underline-offset-4 hover:underline",
+        default: [
+          "bg-amber-400 text-slate-900",
+          "border border-amber-300/60",
+          "shadow-sm shadow-amber-100/50",
+          "hover:bg-amber-300",
+          "hover:shadow-md hover:shadow-amber-200/40",
+        ].join(" "),
+
+        primary: [
+          "bg-slate-900 text-white",
+          "shadow-sm",
+          "hover:bg-slate-800",
+          "hover:shadow-md",
+        ].join(" "),
+
+        secondary: [
+          "bg-amber-50 text-amber-900",
+          "border border-amber-100",
+          "hover:bg-amber-100/80",
+        ].join(" "),
+
+        outline: [
+          "border border-slate-200",
+          "bg-white/70 backdrop-blur-sm",
+          "text-slate-800",
+          "hover:bg-slate-100/80",
+          "hover:border-slate-300",
+        ].join(" "),
+
+        ghost: [
+          "text-slate-700",
+          "hover:bg-amber-50",
+          "hover:text-slate-900",
+        ].join(" "),
+
+        destructive: [
+          "bg-red-500 text-white",
+          "hover:bg-red-600",
+          "shadow-sm",
+        ].join(" "),
+
+        glow: [
+          "bg-amber-400/90 text-slate-900",
+          "border border-amber-200/50",
+          "backdrop-blur-md",
+          "shadow-lg shadow-amber-200/30",
+          "hover:bg-amber-300",
+        ].join(" "),
+
+        link: [
+          "text-slate-900 underline-offset-4",
+          "hover:underline",
+        ].join(" "),
       },
+
       size: {
-        default: "h-9 px-4 py-2",
-        xs: "h-7 rounded-md px-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-5",
-        icon: "size-9",
+        xs: "h-7 px-2.5 text-xs",
+        sm: "h-9 px-4 text-sm",
+        default: "h-11 px-5 text-sm",
+        lg: "h-12 px-6 text-base",
+        icon: "size-10",
       },
     },
+
     defaultVariants: {
       variant: "default",
       size: "default",
@@ -55,6 +102,7 @@ function Button({
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : "button";
+
   return (
     <Comp
       data-slot="button"
