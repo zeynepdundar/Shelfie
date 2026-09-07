@@ -3,33 +3,10 @@
 import type { ReactNode } from "react";
 import { Star } from "lucide-react";
 
+import { BookCover } from "@/components/books/BookCover";
+
 import { cn } from "@/lib/utils";
 import { glassStyle } from "@/components/ui/glass";
-
-/* Kapağı olmayan kitaplar için sırt rengi paleti. Başlıktan türetilir ki
-   aynı kitap her zaman aynı renkte görünsün. */
-const SPINE_COLORS = [
-  "#e8590c",
-  "#12b886",
-  "#e03131",
-  "#1c7ed6",
-  "#c2255c",
-  "#5f3dc4",
-  "#f08c00",
-  "#0ca678",
-  "#7048e8",
-  "#1098ad",
-  "#d6336c",
-  "#74b816",
-];
-
-function spineColor(seed: string) {
-  let hash = 0;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-  }
-  return SPINE_COLORS[hash % SPINE_COLORS.length];
-}
 
 function Rating({ value }: { value: number }) {
   return (
@@ -76,7 +53,7 @@ export function BookCard({
   return (
     <article
       className={cn(
-        "group relative flex w-[160px] shrink-0 snap-start flex-col gap-3 rounded-xl p-3 transition-colors duration-200",
+        "group relative flex w-[148px] shrink-0 snap-start flex-col gap-3 rounded-xl p-3 transition-colors duration-200",
         interactive && "cursor-pointer hover:bg-white/[0.16]",
         className
       )}
@@ -95,22 +72,7 @@ export function BookCard({
       role={interactive ? "button" : undefined}
       tabIndex={interactive ? 0 : undefined}
     >
-      <span
-        aria-hidden
-        className="block aspect-[3/4] w-full overflow-hidden rounded-lg"
-        style={{ background: spineColor(title) }}
-      >
-        {coverUrl && (
-          <img
-            src={coverUrl}
-            alt=""
-            className="h-full w-full object-cover"
-            onError={(event) => {
-              (event.target as HTMLImageElement).style.display = "none";
-            }}
-          />
-        )}
-      </span>
+      <BookCover src={coverUrl} size="lg" />
 
       <div className="min-w-0">
         <h3 className="line-clamp-2 text-[0.9rem] font-semibold leading-snug text-white">

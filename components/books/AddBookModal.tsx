@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GoogleBook } from "@/types/book";
 import { AddBookModalProps } from "@/types/component-props";
-import { BookOpen, Search, X } from "lucide-react";
+import { BookCover } from "@/components/books/BookCover";
+import { Search, X } from "lucide-react";
 
 export function AddBookModal({
   isOpen,
@@ -179,13 +180,11 @@ export function AddBookModal({
             <div className="sf-modal-body">
               <div className="sf-tile">
                 <div className="flex gap-3">
-                  {selectedBook.volumeInfo.imageLinks?.thumbnail && (
-                    <img
-                      src={selectedBook.volumeInfo.imageLinks.thumbnail}
-                      alt={selectedBook.volumeInfo.title}
-                      className="h-16 w-12 rounded-md object-cover"
-                    />
-                  )}
+                  <BookCover
+                    src={selectedBook.volumeInfo.imageLinks?.thumbnail}
+                    alt={selectedBook.volumeInfo.title}
+                    size="md"
+                  />
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate">{selectedBook.volumeInfo.title}</h3>
                     <p className="sf-body truncate">
@@ -423,17 +422,11 @@ export function AddBookModal({
                           className="sf-tile w-full cursor-pointer text-left transition-colors duration-200 hover:bg-control-hover"
                         >
                           <div className="flex gap-3">
-                            {book.volumeInfo.imageLinks?.thumbnail ? (
-                              <img
-                                src={book.volumeInfo.imageLinks.thumbnail}
-                                alt={book.volumeInfo.title}
-                                className="h-16 w-12 rounded-md object-cover"
-                              />
-                            ) : (
-                              <span className="flex h-16 w-12 items-center justify-center rounded-md bg-control">
-                                <BookOpen className="h-5 w-5 text-ink/40" />
-                              </span>
-                            )}
+                            <BookCover
+                              src={book.volumeInfo.imageLinks?.thumbnail}
+                              alt={book.volumeInfo.title}
+                              size="md"
+                            />
                             <div className="min-w-0 flex-1">
                               <h3 className="truncate">{book.volumeInfo.title}</h3>
                               <p className="sf-body truncate">

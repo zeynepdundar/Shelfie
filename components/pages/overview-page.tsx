@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AuthUser } from "@/lib/authSlice";
 import { Button } from "@/components/ui/button";
 import { AddBookModal } from "@/components/books/AddBookModal";
+import { BookCover } from "@/components/books/BookCover";
 import { Book } from "@/types/book";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { addBook, fetchUserBooks, updateBook } from "@/lib/booksSlice";
@@ -314,21 +315,11 @@ export function OverviewPage({ user }: OverviewPageProps) {
                       className="grid gap-4 border-b border-white/10 px-4 py-4 transition-colors last:border-b-0 hover:bg-white/[0.05] md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto] md:items-center"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="sf-cover-thumb">
-                          {coverUrl ? (
-                            <img
-                              src={coverUrl}
-                              alt={`${book.title} cover`}
-                              className="h-full w-full object-cover"
-                              onError={(event) => {
-                                const target = event.target as HTMLImageElement;
-                                target.style.display = "none";
-                              }}
-                            />
-                          ) : (
-                            <BookOpen className="h-6 w-6 text-white/40" />
-                          )}
-                        </div>
+                        <BookCover
+                          src={coverUrl}
+                          alt={`${book.title} cover`}
+                          size="sm"
+                        />
 
                         <div className="min-w-0 md:hidden">
                           <p className="truncate text-base font-semibold text-white">
