@@ -42,6 +42,50 @@
   },
   "treasures": {
     "title": "Your Literary Treasures",
-    "subtitle": "Discover your favorite books and the quotes that touched your soul"
+    "subtitle": "Your favorite books and the passages worth keeping, all in one place.",
+    "loading": "Opening your treasure chest...",
+    "stats": {
+      "favorites": "Favorite books",
+      "quotes": "Saved quotes",
+      "books": "Books on the shelf",
+      "quotedBooks": "Books with quotes"
+    },
+    "favorites": {
+      "title": "Favorites",
+      "hint": "The books you marked with a heart.",
+      "count": "{count} books",
+      "emptyTitle": "No favorites yet",
+      "emptyBody": "Mark a book with a heart on the Overview page and it will show up here.",
+      "addQuote": "Add quote",
+      "remove": "Remove from favorites"
+    },
+    "quotes": {
+      "title": "Memorable quotes",
+      "hint": "Passages you collected while reading.",
+      "count": "{count} quotes",
+      "emptyTitle": "No quotes yet",
+      "emptyBody": "Pick a book and save the lines that stayed with you.",
+      "page": "p. {page}",
+      "note": "Note",
+      "addQuote": "Add quote"
+    },
+    "modal": {
+      "title": "Add a quote",
+      "quoteLabel": "Quote",
+      "quotePlaceholder": "Type the passage you want to keep...",
+      "pageLabel": "Page",
+      "pagePlaceholder": "e.g. 142",
+      "notesLabel": "Note",
+      "notesPlaceholder": "Your thoughts about it...",
+      "optional": "optional",
+      "save": "Save quote",
+      "cancel": "Cancel",
+      "close": "Close",
+      "subtitle": "Pick the book it comes from, and add the page if you remember it.",
+      "bookLabel": "Book",
+      "bookPlaceholder": "Select a book",
+      "noBooks": "Add a book to your shelf first, then you can save quotes from it.",
+      "savedOn": "Saved on {date}"
+    }
   }
 }

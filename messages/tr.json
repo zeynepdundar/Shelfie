@@ -42,6 +42,50 @@
   },
   "treasures": {
     "title": "Edebi Hazinelerin",
-    "subtitle": "Favori kitaplarını ve seni etkileyen alıntıları keşfet"
+    "subtitle": "Favori kitapların ve saklamaya değer satırların, hepsi tek yerde.",
+    "loading": "Hazine sandığın açılıyor...",
+    "stats": {
+      "favorites": "Favori kitap",
+      "quotes": "Kayıtlı alıntı",
+      "books": "Kitaplıktaki kitap",
+      "quotedBooks": "Alıntısı olan kitap"
+    },
+    "favorites": {
+      "title": "Favoriler",
+      "hint": "Kalple işaretlediğin kitaplar.",
+      "count": "{count} kitap",
+      "emptyTitle": "Henüz favori yok",
+      "emptyBody": "Genel Bakış sayfasında bir kitabı kalple işaretle, burada görünsün.",
+      "addQuote": "Alıntı ekle",
+      "remove": "Favorilerden çıkar"
+    },
+    "quotes": {
+      "title": "Unutulmaz alıntılar",
+      "hint": "Okurken biriktirdiğin satırlar.",
+      "count": "{count} alıntı",
+      "emptyTitle": "Henüz alıntı yok",
+      "emptyBody": "Bir kitap seç ve aklında kalan satırları kaydet.",
+      "page": "s. {page}",
+      "note": "Not",
+      "addQuote": "Alıntı ekle"
+    },
+    "modal": {
+      "title": "Alıntı ekle",
+      "quoteLabel": "Alıntı",
+      "quotePlaceholder": "Saklamak istediğin satırları yaz...",
+      "pageLabel": "Sayfa",
+      "pagePlaceholder": "örn. 142",
+      "notesLabel": "Not",
+      "notesPlaceholder": "Bu alıntı hakkındaki düşüncen...",
+      "optional": "isteğe bağlı",
+      "save": "Alıntıyı kaydet",
+      "cancel": "Vazgeç",
+      "close": "Kapat",
+      "subtitle": "Alıntıyı hangi kitaptan aldığını seç, hatırlıyorsan sayfa numarasını da ekle.",
+      "bookLabel": "Kitap",
+      "bookPlaceholder": "Bir kitap seç",
+      "noBooks": "Önce kitaplığına bir kitap ekle, sonra ondan alıntı kaydedebilirsin.",
+      "savedOn": "{date} tarihinde kaydedildi"
+    }
   }
 }
