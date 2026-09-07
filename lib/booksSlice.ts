@@ -2,34 +2,11 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { auth } from "@/lib/firebase";
 import { doc, setDoc, getDoc, updateDoc, deleteDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import type { Book, Quote } from "@/types/book";
 
-export interface Book {
-  id: string;
-  title: string;
-  author: string;
-  isbn?: string;
-  publishedYear?: number;
-  genre?: string;
-  rating?: number;
-  notes?: string;
-  isCompleted: boolean;
-  pages: number;
-  dateRead?: string | null;
-  startDate?: string;
-  endDate?: string;
-  dateAdded: string;
-  coverUrl?: string;
-  isFavorite?: boolean;
-  quotes?: Quote[];
-}
-
-export interface Quote {
-  id: string;
-  text: string;
-  page?: number;
-  dateAdded: string;
-  notes?: string;
-}
+/* Tek kaynak: types/book.ts. Burada tekrar tanımlanmıyor, sadece yeniden ihraç
+   ediliyor ki eski importlar çalışmaya devam etsin. */
+export type { Book, Quote };
 
 interface BooksState {
   books: Book[];

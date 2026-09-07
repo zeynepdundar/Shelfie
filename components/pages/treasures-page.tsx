@@ -4,22 +4,24 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  BookOpen,
   ChevronLeft,
   ChevronRight,
   Heart,
   Quote as QuoteIcon,
+  Bookmark,
+  BookmarkX,
   Plus,
-  Sparkles,
-  Star,
   X,
 } from 'lucide-react';
 
 import { AppDispatch, RootState } from '@/lib/store';
-import { fetchUserBooks, updateBook } from '@/lib/booksSlice';
+import { addBook, fetchUserBooks, updateBook } from '@/lib/booksSlice';
 import { AuthUser } from '@/lib/authSlice';
-import { Quote } from '@/types/book';
+import { Book, Quote } from '@/types/book';
 import { Button } from '@/components/ui/button';
+import { AddBookModal } from '@/components/books/AddBookModal';
+import { BookCard } from '@/components/books/BookCard';
+import { BOOK_STATUS_TONE, getBookStatus } from '@/lib/bookStatus';
 import {
   EmptyState,
   GlassCard,
@@ -47,10 +49,12 @@ function formatDate(value?: string) {
 
 export function TreasuresPage({ user }: TreasuresPageProps) {
   const t = useTranslations('treasures');
+  const statusT = useTranslations('overview');
   const dispatch = useDispatch<AppDispatch>();
   const { books, status } = useSelector((state: RootState) => state.books);
 
   const shelfRef = useRef<HTMLDivElement>(null);
+  const readingListRef = useRef<HTMLDivElement>(null);
   const quotesRef = useRef<HTMLDivElement>(null);
   const quoteTextRef = useRef<HTMLTextAreaElement>(null);
 
@@ -61,6 +65,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
   const [quoteNotes, setQuoteNotes] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [justAddedId, setJustAddedId] = useState<string | null>(null);
+  const [showAddBookModal, setShowAddBookModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -70,6 +75,11 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
 
   const favoriteBooks = useMemo(
     () => books.filter((book) => book.isFavorite),
+    [books],
+  );
+
+  const readingList = useMemo(
+    () => books.filter((book) => book.wantToRead && !book.isCompleted),
     [books],
   );
 
@@ -144,13 +154,33 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
     return () => window.clearTimeout(timeout);
   }, [justAddedId]);
 
-  const scrollShelf = (direction: 'left' | 'right') => {
-    const node = shelfRef.current;
+  const scrollShelf = (
+    ref: React.RefObject<HTMLDivElement | null>,
+    direction: 'left' | 'right',
+  ) => {
+    const node = ref.current;
     if (!node) return;
     node.scrollBy({
       left: direction === 'left' ? -340 : 340,
       behavior: 'smooth',
     });
+  };
+
+  const handleAddBook = async (newBook: Omit<Book, 'id' | 'dateAdded'>) => {
+    try {
+      await dispatch(addBook(newBook)).unwrap();
+      setShowAddBookModal(false);
+    } catch (error) {
+      console.error('Error adding book:', error);
+    }
+  };
+
+  const removeFromReadingList = async (bookId: string) => {
+    try {
+      await dispatch(updateBook({ bookId, updates: { wantToRead: false } }));
+    } catch (error) {
+      console.error('Error updating reading list:', error);
+    }
   };
 
   const toggleFavorite = async (bookId: string, currentFavorite: boolean) => {
@@ -203,31 +233,21 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
   }
 
   const summaryCards = [
-    { title: t('stats.favorites'), value: favoriteBooks.length, icon: Heart },
-    { title: t('stats.quotes'), value: allQuotes.length, icon: QuoteIcon },
-    { title: t('stats.quotedBooks'), value: quotedBooksCount, icon: Sparkles },
-    { title: t('stats.books'), value: books.length, icon: BookOpen },
+    { title: t('stats.favorites'), value: favoriteBooks.length },
+    { title: t('stats.quotes'), value: allQuotes.length },
+    { title: t('stats.quotedBooks'), value: quotedBooksCount },
+    { title: t('readingList.stat'), value: readingList.length },
   ];
 
   return (
     <div className="sf-page">
-            <div className="sf-container">
+      <div className="sf-container">
         {/* Sayfa başlığı */}
         <header className="sf-page-header">
           <div>
             <h1 className="sf-title-page">{t('title')}</h1>
             <p className="sf-page-header-sub">{t('subtitle')}</p>
           </div>
-
-          <Button
-            onClick={() => openQuoteForm()}
-            size="lg"
-            disabled={books.length === 0}
-            className="shrink-0"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            {t('quotes.addQuote')}
-          </Button>
         </header>
 
         {/* Özet istatistikler */}
@@ -237,7 +257,6 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
               key={card.title}
               label={card.title}
               value={card.value}
-              icon={card.icon}
             />
           ))}
         </div>
@@ -245,7 +264,6 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
         {/* Favori rafı */}
         <GlassCard>
           <GlassCardHeader
-            icon={Heart}
             title={t('favorites.title')}
             description={t('favorites.hint')}
             action={
@@ -257,7 +275,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                   <div className="hidden gap-2 md:flex">
                     <button
                       type="button"
-                      onClick={() => scrollShelf('left')}
+                      onClick={() => scrollShelf(shelfRef, 'left')}
                       aria-label="Scroll left"
                       className="sf-icon-button"
                     >
@@ -265,7 +283,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => scrollShelf('right')}
+                      onClick={() => scrollShelf(shelfRef, 'right')}
                       aria-label="Scroll right"
                       className="sf-icon-button"
                     >
@@ -287,90 +305,115 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
             ) : (
               <div
                 ref={shelfRef}
-                className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 [scrollbar-color:rgba(255,255,255,0.2)_transparent] [scrollbar-width:thin]"
+                className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-color:rgba(255,255,255,0.2)_transparent] [scrollbar-width:thin]"
               >
-                {favoriteBooks.map((book) => {
-                  const quoteCount = book.quotes?.length || 0;
+                {favoriteBooks.map((book) => (
+                  <BookCard
+                    key={book.id}
+                    title={book.title}
+                    author={book.author}
+                    coverUrl={book.coverUrl}
+                    rating={book.rating}
+                    status={{
+                      label: statusT(`status.${getBookStatus(book)}`),
+                      tone: BOOK_STATUS_TONE[getBookStatus(book)],
+                    }}
+                    onClick={() => openQuoteForm(book.id)}
+                    action={
+                      <button
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          toggleFavorite(book.id, book.isFavorite || false);
+                        }}
+                        title={t('favorites.remove')}
+                        aria-label={t('favorites.remove')}
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white/70 backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white"
+                      >
+                        <Heart className="h-3.5 w-3.5 fill-current" />
+                      </button>
+                    }
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </GlassCard>
 
-                  return (
-                    <article
-                      key={book.id}
-                      className="group relative flex w-[260px] shrink-0 snap-start flex-col overflow-hidden sf-card transition-all duration-300 hover:-translate-y-1 hover:shadow-panel"
+        {/* Okuma listesi */}
+        <GlassCard>
+          <GlassCardHeader
+            title={t('readingList.title')}
+            description={t('readingList.hint')}
+            action={
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-white/60">
+                  {t('readingList.count', { count: readingList.length })}
+                </span>
+                <Button onClick={() => setShowAddBookModal(true)} size="sm">
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('readingList.addBook')}
+                </Button>
+                {readingList.length > 2 && (
+                  <div className="hidden gap-2 md:flex">
+                    <button
+                      type="button"
+                      onClick={() => scrollShelf(readingListRef, 'left')}
+                      aria-label="Scroll left"
+                      className="sf-icon-button"
                     >
-                      <div className="relative h-[300px] overflow-hidden bg-black/40">
-                        {book.coverUrl ? (
-                          <img
-                            src={book.coverUrl}
-                            alt={`${book.title} cover`}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                            onError={(event) => {
-                              const target = event.target as HTMLImageElement;
-                              target.style.display = 'none';
-                            }}
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center">
-                            <BookOpen className="h-12 w-12 text-white/35" />
-                          </div>
-                        )}
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => scrollShelf(readingListRef, 'right')}
+                      aria-label="Scroll right"
+                      className="sf-icon-button"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            }
+          />
 
-                        <div
-                          aria-hidden
-                          className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent"
-                        />
-
-                        <button
-                          type="button"
-                          onClick={() =>
-                            toggleFavorite(book.id, book.isFavorite || false)
-                          }
-                          title={t('favorites.remove')}
-                          aria-label={t('favorites.remove')}
-                          className="sf-on-dark-icon-button absolute right-3 top-3"
-                        >
-                          <Heart className="h-4 w-4 fill-current" />
-                        </button>
-
-                        {quoteCount > 0 && (
-                          <span className="sf-on-dark-chip absolute left-3 top-3">
-                            <QuoteIcon className="h-3 w-3" />
-                            {quoteCount}
-                          </span>
-                        )}
-
-                        <div className="absolute inset-x-0 bottom-0 p-4">
-                          <h3 className="line-clamp-2 text-base font-semibold leading-snug text-white">
-                            {book.title}
-                          </h3>
-                          <p className="mt-1 truncate text-sm text-white/75">{book.author}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-1 flex-col gap-3 p-4">
-                        <div className="flex items-center justify-between">
-                          <span className="sf-meta">
-                            {book.pages ? `${book.pages} p.` : ' '}
-                          </span>
-                          {book.rating ? (
-                            <span className="star-filled inline-flex items-center gap-1 text-xs font-semibold">
-                              <Star className="h-3.5 w-3.5 fill-current" />
-                              {book.rating}
-                            </span>
-                          ) : null}
-                        </div>
-
-                        <Button
-                          onClick={() => openQuoteForm(book.id)}
-                          size="sm"
-                          className="w-full"
-                        >
-                          <Plus className="mr-2 h-4 w-4" />
-                          {t('favorites.addQuote')}
-                        </Button>
-                      </div>
-                    </article>
-                  );
-                })}
+          <div>
+            {readingList.length === 0 ? (
+              <EmptyState
+                icon={Bookmark}
+                title={t('readingList.emptyTitle')}
+                description={t('readingList.emptyBody')}
+              />
+            ) : (
+              <div
+                ref={readingListRef}
+                className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-color:rgba(255,255,255,0.2)_transparent] [scrollbar-width:thin]"
+              >
+                {readingList.map((book) => (
+                  <BookCard
+                    key={book.id}
+                    title={book.title}
+                    author={book.author}
+                    coverUrl={book.coverUrl}
+                    rating={book.rating}
+                    status={{
+                      label: statusT('status.wantToRead'),
+                      tone: 'neutral',
+                    }}
+                    action={
+                      <button
+                        type="button"
+                        onClick={() => removeFromReadingList(book.id)}
+                        title={t('readingList.remove')}
+                        aria-label={t('readingList.remove')}
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white/70 backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white"
+                      >
+                        <BookmarkX className="h-3.5 w-3.5" />
+                      </button>
+                    }
+                  />
+                ))}
               </div>
             )}
           </div>
@@ -379,7 +422,6 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
         {/* Alıntılar */}
         <GlassCard ref={quotesRef} className="scroll-mt-6">
           <GlassCardHeader
-            icon={QuoteIcon}
             title={t('quotes.title')}
             description={t('quotes.hint')}
             action={
@@ -406,14 +448,6 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                 title={t('quotes.emptyTitle')}
                 description={
                   books.length === 0 ? t('modal.noBooks') : t('quotes.emptyBody')
-                }
-                action={
-                  books.length > 0 ? (
-                    <Button onClick={() => openQuoteForm()} size="lg">
-                      <Plus className="mr-2 h-4 w-4" />
-                      {t('quotes.addQuote')}
-                    </Button>
-                  ) : undefined
                 }
               />
             ) : (
@@ -482,6 +516,15 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
           </div>
         </GlassCard>
       </div>
+
+      {showAddBookModal && (
+        <AddBookModal
+          isOpen={showAddBookModal}
+          onClose={() => setShowAddBookModal(false)}
+          onAddBook={handleAddBook}
+          defaultWantToRead
+        />
+      )}
 
       {/* Alıntı ekleme modalı */}
       {showQuoteForm && (

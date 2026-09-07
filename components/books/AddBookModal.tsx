@@ -5,7 +5,12 @@ import { GoogleBook } from "@/types/book";
 import { AddBookModalProps } from "@/types/component-props";
 import { BookOpen, Search, X } from "lucide-react";
 
-export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) {
+export function AddBookModal({
+  isOpen,
+  onClose,
+  onAddBook,
+  defaultWantToRead = false,
+}: AddBookModalProps) {
   const [activeTab, setActiveTab] = useState<'form' | 'search'>('form');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<GoogleBook[]>([]);
@@ -21,7 +26,8 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date().toISOString().split('T')[0],
     isCompleted: false,
-    isFavorite: false
+    isFavorite: false,
+    wantToRead: defaultWantToRead
   });
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY || '';
@@ -35,7 +41,8 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
       startDate: new Date().toISOString().split('T')[0],
       endDate: new Date().toISOString().split('T')[0],
       isCompleted: false,
-      isFavorite: false
+      isFavorite: false,
+      wantToRead: defaultWantToRead
     });
     setFormError(null);
   };
@@ -82,6 +89,7 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
       endDate: formData.endDate,
       dateRead: formData.isCompleted ? formData.endDate : null,
       isCompleted: formData.isCompleted,
+      wantToRead: formData.wantToRead,
       coverUrl: selectedBook.volumeInfo.imageLinks?.thumbnail || undefined,
       dateAdded: new Date().toISOString().split('T')[0]
     };
@@ -117,6 +125,7 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
       endDate: formData.endDate,
       isCompleted: formData.isCompleted,
       isFavorite: formData.isFavorite,
+      wantToRead: formData.wantToRead,
       dateAdded: new Date().toISOString().split('T')[0]
     };
 
@@ -219,15 +228,27 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
                   />
                 </div>
 
-                <label className="flex items-center gap-3 text-sm text-ink/80">
-                  <input
-                    type="checkbox"
-                    checked={formData.isCompleted}
-                    onChange={(e) => setFormData({ ...formData, isCompleted: e.target.checked })}
-                    className="sf-checkbox"
-                  />
-                  Kitabı tamamladım
-                </label>
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 text-sm text-ink/80">
+                    <input
+                      type="checkbox"
+                      checked={formData.isCompleted}
+                      onChange={(e) => setFormData({ ...formData, isCompleted: e.target.checked })}
+                      className="sf-checkbox"
+                    />
+                    Kitabı tamamladım
+                  </label>
+
+                  <label className="flex items-center gap-3 text-sm text-ink/80">
+                    <input
+                      type="checkbox"
+                      checked={formData.wantToRead}
+                      onChange={(e) => setFormData({ ...formData, wantToRead: e.target.checked })}
+                      className="sf-checkbox"
+                    />
+                    Sonra okumak istiyorum
+                  </label>
+                </div>
               </form>
             </div>
 
@@ -343,6 +364,16 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
                           className="sf-checkbox"
                         />
                         Favori kitabım
+                      </label>
+
+                      <label className="flex items-center gap-3 text-sm text-ink/80">
+                        <input
+                          type="checkbox"
+                          checked={formData.wantToRead}
+                          onChange={(e) => setFormData({ ...formData, wantToRead: e.target.checked })}
+                          className="sf-checkbox"
+                        />
+                        Sonra okumak istiyorum
                       </label>
                     </div>
                   </form>

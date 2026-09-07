@@ -31,7 +31,8 @@
     "status": {
       "completed": "Completed",
       "inProgress": "In progress",
-      "value": "Status"
+      "value": "Status",
+      "wantToRead": "Want to Read"
     },
     "yearlyStats": "Yearly Reading Statistics",
     "yearlyStatsHint": "Completed books and pages read across the year.",
@@ -96,6 +97,16 @@
       "bookPlaceholder": "Select a book",
       "noBooks": "Add a book to your shelf first, then you can save quotes from it.",
       "savedOn": "Saved on {date}"
+    },
+    "readingList": {
+      "title": "Reading List",
+      "hint": "Books you saved to read later.",
+      "count": "{count} books",
+      "emptyTitle": "Your reading list is empty",
+      "emptyBody": "Tick \"Want to read later\" when adding a book and it will collect here.",
+      "remove": "Remove from reading list",
+      "stat": "Reading list",
+      "addBook": "Add Book"
     }
   }
 }

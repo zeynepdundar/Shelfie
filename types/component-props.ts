@@ -20,4 +20,6 @@ export interface AddBookModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddBook: (book: Omit<Book, 'id'>) => void;
+  /** Modal "sonra okumak istiyorum" işaretli açılsın. */
+  defaultWantToRead?: boolean;
 }

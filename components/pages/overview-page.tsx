@@ -7,6 +7,7 @@ import { AddBookModal } from "@/components/books/AddBookModal";
 import { Book } from "@/types/book";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { addBook, fetchUserBooks, updateBook } from "@/lib/booksSlice";
+import { getBookStatus } from "@/lib/bookStatus";
 import {
   BookOpen,
   CalendarDays,
@@ -358,13 +359,15 @@ export function OverviewPage({ user }: OverviewPageProps) {
                       <div className="flex items-center gap-3">
                         <span
                           className={
-                            book.isCompleted ? "sf-chip-success" : "sf-chip-accent"
+                            {
+                              completed: "sf-chip-success",
+                              inProgress: "sf-chip-accent",
+                              wantToRead: "sf-chip",
+                            }[getBookStatus(book)]
                           }
                         >
                           <span className="h-2 w-2 rounded-full bg-current" />
-                          {book.isCompleted
-                            ? t("status.completed")
-                            : t("status.inProgress")}
+                          {t(`status.${getBookStatus(book)}`)}
                         </span>
                       </div>
 

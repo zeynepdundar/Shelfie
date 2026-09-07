@@ -15,6 +15,8 @@ export interface Book {
   dateAdded: string;
   coverUrl?: string;
   isFavorite?: boolean;
+  /** Sonra okumak üzere kaydedilen kitaplar. */
+  wantToRead?: boolean;
   quotes?: Quote[];
 }
 

@@ -31,7 +31,8 @@
     "status": {
       "completed": "Tamamlandı",
       "inProgress": "Devam ediyor",
-      "value": "Durum"
+      "value": "Durum",
+      "wantToRead": "Okumak İstiyorum"
     },
     "yearlyStats": "Yıllık Okuma İstatistikleri",
     "yearlyStatsHint": "Yıl boyunca tamamlanan kitaplar ve okunan sayfalar.",
@@ -96,6 +97,16 @@
       "bookPlaceholder": "Bir kitap seç",
       "noBooks": "Önce kitaplığına bir kitap ekle, sonra ondan alıntı kaydedebilirsin.",
       "savedOn": "{date} tarihinde kaydedildi"
+    },
+    "readingList": {
+      "title": "Okuma Listem",
+      "hint": "Sonra okumak üzere kaydettiğin kitaplar.",
+      "count": "{count} kitap",
+      "emptyTitle": "Okuma listen boş",
+      "emptyBody": "Kitap eklerken \"Sonra okumak istiyorum\" seçeneğini işaretle, burada biriksin.",
+      "remove": "Okuma listesinden çıkar",
+      "stat": "Okuma listesi",
+      "addBook": "Kitap Ekle"
     }
   }
 }
