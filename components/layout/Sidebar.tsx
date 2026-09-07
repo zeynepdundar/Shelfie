@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -11,26 +11,13 @@ import type { RootState } from "@/lib/store";
 import { useAppDispatch } from "@/lib/hooks";
 import { signOutUser } from "@/lib/authSlice";
 import { Button } from "@/components/ui/button";
+import { darkGlassStyle, glassStyle } from "@/components/ui/glass";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-
-const darkGlassStyle: CSSProperties = {
-  background: "rgba(10, 8, 6, 0.55)",
-  backdropFilter: "blur(24px) saturate(1.2)",
-  WebkitBackdropFilter: "blur(24px) saturate(1.2)",
-  border: "1px solid rgba(255, 255, 255, 0.10)",
-};
-
-const glassStyle: CSSProperties = {
-  background: "rgba(255, 255, 255, 0.10)",
-  backdropFilter: "blur(20px) saturate(1.4)",
-  WebkitBackdropFilter: "blur(20px) saturate(1.4)",
-  border: "1px solid rgba(255, 255, 255, 0.18)",
-};
 
 function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();

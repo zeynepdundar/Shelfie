@@ -42,7 +42,13 @@
     "pages": "Sayfa",
     "startDate": "Başlama",
     "endDate": "Bitiş",
-    "favorite": "Favori"
+    "favorite": "Favori",
+    "chart": {
+      "monthBooks": "{count} kitap",
+      "totalPages": "Toplam Sayfa",
+      "booksThatMonth": "O Ay Okunanlar",
+      "none": "Kitap yok"
+    }
   },
   "treasures": {
     "title": "Edebi Hazinelerin",

@@ -3,13 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AuthUser } from "@/lib/authSlice";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { AddBookModal } from "@/components/books/AddBookModal";
 import { Book } from "@/types/book";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -19,11 +12,17 @@ import {
   CalendarDays,
   Heart,
   Plus,
-  Sparkles,
-  TrendingUp,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { MyChart } from "../books/chartx";
+import {
+  EmptyState,
+  GlassCard,
+  GlassCardHeader,
+  GlassInset,
+  PageLoading,
+  StatCard,
+} from "@/components/ui/glass";
 
 interface OverviewPageProps {
   user: AuthUser | null;
@@ -166,54 +165,24 @@ export function OverviewPage({ user }: OverviewPageProps) {
 
   const completedBooks = books.filter((book) => book.isCompleted);
   const favoriteBooks = books.filter((book) => book.isFavorite);
-  const currentMonth = new Date().getMonth();
   const selectedYearCompletedBooks = completedBooks.filter((book) => {
     const bookDate = getBookDate(book);
     return bookDate !== null && bookDate.getFullYear() === selectedYear;
-  });
-  const completedThisMonth = completedBooks.filter((book) => {
-    const relevantDate = getRelevantDate(book);
-    if (!relevantDate) {
-      return false;
-    }
-
-    const date = new Date(relevantDate);
-    return (
-      !Number.isNaN(date.getTime()) &&
-      date.getFullYear() === currentYear &&
-      date.getMonth() === currentMonth
-    );
   });
 
   const pagesThisSelectedYear = selectedYearCompletedBooks.reduce(
     (sum, book) => sum + (book.pages || 0),
     0
   );
-  const totalPagesRead = completedBooks.reduce(
-    (sum, book) => sum + (book.pages || 0),
-    0
-  );
   const completionRate = books.length
     ? Math.round((completedBooks.length / books.length) * 100)
-    : 0;
-  const averagePagesPerCompletedBook = completedBooks.length
-    ? Math.round(totalPagesRead / completedBooks.length)
     : 0;
   const averagePagesPerCompletedBookInSelectedYear = selectedYearCompletedBooks.length
     ? Math.round(pagesThisSelectedYear / selectedYearCompletedBooks.length)
     : 0;
 
   if (status === "loading") {
-    return (
-      <div className="sf-page px-4 py-16">
-        <div className="relative mx-auto flex min-h-[60vh] max-w-7xl items-center justify-center">
-          <div className="sf-loading-pill">
-            <span className="sf-spinner" />
-            <span className="sf-muted">Loading your reading dashboard...</span>
-          </div>
-        </div>
-      </div>
-    );
+    return <PageLoading label="Loading your reading dashboard..." />;
   }
 
   const summaryCards = [
@@ -221,25 +190,21 @@ export function OverviewPage({ user }: OverviewPageProps) {
       title: t("stats.totalBooks"),
       value: books.length,
       note: `${books.length - completedBooks.length} ${t("inProgressBooks")}`,
-      icon: BookOpen,
     },
     {
       title: t("completedThisYear"),
       value: selectedYearCompletedBooks.length,
       note: `${selectedYear}`,
-      icon: Sparkles,
     },
     {
       title: t("pagesThisYear"),
       value: pagesThisSelectedYear.toLocaleString("tr-TR"),
       note: `${averagePagesPerCompletedBookInSelectedYear} avg / book`,
-      icon: TrendingUp,
     },
     {
       title: t("stats.favoriteBooks"),
       value: favoriteBooks.length,
       note: `${completionRate}% ${t("completionRate")}`,
-      icon: Heart,
     },
   ];
 
@@ -261,188 +226,82 @@ export function OverviewPage({ user }: OverviewPageProps) {
 
         {/* Özet istatistikler */}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {summaryCards.map((card) => {
-            const Icon = card.icon;
-
-            return (
-              <div key={card.title} className="sf-stat">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-2">
-                    <p className="sf-stat-label">{card.title}</p>
-                    <p className="sf-stat-value">{card.value}</p>
-                    <p className="sf-stat-note">{card.note}</p>
-                  </div>
-                  <span className="sf-icon-badge">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+          {summaryCards.map((card) => (
+            <StatCard
+              key={card.title}
+              label={card.title}
+              value={card.value}
+              note={card.note}
+            />
+          ))}
         </div>
 
         {status === "failed" && <div className="sf-alert-error">{error}</div>}
 
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.8fr)]">
-          {/* Yıllık grafik */}
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <CardTitle>{t("yearlyStats")}</CardTitle>
-                  <CardDescription className="mt-1">
-                    {t("yearlyStatsHint")}
-                  </CardDescription>
-                </div>
-
-                <label className="sf-chip gap-3 px-4 py-2">
-                  <CalendarDays className="h-3.5 w-3.5 text-accent-strong" />
-                  <span>{t("chartYear")}</span>
-                  <select
-                    value={selectedYear}
-                    onChange={(event) => setSelectedYear(Number(event.target.value))}
-                    className="bg-transparent font-semibold text-ink outline-none"
-                    aria-label={t("chartYear")}
-                  >
-                    {availableYears.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="sf-tile p-4">
-                <MyChart year={selectedYear} />
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="grid gap-6">
-            {/* Tamamlama oranı */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">{t("completionRate")}</CardTitle>
-                <CardDescription>
-                  {completedBooks.length} / {books.length} books completed
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-end justify-between">
-                  <div>
-                    <p className="text-4xl font-semibold tracking-tight text-brand-ink">
-                      {completionRate}%
-                    </p>
-                    <p className="sf-muted mt-1">
-                      {t("stats.readThisMonth")}: {completedThisMonth.length}
-                    </p>
-                  </div>
-                  <span className="sf-icon-badge">
-                    <Sparkles className="h-5 w-5" />
-                  </span>
-                </div>
-
-                <div className="sf-progress-track">
-                  <div
-                    className="sf-progress-bar"
-                    style={{ width: `${completionRate}%` }}
-                  />
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="sf-tile">
-                    <p className="sf-stat-sm-label">{t("completedThisYear")}</p>
-                    <p className="sf-stat-sm-value">
-                      {selectedYearCompletedBooks.length}
-                    </p>
-                  </div>
-                  <div className="sf-tile">
-                    <p className="sf-stat-sm-label">{t("inProgressBooks")}</p>
-                    <p className="sf-stat-sm-value">
-                      {Math.max(books.length - completedBooks.length, 0)}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Toplam sayfa */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">{t("stats.totalPages")}</CardTitle>
-                <CardDescription>
-                  {averagePagesPerCompletedBook} avg pages per completed book
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-end justify-between">
-                  <div>
-                    <p className="text-4xl font-semibold tracking-tight text-brand-ink">
-                      {totalPagesRead.toLocaleString("tr-TR")}
-                    </p>
-                    <p className="sf-muted mt-1">
-                      {t("pagesThisYear")}: {pagesThisSelectedYear.toLocaleString("tr-TR")}
-                    </p>
-                  </div>
-                  <span className="sf-icon-badge">
-                    <TrendingUp className="h-5 w-5" />
-                  </span>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="sf-tile">
-                    <p className="sf-stat-sm-label">{t("stats.favoriteBooks")}</p>
-                    <p className="sf-stat-sm-value">{favoriteBooks.length}</p>
-                  </div>
-                  <div className="sf-tile">
-                    <p className="sf-stat-sm-label">{t("stats.readThisMonth")}</p>
-                    <p className="sf-stat-sm-value">{completedThisMonth.length}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+        {/* Yıllık grafik */}
+        <GlassCard>
+          <GlassCardHeader
+            title={t("yearlyStats")}
+            description={t("yearlyStatsHint")}
+            action={
+              <label className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-sm text-white/80">
+                <CalendarDays className="h-3.5 w-3.5 text-accent-strong" />
+                <span>{t("chartYear")}</span>
+                <select
+                  value={selectedYear}
+                  onChange={(event) => setSelectedYear(Number(event.target.value))}
+                  className="bg-transparent font-semibold text-white outline-none"
+                  aria-label={t("chartYear")}
+                >
+                  {availableYears.map((year) => (
+                    <option key={year} value={year} className="bg-stone-900 text-white">
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            }
+          />
+          <GlassInset>
+            <MyChart year={selectedYear} />
+          </GlassInset>
+        </GlassCard>
 
         {/* Son kitaplar */}
-        <Card>
-          <CardHeader>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <CardTitle>{t("recentBooks")}</CardTitle>
-                <CardDescription className="mt-1">
-                  {t("recentBooksHint")}
-                </CardDescription>
+        <GlassCard>
+          <GlassCardHeader
+            title={t("recentBooks")}
+            description={t("recentBooksHint")}
+            action={
+              <div className="text-sm text-white/60">
+                {books.length} books tracked
               </div>
-              <div className="sf-muted">{books.length} books tracked</div>
-            </div>
-          </CardHeader>
+            }
+          />
 
-          <CardContent>
+          <div>
             {books.length === 0 ? (
-              <div className="sf-empty">
-                <span className="sf-icon-badge mb-4 rounded-full p-4">
-                  <BookOpen className="h-7 w-7" />
-                </span>
-                <h3 className="sf-title-section">{t("emptyTitle")}</h3>
-                <p className="sf-body mt-2 max-w-lg">{t("emptyBody")}</p>
-                <Button onClick={handleAddBook} className="mt-6" size="lg">
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t("emptyAction")}
-                </Button>
-              </div>
+              <EmptyState
+                icon={BookOpen}
+                title={t("emptyTitle")}
+                description={t("emptyBody")}
+                action={
+                  <Button onClick={handleAddBook} size="lg">
+                    <Plus className="mr-2 h-4 w-4" />
+                    {t("emptyAction")}
+                  </Button>
+                }
+              />
             ) : (
               <div className="space-y-3">
                 <div className="hidden items-center gap-4 px-4 pb-2 md:grid md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto]">
-                  <div className="sf-label">{t("cover")}</div>
-                  <div className="sf-label">{t("title")}</div>
-                  <div className="sf-label">{t("pages")}</div>
-                  <div className="sf-label">{t("startDate")}</div>
-                  <div className="sf-label">{t("endDate")}</div>
-                  <div className="sf-label">{t("status.value")}</div>
-                  <div className="sf-label text-right">{t("favorite")}</div>
+                  <div className="text-xs font-medium text-white/60">{t("cover")}</div>
+                  <div className="text-xs font-medium text-white/60">{t("title")}</div>
+                  <div className="text-xs font-medium text-white/60">{t("pages")}</div>
+                  <div className="text-xs font-medium text-white/60">{t("startDate")}</div>
+                  <div className="text-xs font-medium text-white/60">{t("endDate")}</div>
+                  <div className="text-xs font-medium text-white/60">{t("status.value")}</div>
+                  <div className="text-xs font-medium text-white/60 text-right">{t("favorite")}</div>
                 </div>
 
                 {books.slice(0, 8).map((book) => {
@@ -451,7 +310,7 @@ export function OverviewPage({ user }: OverviewPageProps) {
                   return (
                     <div
                       key={book.id}
-                      className="grid gap-4 border-b border-hairline px-4 py-4 transition-colors last:border-b-0 hover:bg-control md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto] md:items-center"
+                      className="grid gap-4 border-b border-white/10 px-4 py-4 transition-colors last:border-b-0 hover:bg-white/[0.05] md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto] md:items-center"
                     >
                       <div className="flex items-center gap-4">
                         <div className="sf-cover-thumb">
@@ -466,35 +325,35 @@ export function OverviewPage({ user }: OverviewPageProps) {
                               }}
                             />
                           ) : (
-                            <BookOpen className="h-6 w-6 text-ink/40" />
+                            <BookOpen className="h-6 w-6 text-white/40" />
                           )}
                         </div>
 
                         <div className="min-w-0 md:hidden">
-                          <p className="truncate text-base font-semibold text-ink">
+                          <p className="truncate text-base font-semibold text-white">
                             {book.title}
                           </p>
-                          <p className="sf-body truncate">{book.author}</p>
-                          <p className="sf-meta truncate">
+                          <p className="text-sm text-white/70 truncate">{book.author}</p>
+                          <p className="text-xs text-white/50 truncate">
                             {book.pages} {t("pages")} · {formatDate(book.startDate)} · {formatDate(book.endDate)}
                           </p>
                         </div>
                       </div>
 
                       <div className="hidden min-w-0 md:block">
-                        <p className="truncate text-base font-semibold text-ink">
+                        <p className="truncate text-base font-semibold text-white">
                           {book.title}
                         </p>
-                        <p className="sf-body truncate">{book.author}</p>
+                        <p className="text-sm text-white/70 truncate">{book.author}</p>
                       </div>
 
-                      <div className="sf-muted">
+                      <div className="text-sm text-white/60">
                         {book.pages} {t("pages")}
                       </div>
 
-                      <div className="sf-muted">{formatDate(book.startDate)}</div>
+                      <div className="text-sm text-white/60">{formatDate(book.startDate)}</div>
 
-                      <div className="sf-muted">{formatDate(book.endDate)}</div>
+                      <div className="text-sm text-white/60">{formatDate(book.endDate)}</div>
 
                       <div className="flex items-center gap-3">
                         <span
@@ -538,8 +397,8 @@ export function OverviewPage({ user }: OverviewPageProps) {
                 })}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </GlassCard>
       </div>
 
       {showAddBookModal && (

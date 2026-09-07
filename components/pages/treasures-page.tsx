@@ -18,15 +18,15 @@ import {
 import { AppDispatch, RootState } from '@/lib/store';
 import { fetchUserBooks, updateBook } from '@/lib/booksSlice';
 import { AuthUser } from '@/lib/authSlice';
-import { Book, Quote } from '@/types/book';
+import { Quote } from '@/types/book';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+  EmptyState,
+  GlassCard,
+  GlassCardHeader,
+  PageLoading,
+  StatCard,
+} from '@/components/ui/glass';
 
 interface TreasuresPageProps {
   user: AuthUser | null;
@@ -199,16 +199,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
   };
 
   if (status === 'loading') {
-    return (
-      <div className="sf-page px-4 py-16">
-        <div className="relative mx-auto flex min-h-[60vh] max-w-7xl items-center justify-center">
-          <div className="sf-loading-pill">
-            <span className="sf-spinner" />
-            <span className="sf-muted">{t('loading')}</span>
-          </div>
-        </div>
-      </div>
-    );
+    return <PageLoading label={t('loading')} />;
   }
 
   const summaryCards = [
@@ -241,43 +232,25 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
 
         {/* Özet istatistikler */}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {summaryCards.map((card) => {
-            const Icon = card.icon;
-
-            return (
-              <div key={card.title} className="sf-stat">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-2">
-                    <p className="sf-stat-label">{card.title}</p>
-                    <p className="sf-stat-value">{card.value}</p>
-                  </div>
-                  <span className="sf-icon-badge">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+          {summaryCards.map((card) => (
+            <StatCard
+              key={card.title}
+              label={card.title}
+              value={card.value}
+              icon={card.icon}
+            />
+          ))}
         </div>
 
         {/* Favori rafı */}
-        <Card>
-          <CardHeader>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="flex items-start gap-3">
-                <span className="sf-icon-badge">
-                  <Heart className="h-5 w-5 fill-current" />
-                </span>
-                <div>
-                  <CardTitle>{t('favorites.title')}</CardTitle>
-                  <CardDescription className="mt-1">
-                    {t('favorites.hint')}
-                  </CardDescription>
-                </div>
-              </div>
-
+        <GlassCard>
+          <GlassCardHeader
+            icon={Heart}
+            title={t('favorites.title')}
+            description={t('favorites.hint')}
+            action={
               <div className="flex items-center gap-3">
-                <span className="sf-muted">
+                <span className="text-sm text-white/60">
                   {t('favorites.count', { count: favoriteBooks.length })}
                 </span>
                 {favoriteBooks.length > 2 && (
@@ -301,20 +274,16 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                   </div>
                 )}
               </div>
-            </div>
-          </CardHeader>
+            }
+          />
 
-          <CardContent>
+          <div>
             {favoriteBooks.length === 0 ? (
-              <div className="sf-empty">
-                <span className="sf-icon-badge mb-4 rounded-full p-4">
-                  <Heart className="h-7 w-7" />
-                </span>
-                <h3 className="sf-title-section">{t('favorites.emptyTitle')}</h3>
-                <p className="sf-body mt-2 max-w-lg">
-                  {t('favorites.emptyBody')}
-                </p>
-              </div>
+              <EmptyState
+                icon={Heart}
+                title={t('favorites.emptyTitle')}
+                description={t('favorites.emptyBody')}
+              />
             ) : (
               <div
                 ref={shelfRef}
@@ -404,27 +373,18 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                 })}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </GlassCard>
 
         {/* Alıntılar */}
-        <Card ref={quotesRef} className="scroll-mt-6">
-          <CardHeader>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="flex items-start gap-3">
-                <span className="sf-icon-badge">
-                  <QuoteIcon className="h-5 w-5" />
-                </span>
-                <div>
-                  <CardTitle>{t('quotes.title')}</CardTitle>
-                  <CardDescription className="mt-1">
-                    {t('quotes.hint')}
-                  </CardDescription>
-                </div>
-              </div>
-
+        <GlassCard ref={quotesRef} className="scroll-mt-6">
+          <GlassCardHeader
+            icon={QuoteIcon}
+            title={t('quotes.title')}
+            description={t('quotes.hint')}
+            action={
               <div className="flex items-center gap-4">
-                <span className="sf-muted">
+                <span className="text-sm text-white/60">
                   {t('quotes.count', { count: allQuotes.length })}
                 </span>
                 <Button
@@ -436,32 +396,26 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                   {t('quotes.addQuote')}
                 </Button>
               </div>
-            </div>
-          </CardHeader>
+            }
+          />
 
-          <CardContent>
+          <div>
             {allQuotes.length === 0 ? (
-              <div className="sf-empty">
-                <span className="sf-icon-badge mb-4 rounded-full p-4">
-                  <QuoteIcon className="h-7 w-7" />
-                </span>
-                <h3 className="sf-title-section">{t('quotes.emptyTitle')}</h3>
-                <p className="sf-body mt-2 max-w-lg">
-                  {books.length === 0
-                    ? t('modal.noBooks')
-                    : t('quotes.emptyBody')}
-                </p>
-                {books.length > 0 && (
-                  <Button
-                    onClick={() => openQuoteForm()}
-                    size="lg"
-                    className="mt-6"
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t('quotes.addQuote')}
-                  </Button>
-                )}
-              </div>
+              <EmptyState
+                icon={QuoteIcon}
+                title={t('quotes.emptyTitle')}
+                description={
+                  books.length === 0 ? t('modal.noBooks') : t('quotes.emptyBody')
+                }
+                action={
+                  books.length > 0 ? (
+                    <Button onClick={() => openQuoteForm()} size="lg">
+                      <Plus className="mr-2 h-4 w-4" />
+                      {t('quotes.addQuote')}
+                    </Button>
+                  ) : undefined
+                }
+              />
             ) : (
               <div className="gap-5 [column-fill:balance] sm:columns-2">
                 {allQuotes.map((quote) => {
@@ -525,8 +479,8 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                 })}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </GlassCard>
       </div>
 
       {/* Alıntı ekleme modalı */}

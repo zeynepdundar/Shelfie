@@ -42,7 +42,13 @@
     "pages": "Pages",
     "startDate": "Start Date",
     "endDate": "End Date",
-    "favorite": "Favorite"
+    "favorite": "Favorite",
+    "chart": {
+      "monthBooks": "{count} books",
+      "totalPages": "Total Pages",
+      "booksThatMonth": "Read That Month",
+      "none": "No books"
+    }
   },
   "treasures": {
     "title": "Your Literary Treasures",

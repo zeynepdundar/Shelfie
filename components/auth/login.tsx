@@ -1,18 +1,12 @@
 "use client";
 
-import { useState, type CSSProperties, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useDispatch } from "react-redux";
 
 import { Button } from "@/components/ui/button";
+import { GlassCard } from "@/components/ui/glass";
 import { signInWithEmailPassword } from "@/lib/authSlice";
 import type { AppDispatch } from "@/lib/store";
-
-const darkGlassStyle: CSSProperties = {
-  background: "rgba(10, 8, 6, 0.55)",
-  backdropFilter: "blur(24px) saturate(1.2)",
-  WebkitBackdropFilter: "blur(24px) saturate(1.2)",
-  border: "1px solid rgba(255, 255, 255, 0.10)",
-};
 
 const inputClassName =
   "w-full rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-white/40 focus:bg-white/10 focus:ring-2 focus:ring-white/10";
@@ -82,9 +76,10 @@ export function Login({ onCancel }: { onCancel?: () => void }) {
 
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-8">
-      <section
-        className="w-full max-w-md rounded-card p-6 shadow-card sm:p-8"
-        style={darkGlassStyle}
+      <GlassCard
+        as="section"
+        variant="dark"
+        className="w-full max-w-md p-6 sm:p-8"
         aria-labelledby="login-title"
       >
         <div className="mb-6 space-y-2">
@@ -176,7 +171,7 @@ export function Login({ onCancel }: { onCancel?: () => void }) {
             </Button>
           </div>
         </form>
-      </section>
+      </GlassCard>
     </main>
   );
 }
