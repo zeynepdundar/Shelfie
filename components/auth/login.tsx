@@ -1,10 +1,21 @@
-'use client';
+"use client";
+
+import { useState, type CSSProperties, type FormEvent } from "react";
+import { useDispatch } from "react-redux";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { signInWithEmailPassword } from "@/lib/authSlice";
-import { AppDispatch } from "@/lib/store";
+import type { AppDispatch } from "@/lib/store";
+
+const darkGlassStyle: CSSProperties = {
+  background: "rgba(10, 8, 6, 0.55)",
+  backdropFilter: "blur(24px) saturate(1.2)",
+  WebkitBackdropFilter: "blur(24px) saturate(1.2)",
+  border: "1px solid rgba(255, 255, 255, 0.10)",
+};
+
+const inputClassName =
+  "w-full rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-white/40 focus:bg-white/10 focus:ring-2 focus:ring-white/10";
 
 function getAuthErrorMessage(errorCode?: string) {
   switch (errorCode) {
@@ -34,19 +45,15 @@ function getAuthErrorMessage(errorCode?: string) {
   }
 }
 
-const inputClassName =
-  "w-full rounded-xl border border-white/20 bg-white/70 px-4 py-3 text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-slate-300 focus:ring-2 focus:ring-slate-300/40";
-
 export function Login({ onCancel }: { onCancel?: () => void }) {
   const dispatch = useDispatch<AppDispatch>();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setError(null);
@@ -57,15 +64,13 @@ export function Login({ onCancel }: { onCancel?: () => void }) {
         signInWithEmailPassword({
           email,
           password,
-        })
+        }),
       ).unwrap();
 
       onCancel?.();
     } catch (err: unknown) {
       const errorCode =
-        typeof err === "object" &&
-        err !== null &&
-        "code" in err
+        typeof err === "object" && err !== null && "code" in err
           ? String(err.code)
           : undefined;
 
@@ -78,18 +83,26 @@ export function Login({ onCancel }: { onCancel?: () => void }) {
   return (
     <main className="flex min-h-dvh items-center justify-center px-4 py-8">
       <section
-        className="w-full max-w-md rounded-2xl border border-white/20 bg-white/60 p-6 shadow-xl backdrop-blur-xl sm:p-8"
+        className="w-full max-w-md rounded-card p-6 shadow-card sm:p-8"
+        style={darkGlassStyle}
         aria-labelledby="login-title"
       >
         <div className="mb-6 space-y-2">
+          <p
+            className="text-2xl font-light italic text-white"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Shelfie
+          </p>
+
           <h1
             id="login-title"
-            className="text-2xl font-semibold tracking-tight text-slate-900"
+            className="text-2xl font-semibold tracking-tight text-white"
           >
             Giriş Yap
           </h1>
 
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-white/60">
             Kitap takibine kaldığın yerden devam et.
           </p>
         </div>
@@ -98,27 +111,21 @@ export function Login({ onCancel }: { onCancel?: () => void }) {
           <div
             role="alert"
             aria-live="polite"
-            className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+            className="mb-5 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200"
           >
             {error}
           </div>
         )}
 
-        <form
-          onSubmit={onSubmit}
-          className="space-y-5"
-          aria-busy={loading}
-        >
-          <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="text-sm font-medium text-slate-700"
-            >
+        <form onSubmit={onSubmit} className="space-y-5" aria-busy={loading}>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="email" className="text-sm font-medium text-white/80">
               E-posta
             </label>
 
             <input
               id="email"
+              name="email"
               type="email"
               required
               autoComplete="email"
@@ -129,16 +136,17 @@ export function Login({ onCancel }: { onCancel?: () => void }) {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="password"
-              className="text-sm font-medium text-slate-700"
+              className="text-sm font-medium text-white/80"
             >
               Şifre
             </label>
 
             <input
               id="password"
+              name="password"
               type="password"
               required
               autoComplete="current-password"
@@ -152,7 +160,7 @@ export function Login({ onCancel }: { onCancel?: () => void }) {
           <div className="flex flex-col gap-3 pt-2 sm:flex-row">
             <Button
               type="submit"
-              className="w-full transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-70"
+              className="w-full rounded-xl bg-white text-stone-950 hover:bg-white/90"
               disabled={loading}
             >
               {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
@@ -162,7 +170,7 @@ export function Login({ onCancel }: { onCancel?: () => void }) {
               type="button"
               variant="outline"
               onClick={() => onCancel?.()}
-              className="w-full sm:w-auto"
+              className="w-full rounded-xl border-white/20 bg-transparent text-white/80 hover:bg-white/10 hover:text-white sm:w-auto"
             >
               Geri
             </Button>

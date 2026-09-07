@@ -27,7 +27,7 @@ export function UserInfo() {
         </CardHeader>
         <CardContent>
           <p>Lütfen giriş yapın.</p>
-          {error && <p className="text-red-500 mt-2">Hata: {error}</p>}
+          {error && <p className="sf-alert-error mt-2">Hata: {error}</p>}
         </CardContent>
       </Card>
     );
@@ -55,7 +55,7 @@ export function UserInfo() {
         </div>
         <div className="flex justify-between">
           <span className="font-medium">Kullanıcı ID:</span>
-          <span className="text-sm text-gray-600">{user.uid}</span>
+          <span className="sf-muted">{user.uid}</span>
         </div>
         <div className="flex justify-between">
           <span className="font-medium">Görünen Ad:</span>
@@ -73,7 +73,7 @@ export function UserInfo() {
         )}
         <div className="flex justify-between">
           <span className="font-medium">Durum:</span>
-          <span className="text-green-600 font-medium">Giriş Yapıldı</span>
+          <span className="sf-chip-success">Giriş Yapıldı</span>
         </div>
       </CardContent>
     </Card>

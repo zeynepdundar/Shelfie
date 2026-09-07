@@ -1,9 +1,9 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { GoogleBook } from "@/types/book";
 import { AddBookModalProps } from "@/types/component-props";
-
+import { BookOpen, Search, X } from "lucide-react";
 
 export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) {
   const [activeTab, setActiveTab] = useState<'form' | 'search'>('form');
@@ -12,6 +12,7 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
   const [isSearching, setIsSearching] = useState(false);
   const [selectedBook, setSelectedBook] = useState<GoogleBook | null>(null);
   const [showDateForm, setShowDateForm] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     author: '',
@@ -23,31 +24,33 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
     isFavorite: false
   });
 
-  // Google Books API anahtarınızı buraya ekleyin
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY || '';
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      author: '',
+      pages: '',
+      dateRead: '',
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: new Date().toISOString().split('T')[0],
+      isCompleted: false,
+      isFavorite: false
+    });
+    setFormError(null);
+  };
 
   const searchBooks = async () => {
     if (!searchQuery.trim()) return;
 
     setIsSearching(true);
     try {
-      console.log('API Key:', apiKey ? 'Mevcut' : 'Eksik');
-      console.log('Aranan kitap:', searchQuery);
-
       const response = await fetch(
         `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchQuery)}&key=${apiKey}&maxResults=4`
       );
       const data = await response.json();
 
-      console.log('API Response:', data);
-
-      if (data.items) {
-        setSearchResults(data.items);
-        console.log('Bulunan kitaplar:', data.items.length);
-      } else {
-        setSearchResults([]);
-        console.log('Kitap bulunamadı');
-      }
+      setSearchResults(data.items || []);
     } catch (error) {
       console.error('Kitap arama hatası:', error);
       setSearchResults([]);
@@ -83,31 +86,17 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
       dateAdded: new Date().toISOString().split('T')[0]
     };
 
-    console.log('Kitap ekleniyor:', bookData);
-    console.log('onAddBook fonksiyonu:', onAddBook);
-
     try {
       onAddBook(bookData);
-      console.log('onAddBook çağrısı başarılı');
     } catch (error) {
       console.error('onAddBook çağrısında hata:', error);
     }
 
-    // Reset states
     setSelectedBook(null);
     setShowDateForm(false);
     setSearchQuery('');
     setSearchResults([]);
-    setFormData({
-      title: '',
-      author: '',
-      pages: '',
-      dateRead: '',
-      startDate: new Date().toISOString().split('T')[0],
-      endDate: new Date().toISOString().split('T')[0],
-      isCompleted: false,
-      isFavorite: false
-    });
+    resetForm();
     onClose();
   };
 
@@ -115,7 +104,7 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
     e.preventDefault();
 
     if (!formData.title || !formData.author || !formData.pages) {
-      alert('Lütfen tüm alanları doldurun');
+      setFormError('Lütfen kitap adı, yazar ve sayfa sayısını doldurun.');
       return;
     }
 
@@ -137,18 +126,7 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
       console.error('onAddBook çağrısında hata:', error);
     }
 
-    // Reset form
-    setFormData({
-      title: '',
-      author: '',
-      pages: '',
-      dateRead: '',
-      startDate: new Date().toISOString().split('T')[0],
-      endDate: new Date().toISOString().split('T')[0],
-      isCompleted: false,
-      isFavorite: false
-    });
-
+    resetForm();
     onClose();
   };
 
@@ -159,314 +137,298 @@ export function AddBookModal({ isOpen, onClose, onAddBook }: AddBookModalProps) 
 
   if (!isOpen) return null;
 
+  const tabClass = (tab: 'form' | 'search') =>
+    `flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
+      activeTab === tab
+        ? 'bg-accent-strong text-on-accent shadow-sm'
+        : 'text-ink/55 hover:text-ink'
+    }`;
+
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-        <h2 className="mb-4">Yeni Kitap Ekle</h2>
-
-        {/* Date Form for Selected Book */}
-        {showDateForm && selectedBook && (
-          <div className="space-y-4">
-            <div className="bg-gray-700 rounded-lg p-3 mb-4">
-              <div className="flex gap-3">
-                {selectedBook.volumeInfo.imageLinks?.thumbnail && (
-                  <img
-                    src={selectedBook.volumeInfo.imageLinks.thumbnail}
-                    alt={selectedBook.volumeInfo.title}
-                    className="w-12 h-16 object-cover rounded"
-                  />
-                )}
-                <div className="flex-1">
-                  <h4 className="text-white font-medium text-sm">
-                    {selectedBook.volumeInfo.title}
-                  </h4>
-                  <p className="text-gray-300 text-xs">
-                    {selectedBook.volumeInfo.authors?.join(', ') || 'Bilinmeyen Yazar'}
-                  </p>
-                  {selectedBook.volumeInfo.pageCount && (
-                    <p className="text-gray-400 text-xs">
-                      {selectedBook.volumeInfo.pageCount} sayfa
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <form onSubmit={handleDateFormSubmit} className="space-y-4">
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">
-                  Okuma Başlangıç Tarihi *
-                </label>
-                <input
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-blue-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-white text-sm font-medium mb-2">
-                  Okuma Bitiş Tarihi
-                </label>
-                <input
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-blue-500"
-                />
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="isCompleted"
-                  checked={formData.isCompleted}
-                  onChange={(e) => setFormData({ ...formData, isCompleted: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
-                />
-                <label htmlFor="isCompleted" className="ml-2 text-white text-sm">
-                  Kitabı tamamladım
-                </label>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <Button
-                  type="submit"
-                  className="flex-1 bg-amber-400 hover:bg-amber-500 text-white px-6 py-3 rounded-lg text-lg font-semibold"
-                >
-                  Kitabı Ekle
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleBackToSearch}
-                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white"
-                >
-                  Geri
-                </Button>
-              </div>
-            </form>
+    <div className="sf-modal-overlay" role="dialog" aria-modal="true" onClick={onClose}>
+      <div className="sf-modal max-w-lg" onClick={(e) => e.stopPropagation()}>
+        <div className="sf-modal-header">
+          <div>
+            <h2 className="sf-title-section">Yeni Kitap Ekle</h2>
+            <p className="sf-muted mt-1">
+              Elle ekle ya da Google Books&apos;ta ara.
+            </p>
           </div>
-        )}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Kapat"
+            className="sf-icon-button"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
 
-        {/* Main Modal Content */}
-        {!showDateForm && (
+        {/* Seçilen kitap için tarih formu */}
+        {showDateForm && selectedBook && (
           <>
-            {/* Tab Buttons */}
-            <div className="flex mb-4 bg-gray-700 rounded-lg p-1">
-              <button
-                type="button"
-                onClick={() => setActiveTab('form')}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'form'
-                    ? 'bg-amber-400 text-gray-900'
-                    : 'text-gray-300 hover:text-white'
-                  }`}
-              >
-                Manuel Ekle
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('search')}
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === 'search'
-                    ? 'bg-amber-400 text-gray-900'
-                    : 'text-gray-300 hover:text-white'
-                  }`}
-              >
-                Arama Yap
-              </button>
-            </div>
-
-            {/* Form Tab */}
-            {activeTab === 'form' && (
-              <form onSubmit={handleFormSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-white text-sm font-medium mb-2">
-                    Kitap Adı *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-blue-500"
-                    placeholder="Kitap adını girin"
-                  />
+            <div className="sf-modal-body">
+              <div className="sf-tile">
+                <div className="flex gap-3">
+                  {selectedBook.volumeInfo.imageLinks?.thumbnail && (
+                    <img
+                      src={selectedBook.volumeInfo.imageLinks.thumbnail}
+                      alt={selectedBook.volumeInfo.title}
+                      className="h-16 w-12 rounded-md object-cover"
+                    />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate">{selectedBook.volumeInfo.title}</h3>
+                    <p className="sf-body truncate">
+                      {selectedBook.volumeInfo.authors?.join(', ') || 'Bilinmeyen Yazar'}
+                    </p>
+                    {selectedBook.volumeInfo.pageCount && (
+                      <p className="sf-meta">
+                        {selectedBook.volumeInfo.pageCount} sayfa
+                      </p>
+                    )}
+                  </div>
                 </div>
+              </div>
 
-                <div>
-                  <label className="block text-white text-sm font-medium mb-2">
-                    Yazar *
+              <form id="date-form" onSubmit={handleDateFormSubmit} className="space-y-4">
+                <div className="sf-field">
+                  <label htmlFor="sd-start" className="sf-label">
+                    Okuma Başlangıç Tarihi *
                   </label>
                   <input
-                    type="text"
-                    value={formData.author}
-                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-blue-500"
-                    placeholder="Yazar adını girin"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-white text-sm font-medium mb-2">
-                    Sayfa Sayısı *
-                  </label>
-                  <input
-                    type="number"
-                    value={formData.pages}
-                    onChange={(e) => setFormData({ ...formData, pages: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-blue-500"
-                    placeholder="Sayfa sayısını girin"
-                    min="1"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-white text-sm font-medium mb-2">
-                    Okuma Başlangıç Tarihi
-                  </label>
-                  <input
+                    id="sd-start"
                     type="date"
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-blue-500"
+                    className="sf-input"
+                    required
                   />
                 </div>
 
-                <div>
-                  <label className="block text-white text-sm font-medium mb-2">
+                <div className="sf-field">
+                  <label htmlFor="sd-end" className="sf-label">
                     Okuma Bitiş Tarihi
                   </label>
                   <input
+                    id="sd-end"
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-blue-500"
+                    className="sf-input"
                   />
                 </div>
 
-                <div className="flex items-center">
+                <label className="flex items-center gap-3 text-sm text-ink/80">
                   <input
                     type="checkbox"
-                    id="isCompleted"
                     checked={formData.isCompleted}
                     onChange={(e) => setFormData({ ...formData, isCompleted: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                    className="sf-checkbox"
                   />
-                  <label htmlFor="isCompleted" className="ml-2 text-white text-sm">
-                    Kitabı tamamladım
-                  </label>
+                  Kitabı tamamladım
+                </label>
+              </form>
+            </div>
+
+            <div className="sf-modal-footer sm:justify-end">
+              <Button type="button" variant="outline" onClick={handleBackToSearch}>
+                Geri
+              </Button>
+              <Button type="submit" form="date-form">
+                Kitabı Ekle
+              </Button>
+            </div>
+          </>
+        )}
+
+        {/* Ana içerik */}
+        {!showDateForm && (
+          <>
+            <div className="px-6 pt-5">
+              <div className="flex gap-1 sf-tile rounded-full p-1">
+                <button type="button" onClick={() => setActiveTab('form')} className={tabClass('form')}>
+                  Manuel Ekle
+                </button>
+                <button type="button" onClick={() => setActiveTab('search')} className={tabClass('search')}>
+                  Arama Yap
+                </button>
+              </div>
+            </div>
+
+            {/* Manuel ekleme */}
+            {activeTab === 'form' && (
+              <>
+                <div className="sf-modal-body">
+                  {formError && <div className="sf-alert-error">{formError}</div>}
+
+                  <form id="manual-form" onSubmit={handleFormSubmit} className="space-y-4">
+                    <div className="sf-field">
+                      <label htmlFor="mf-title" className="sf-label">Kitap Adı *</label>
+                      <input
+                        id="mf-title"
+                        type="text"
+                        value={formData.title}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        className="sf-input"
+                        placeholder="Kitap adını girin"
+                      />
+                    </div>
+
+                    <div className="sf-field">
+                      <label htmlFor="mf-author" className="sf-label">Yazar *</label>
+                      <input
+                        id="mf-author"
+                        type="text"
+                        value={formData.author}
+                        onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                        className="sf-input"
+                        placeholder="Yazar adını girin"
+                      />
+                    </div>
+
+                    <div className="sf-field">
+                      <label htmlFor="mf-pages" className="sf-label">Sayfa Sayısı *</label>
+                      <input
+                        id="mf-pages"
+                        type="number"
+                        min="1"
+                        value={formData.pages}
+                        onChange={(e) => setFormData({ ...formData, pages: e.target.value })}
+                        className="sf-input"
+                        placeholder="Sayfa sayısını girin"
+                      />
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="sf-field">
+                        <label htmlFor="mf-start" className="sf-label">Başlangıç Tarihi</label>
+                        <input
+                          id="mf-start"
+                          type="date"
+                          value={formData.startDate}
+                          onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                          className="sf-input"
+                        />
+                      </div>
+
+                      <div className="sf-field">
+                        <label htmlFor="mf-end" className="sf-label">Bitiş Tarihi</label>
+                        <input
+                          id="mf-end"
+                          type="date"
+                          value={formData.endDate}
+                          onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                          className="sf-input"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 pt-1">
+                      <label className="flex items-center gap-3 text-sm text-ink/80">
+                        <input
+                          type="checkbox"
+                          checked={formData.isCompleted}
+                          onChange={(e) => setFormData({ ...formData, isCompleted: e.target.checked })}
+                          className="sf-checkbox"
+                        />
+                        Kitabı tamamladım
+                      </label>
+
+                      <label className="flex items-center gap-3 text-sm text-ink/80">
+                        <input
+                          type="checkbox"
+                          checked={formData.isFavorite}
+                          onChange={(e) => setFormData({ ...formData, isFavorite: e.target.checked })}
+                          className="sf-checkbox"
+                        />
+                        Favori kitabım
+                      </label>
+                    </div>
+                  </form>
                 </div>
 
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="isFavorite"
-                    checked={formData.isFavorite}
-                    onChange={(e) => setFormData({ ...formData, isFavorite: e.target.checked })}
-                    className="w-4 h-4 text-red-600 bg-gray-700 border-gray-600 rounded focus:ring-red-500"
-                  />
-                  <label htmlFor="isFavorite" className="ml-2 text-white text-sm">
-                    Favori kitabım
-                  </label>
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <Button
-                    type="submit"
-                    className="flex-1 bg-amber-400 hover:bg-amber-500 text-white px-6 py-3 rounded-lg text-lg font-semibold"
-                  >
-                    Kitap Ekle
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={onClose}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white"
-                  >
+                <div className="sf-modal-footer sm:justify-end">
+                  <Button type="button" variant="outline" onClick={onClose}>
                     İptal
                   </Button>
+                  <Button type="submit" form="manual-form">
+                    Kitap Ekle
+                  </Button>
                 </div>
-              </form>
+              </>
             )}
 
-            {/* Search Tab */}
+            {/* Arama */}
             {activeTab === 'search' && (
-              <div className="space-y-4">
-                <form onSubmit={handleSearchSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-white text-sm font-medium mb-2">
-                      Kitap Ara
-                    </label>
+              <>
+                <div className="sf-modal-body">
+                  <form onSubmit={handleSearchSubmit} className="sf-field">
+                    <label htmlFor="sf-search" className="sf-label">Kitap Ara</label>
                     <div className="flex gap-2">
                       <input
+                        id="sf-search"
                         type="text"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-blue-500"
+                        className="sf-input flex-1"
                         placeholder="Kitap adı veya yazar girin"
                       />
-                      <Button
-                        type="submit"
-                        disabled={isSearching}
-                        className="bg-amber-400 hover:bg-amber-500 text-white px-4 py-2 rounded-md disabled:opacity-50"
-                      >
+                      <Button type="submit" disabled={isSearching} className="shrink-0">
+                        <Search className="mr-2 h-4 w-4" />
                         {isSearching ? 'Aranıyor...' : 'Ara'}
                       </Button>
                     </div>
-                  </div>
-                </form>
+                  </form>
 
-                {/* Search Results */}
-                {searchResults.length > 0 && (
-                  <div className="space-y-3">
-                    <h3 className="text-white font-medium">Arama Sonuçları:</h3>
-                    {searchResults.map((book) => (
-                      <div
-                        key={book.id}
-                        className="bg-gray-700 rounded-lg p-3 cursor-pointer hover:bg-gray-600 transition-colors"
-                        onClick={() => handleSelectBook(book)}
-                      >
-                        <div className="flex gap-3">
-                          {book.volumeInfo.imageLinks?.thumbnail && (
-                            <img
-                              src={book.volumeInfo.imageLinks.thumbnail}
-                              alt={book.volumeInfo.title}
-                              className="w-12 h-16 object-cover rounded"
-                            />
-                          )}
-                          <div className="flex-1">
-                            <h4 className="text-white font-medium text-sm">
-                              {book.volumeInfo.title}
-                            </h4>
-                            <p className="text-gray-300 text-xs">
-                              {book.volumeInfo.authors?.join(', ') || 'Bilinmeyen Yazar'}
-                            </p>
-                            {book.volumeInfo.pageCount && (
-                              <p className="text-gray-400 text-xs">
-                                {book.volumeInfo.pageCount} sayfa
-                              </p>
+                  {searchResults.length > 0 && (
+                    <div className="space-y-3">
+                      <p className="sf-label">Arama Sonuçları</p>
+                      {searchResults.map((book) => (
+                        <button
+                          key={book.id}
+                          type="button"
+                          onClick={() => handleSelectBook(book)}
+                          className="sf-tile w-full cursor-pointer text-left transition-colors duration-200 hover:bg-control-hover"
+                        >
+                          <div className="flex gap-3">
+                            {book.volumeInfo.imageLinks?.thumbnail ? (
+                              <img
+                                src={book.volumeInfo.imageLinks.thumbnail}
+                                alt={book.volumeInfo.title}
+                                className="h-16 w-12 rounded-md object-cover"
+                              />
+                            ) : (
+                              <span className="flex h-16 w-12 items-center justify-center rounded-md bg-control">
+                                <BookOpen className="h-5 w-5 text-ink/40" />
+                              </span>
                             )}
+                            <div className="min-w-0 flex-1">
+                              <h3 className="truncate">{book.volumeInfo.title}</h3>
+                              <p className="sf-body truncate">
+                                {book.volumeInfo.authors?.join(', ') || 'Bilinmeyen Yazar'}
+                              </p>
+                              {book.volumeInfo.pageCount && (
+                                <p className="sf-meta">{book.volumeInfo.pageCount} sayfa</p>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-                {searchResults.length === 0 && searchQuery && !isSearching && (
-                  <p className="text-gray-400 text-center py-4">
-                    Kitap bulunamadı
-                  </p>
-                )}
+                  {searchResults.length === 0 && searchQuery && !isSearching && (
+                    <p className="sf-muted py-4 text-center">Kitap bulunamadı</p>
+                  )}
+                </div>
 
-                <div className="flex gap-3 pt-4">
-                  <Button
-                    type="button"
-                    onClick={onClose}
-                    className="flex-1 bg-gray-600 hover:bg-gray-700 text-white"
-                  >
+                <div className="sf-modal-footer sm:justify-end">
+                  <Button type="button" variant="outline" onClick={onClose}>
                     İptal
                   </Button>
                 </div>
-              </div>
+              </>
             )}
           </>
         )}

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap');
 @import "tailwindcss";
 @import "../styles/utils.css";
 
@@ -5,51 +6,285 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ============================================================================
+   SHELFIE TEMA — TEK KAYNAK
+   Marka renkleri:
+     • Yeşil  #0a5b6f  (navbar)
+     • Sarı   #FFC703  (welcome / birincil aksiyon)
+   Uygulamanın tamamı bu iki renk + nötr cam yüzeyler üzerine kuruludur.
+   Yeni bir renk eklemek yerine buradaki token'lardan birini kullanın.
+   ============================================================================ */
+
+:root {
+  /* --- Marka yeşili skalası ------------------------------------------------ */
+  --sf-green-900: #05242d;
+  --sf-green-800: #062f3a;
+  --sf-green-700: #083f4d;
+  --sf-green-600: #0a5b6f; /* navbar rengi — markanın çekirdeği */
+  --sf-green-500: #0d7288;
+  --sf-green-400: #158fa8;
+
+  /* --- Marka sarısı skalası ------------------------------------------------ */
+  --sf-yellow-600: #c99a02;
+  --sf-yellow-500: #e6b303; /* hover */
+  --sf-yellow-400: #ffc703; /* ana vurgu */
+  --sf-yellow-200: #ffe08a; /* koyu zeminde vurgulu metin */
+  --sf-yellow-100: #fff2c7;
+
+  /* --- Yardımcı ton (welcome başlığındaki nane) ---------------------------- */
+  --sf-mint: #b8d8cf;
+  --sf-mint-strong: #8fc4b6;
+
+  /* --- Durum renkleri (yalnızca anlam taşıdığında) ------------------------- */
+  --sf-success: #7fd1b0;
+  --sf-warning: var(--sf-yellow-400);
+  --sf-danger: #ff8f8f;
+  --sf-danger-strong: #a81f1f;
+
+  /* ==========================================================================
+     YÜZEY TEMASI ("skin")
+     Tüm sayfaların cam yüzeyi, metin rengi ve kontrol renkleri buradan gelir.
+     Aşağıdaki iki set birbirinin yerine geçebilir: aktif olan KOYU CAM.
+     Açık cama dönmek için "AÇIK CAM" bloğundaki değerleri buraya kopyala.
+     ========================================================================== */
+
+  /* --- KOYU CAM (aktif) — giriş ekranıyla aynı dil ------------------------- */
+  --sf-ink: #ffffff;
+  --sf-text: var(--sf-ink);
+  --sf-text-secondary: rgba(255, 255, 255, 0.75);
+  --sf-text-muted: rgba(255, 255, 255, 0.6);
+  --sf-text-faint: rgba(255, 255, 255, 0.45);
+  --sf-text-inverse: #0b2b33;
+  --sf-text-on-accent: #17282d; /* sarı zemin üstündeki metin */
+  --sf-accent-ink: var(--sf-yellow-400); /* vurgu metni */
+  --sf-brand-ink: var(--sf-mint); /* rakamlar, ikincil vurgu */
+
+  /* Cam reçeteleri — referans tasarımdaki .glass-dark / .glass ile aynı:
+     düz yarı saydam renk + doygunluk artıran blur + ince beyaz kenar. */
+  --sf-glass-1: rgba(10, 8, 6, 0.62); /* panel / sayfa yüzeyi */
+  --sf-glass-2: rgba(10, 8, 6, 0.55); /* kart  (.glass-dark) */
+  --sf-glass-sidebar: rgba(10, 8, 6, 0.55); /* kartla aynı: arkadaki kitaplık bulanık görünsün */
+  --sf-glass-modal: rgba(10, 8, 6, 0.92);
+  --sf-glass-blur: blur(24px) saturate(1.2);
+  --sf-glass-blur-strong: blur(28px) saturate(1.2);
+  /* Sidebar: arkadaki kitaplık tanınmayacak kadar dağılsın, geriye renk lekeleri kalsın */
+  --sf-sidebar-blur: blur(72px) saturate(1.35);
+  --sf-glass-edge: none;
+
+  /* Kart içi kutucuk (.glass): beyaz tül, daha parlak kenar */
+  --sf-inset: rgba(255, 255, 255, 0.1);
+  --sf-inset-hover: rgba(255, 255, 255, 0.16);
+  --sf-inset-border: rgba(255, 255, 255, 0.18);
+  --sf-inset-blur: blur(20px) saturate(1.4);
+
+  /* Kontroller: input, ikon butonu, outline buton, satır hover */
+  --sf-control-bg: rgba(255, 255, 255, 0.08);
+  --sf-control-bg-hover: rgba(255, 255, 255, 0.16);
+  --sf-control-border: rgba(255, 255, 255, 0.16);
+
+  --sf-surface-1: rgba(12, 12, 13, 0.64);
+  --sf-surface-2: rgba(12, 12, 13, 0.62);
+  --sf-surface-3: rgba(255, 255, 255, 0.07);
+  --sf-surface-hover: rgba(255, 255, 255, 0.14);
+  --sf-overlay: rgba(0, 0, 0, 0.72); /* modal arka planı */
+  --sf-modal: rgba(12, 12, 13, 0.9);
+
+  --sf-edge: rgba(255, 255, 255, 0.1); /* cam kenarı (dış hat) */
+  --sf-line: rgba(255, 255, 255, 0.12); /* iç ayraç */
+  --sf-line-strong: rgba(255, 255, 255, 0.24);
+
+  --sf-danger-on-glass: var(--sf-danger);
+
+  /* Grafik: eksen yazıları ve ızgara */
+  --sf-chart-tick: rgba(255, 255, 255, 0.65);
+  --sf-chart-grid: rgba(255, 255, 255, 0.14);
+
+  /* --- AÇIK CAM (alternatif) — kullanmak için değerleri yukarı kopyala ------
+  --sf-ink: #0b2b33;
+  --sf-text-secondary: rgba(11, 43, 51, 0.74);
+  --sf-text-muted: rgba(11, 43, 51, 0.58);
+  --sf-text-faint: rgba(11, 43, 51, 0.44);
+  --sf-text-inverse: #ffffff;
+  --sf-accent-ink: #5f4700;
+  --sf-brand-ink: #07485a;
+  --sf-glass-1: rgba(255,255,255,0.80);
+  --sf-glass-2: rgba(255,255,255,0.75);   (.glass-light)
+  --sf-glass-sidebar: rgba(255,255,255,0.75);
+  --sf-glass-modal: rgba(255,255,255,0.93);
+  --sf-glass-blur: blur(16px) saturate(1.1);
+  --sf-glass-blur-strong: blur(20px) saturate(1.1);
+  --sf-sidebar-blur: blur(48px) saturate(1.2);
+  --sf-glass-edge: none;
+  --sf-inset: rgba(10,91,111,0.10);
+  --sf-inset-hover: rgba(10,91,111,0.16);
+  --sf-inset-border: rgba(255,255,255,0.5);
+  --sf-inset-blur: blur(12px);
+  --sf-edge: rgba(255,255,255,0.5);
+  --sf-control-bg: rgba(255,255,255,0.6);
+  --sf-control-bg-hover: rgba(255,255,255,0.9);
+  --sf-control-border: rgba(255,255,255,0.6);
+  --sf-surface-1: rgba(255,255,255,0.84);
+  --sf-surface-2: rgba(255,255,255,0.82);
+  --sf-surface-3: rgba(10,91,111,0.08);
+  --sf-surface-hover: rgba(10,91,111,0.14);
+  --sf-overlay: rgba(4,26,33,0.62);
+  --sf-modal: rgba(255,255,255,0.92);
+  --sf-edge: rgba(255,255,255,0.55);
+  --sf-line: rgba(10,91,111,0.14);
+  --sf-line-strong: rgba(10,91,111,0.28);
+  --sf-danger-on-glass: var(--sf-danger-strong);
+  --sf-chart-tick: rgba(11, 43, 51, 0.6);
+  --sf-chart-grid: rgba(10, 91, 111, 0.15);
+  --------------------------------------------------------------------------- */
+
+  /* --- Sayfa arka planı ---------------------------------------------------- */
+  --sf-page-scrim: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35));
+  --sf-page-image: url("/bookshelf.jpg");
+
+  /* --- Yarıçap ------------------------------------------------------------- */
+  --radius: 0.875rem;
+  --sf-radius-panel: 2rem;
+  --sf-radius-card: 1.5rem;
+  --sf-radius-tile: 1rem;
+
+  /* --- Gölge --------------------------------------------------------------- */
+  --sf-shadow-panel: 0 34px 70px -34px rgba(0, 0, 0, 0.7),
+    0 10px 26px -14px rgba(0, 0, 0, 0.4);
+  --sf-shadow-card: 0 26px 55px -30px rgba(0, 0, 0, 0.62),
+    0 6px 18px -10px rgba(0, 0, 0, 0.32);
+  --sf-shadow-accent: 0 12px 30px -12px rgba(255, 199, 3, 0.45);
+  --shadow: rgba(0, 0, 0, 0.18);
+  --shadow-strong: rgba(0, 0, 0, 0.45);
+
+  /* --- shadcn/ui köprüsü (ui/* bileşenleri bu isimleri kullanır) ----------- */
+  --background: #0c0c0d;
+  --foreground: var(--sf-ink);
+  --card: var(--sf-surface-2);
+  --card-foreground: var(--sf-ink);
+  --popover: var(--sf-modal);
+  --popover-foreground: var(--sf-ink);
+  --primary: var(--sf-yellow-400);
+  --primary-foreground: var(--sf-text-on-accent);
+  --secondary: var(--sf-surface-3);
+  --secondary-foreground: var(--sf-ink);
+  --muted: var(--sf-surface-3);
+  --muted-foreground: var(--sf-text-muted);
+  --accent: var(--sf-surface-hover);
+  --accent-foreground: var(--sf-ink);
+  --destructive: var(--sf-danger-on-glass);
+  --destructive-foreground: var(--sf-text-on-accent);
+  --border: var(--sf-line);
+  --input: var(--sf-line);
+  --ring: var(--sf-yellow-400);
+
+  --brand: var(--sf-green-600);
+  --brand-foreground: var(--sf-yellow-400);
+  --light: var(--sf-mint);
+  --light-foreground: var(--sf-mint-strong);
+
+  /* --- Grafik serileri (marka paletinden türetilmiştir) -------------------- */
+  --chart-1: var(--sf-yellow-400);
+  --chart-2: var(--sf-mint);
+  --chart-3: var(--sf-green-400);
+  --chart-4: var(--sf-yellow-200);
+  --chart-5: var(--sf-green-500);
+
+  --sidebar: var(--sf-surface-1);
+  --sidebar-foreground: var(--sf-ink);
+  --sidebar-primary: var(--sf-yellow-400);
+  --sidebar-primary-foreground: var(--sf-text-on-accent);
+  --sidebar-accent: var(--sf-surface-3);
+  --sidebar-accent-foreground: var(--sf-ink);
+  --sidebar-border: var(--sf-line);
+  --sidebar-ring: var(--sf-yellow-400);
+}
+
+/* Uygulama tek bir koyu cam görünüme sahiptir; .dark ile aynı token'lar geçerli. */
+.dark {
+  color-scheme: dark;
+}
+
 @theme inline {
-  --color-brand: var(--brand);
-  --color-brand-foreground: var(--brand-foreground);
-  --color-light: var(--light);
-  --color-light-foreground: var(--light-foreground);
+  /* Marka renkleri — bg-brand, text-accent, border-accent/30 ... */
+  --color-brand: var(--sf-green-600);
+  --color-brand-deep: var(--sf-green-800);
+  --color-brand-darkest: var(--sf-green-900);
+  --color-brand-light: var(--sf-green-400);
+  --color-brand-foreground: var(--sf-yellow-400);
+
+  --color-accent-soft: var(--sf-yellow-200);
+  --color-accent-strong: var(--sf-yellow-400);
+  --color-accent-hover: var(--sf-yellow-500);
+
+  --color-on-accent: var(--sf-text-on-accent);
+  --color-ink: var(--sf-ink);
+  --color-accent-ink: var(--sf-accent-ink);
+  --color-brand-ink: var(--sf-brand-ink);
+  --color-edge: var(--sf-edge);
+  --color-control: var(--sf-control-bg);
+  --color-control-hover: var(--sf-control-bg-hover);
+  --color-control-border: var(--sf-control-border);
+  --color-mint: var(--sf-mint);
+  --color-success: var(--sf-success);
+  --color-danger: var(--sf-danger);
+
+  --color-surface-1: var(--sf-surface-1);
+  --color-surface-2: var(--sf-surface-2);
+  --color-surface-3: var(--sf-surface-3);
+  --color-hairline: var(--sf-line);
+
+  /* shadcn köprüsü */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --color-test-blue: var(--test-blue)
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-light: var(--light);
+  --color-light-foreground: var(--light-foreground);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Tipografi */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  /* Sayfa başlıkları ve marka için serif görüntü yazı tipi */
+  --font-display: "Fraunces", Georgia, serif;
 
+  /* Yarıçap */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
+  --radius-tile: var(--sf-radius-tile);
+  --radius-card: var(--sf-radius-card);
+  --radius-panel: var(--sf-radius-panel);
 
   --spacing-container: 1280px;
   --spacing-container-lg: 1536px;
@@ -57,6 +292,9 @@
   --shadow-md: 0 4px 6px -1px var(--shadow), 0 2px 4px -2px var(--shadow);
   --shadow-xl: 0 20px 25px -5px var(--shadow), 0 8px 10px -6px var(--shadow);
   --shadow-2xl: 0 25px 50px -12px var(--shadow);
+  --shadow-card: var(--sf-shadow-card);
+  --shadow-panel: var(--sf-shadow-panel);
+  --shadow-accent: var(--sf-shadow-accent);
   --shadow-mockup: -12px 16px 48px var(--shadow-strong);
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
@@ -107,134 +345,52 @@
   }
 }
 
-:root {
-  /* Accent colors */
-  --brand: oklch(66.5% 0.1804 47.04);
-  --brand-foreground: oklch(75.77% 0.159 55.91);
-
-  /* Customized shadcn/ui colors */
-  --background: oklch(97.65% 0.001 17.18);
-  --foreground: oklch(0.141 0.005 285.823);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: #e9ecef;
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.927 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.21 0.006 285.885);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.705 0.015 286.067);
-  --test-blue: #0a5b6f
-
-  /* Illustrations colors */
-  --light: var(--brand);
-  --light-foreground: var(--brand-foreground);
-
-  /* Shadows */
-  --shadow: #00000008;
-  --shadow-strong: #00000008;
-
-
-  --font-sans: var(--font-inter-tight);
-  --font-mono: var(--font-inter-tight);
-}
-
-.dark {
-  /* Accent colors */
-  --brand: oklch(83.6% 0.1177 66.87);
-  --brand-foreground: oklch(75.77% 0.159 55.91);
-
-  /* Customized shadcn/ui colors */
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.141 0.005 285.823);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.141 0.005 285.823);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.885 0.006 286.033);
-  --input: oklch(0.274 0.006 286.033);
-  --ring: oklch(0.442 0.017 285.786);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.274 0.006 286.033);
-  --sidebar-ring: oklch(0.442 0.017 285.786);
-
-  /* Illustrations colors */
-  --light: var(--foreground);
-  --light-foreground: var(--foreground);
-
-  /* Shadows */
-  --shadow: #00000020;
-  --shadow-strong: #00000088;
-}
-
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-[linear-gradient(rgba(0,0,0,0.35),rgba(0,0,0,0.35)),url('/bookshelf.jpg')] bg-no-repeat bg-cover bg-center bg-fixed;
+    background-image: var(--sf-page-scrim), var(--sf-page-image);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--sf-text);
+    -webkit-font-smoothing: antialiased;
   }
+
+  h1 {
+    @apply text-4xl font-semibold tracking-tight sm:text-5xl;
+  }
+
   h2 {
-    @apply text-2xl font-bold text-primary;
-  }
-}
-
-@layer base {
-  :root {
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
+    @apply text-xl font-semibold tracking-tight;
   }
 
-  .dark {
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
+  h3 {
+    @apply text-base font-semibold;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--sf-yellow-400);
+    color: var(--sf-text-on-accent);
+  }
+
+  select option {
+    background-color: var(--sf-green-800);
+    color: #ffffff;
   }
 }

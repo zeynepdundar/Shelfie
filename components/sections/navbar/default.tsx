@@ -52,8 +52,8 @@ export default function Navbar({
     cn(
       "rounded-full px-3 py-1.5 text-sm font-medium transition-colors duration-200",
       withoutLocale === path
-        ? "bg-white/10 text-white"
-        : "text-white/60 hover:bg-white/5 hover:text-white"
+        ? "bg-accent-strong/20 text-accent-soft"
+        : "text-white/60 hover:bg-white/10 hover:text-white"
     );
 
   return (
@@ -64,7 +64,7 @@ export default function Navbar({
       )}
     >
       <div className="max-w-container relative mx-auto">
-        <NavbarComponent className="rounded-[1.75rem] border border-white/10 bg-[#0a5b6f] px-4 py-3 shadow-2xl shadow-black/20 sm:px-5">
+        <NavbarComponent className="rounded-panel border border-white/10 bg-brand px-4 py-3 shadow-card sm:px-5">
           <NavbarLeft className="gap-6">
             <Link
               href={`/${locale}`}
@@ -106,7 +106,7 @@ export default function Navbar({
               <Link
                 href={switchLocaleHref}
                 className={cn(
-                  "rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold tracking-[0.2em] text-white/85",
+                  "rounded-full border border-white/15 bg-white/10 px-3 py-2 text-xs font-semibold tracking-[0.2em] text-white/85",
                   "transition-all duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white"
                 )}
               >
@@ -115,7 +115,7 @@ export default function Navbar({
               {isAuthenticated && (
                 <Button
                   variant="outline"
-                  className="border-white/10 bg-white/5 text-white hover:border-white/20 hover:bg-white/10"
+                  className="border-white/15 bg-white/10 text-white hover:border-white/30 hover:bg-white/20"
                   onClick={() => dispatch(signOutUser())}
                 >
                   {t("logout")}
@@ -127,13 +127,13 @@ export default function Navbar({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="shrink-0 rounded-full border border-white/10 bg-white/5 text-white md:hidden"
+                  className="shrink-0 rounded-full border border-white/15 bg-white/10 text-white hover:bg-white/20 md:hidden"
                 >
                   <Menu className="size-5" />
                   <span className="sr-only">Toggle navigation menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="border-white/10 bg-slate-950 text-white">
+              <SheetContent side="right" className="border-white/10 bg-brand-deep/95 text-white backdrop-blur-2xl">
                 {isAuthenticated && (
                   <nav className="grid gap-4 pt-8 text-base font-medium">
                     <Link
@@ -150,14 +150,14 @@ export default function Navbar({
                     </Link>
                     <Button
                       variant="outline"
-                      className="justify-start border-white/10 bg-white/5 text-white hover:border-white/20 hover:bg-white/10"
+                      className="justify-start border-white/15 bg-white/10 text-white hover:border-white/30 hover:bg-white/20"
                       onClick={() => dispatch(signOutUser())}
                     >
                       {t("logout")}
                     </Button>
                     <Link
                       href={switchLocaleHref}
-                      className="w-fit rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold tracking-[0.2em] text-white/85"
+                      className="w-fit rounded-full border border-white/15 bg-white/10 px-3 py-2 text-xs font-semibold tracking-[0.2em] text-white/85"
                     >
                       {otherLocale.toUpperCase()}
                     </Link>

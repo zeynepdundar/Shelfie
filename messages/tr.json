@@ -1,9 +1,13 @@
 {
   "nav": {
-    "overview": "Genel Bakış",
+    "overview": "İstatistikler",
     "treasures": "Hazinem",
     "addBook": "+ Kitap Ekle",
-    "logout": "Çıkış Yap"
+    "logout": "Çıkış Yap",
+    "tagline": "KİTAP GÜNLÜĞÜ",
+    "booksRead": "KİTAP OKUNDU",
+    "menu": "Menü",
+    "account": "HESAP"
   },
   "overview": {
     "welcome": "Hoş geldin, {email}!",
@@ -55,7 +59,7 @@
       "hint": "Kalple işaretlediğin kitaplar.",
       "count": "{count} kitap",
       "emptyTitle": "Henüz favori yok",
-      "emptyBody": "Genel Bakış sayfasında bir kitabı kalple işaretle, burada görünsün.",
+      "emptyBody": "İstatistikler sayfasında bir kitabı kalple işaretle, burada görünsün.",
       "addQuote": "Alıntı ekle",
       "remove": "Favorilerden çıkar"
     },

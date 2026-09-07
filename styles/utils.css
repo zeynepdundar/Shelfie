@@ -1,3 +1,267 @@
+/* ============================================================================
+   SHELFIE BİLEŞEN SINIFLARI
+   Aynı işi yapan her şey aynı görünsün diye ortak sınıflar.
+   İçerik yüzeyleri buzlu cam, metin koyu mürekkep (--sf-ink).
+   Renk/ölçü değerleri app/globals.css içindeki token'lardan gelir.
+   ============================================================================ */
+
+/* --- Sidebar --------------------------------------------------------------- */
+/* glass / glass-dark: sidebar ve içindeki kutu için cam yüzeyler.
+   Değerler tema token'larından gelir, ayrı bir renk tanımı yok. */
+@utility glass {
+  @apply border;
+  border-color: var(--sf-inset-border);
+  background-color: var(--sf-inset);
+  backdrop-filter: var(--sf-inset-blur);
+  -webkit-backdrop-filter: var(--sf-inset-blur);
+}
+@utility glass-dark {
+  @apply border;
+  border-color: var(--sf-edge);
+  background-color: var(--sf-glass-sidebar);
+  backdrop-filter: var(--sf-sidebar-blur);
+  -webkit-backdrop-filter: var(--sf-sidebar-blur);
+}
+@utility glass-light {
+  @apply border;
+  border-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+@utility sf-mobile-bar {
+  @apply sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 text-white;
+  border-color: var(--sf-edge);
+  background-color: var(--sf-glass-sidebar);
+  backdrop-filter: var(--sf-sidebar-blur);
+  -webkit-backdrop-filter: var(--sf-sidebar-blur);
+}
+@utility sf-drawer {
+  @apply border-r text-white;
+  border-color: var(--sf-edge);
+  background-color: var(--sf-glass-sidebar);
+  backdrop-filter: var(--sf-sidebar-blur);
+  -webkit-backdrop-filter: var(--sf-sidebar-blur);
+}
+
+/* Sayfa başlığı: kart içinde değil, doğrudan arka plan üzerinde durur */
+@utility sf-page-header {
+  @apply flex flex-col gap-4 pb-1 sm:flex-row sm:items-end sm:justify-between;
+  text-shadow: 0 2px 14px rgba(4, 26, 33, 0.6);
+}
+@utility sf-page-header-sub {
+  @apply mt-2 max-w-2xl text-sm text-ink/70 sm:text-base;
+}
+@utility sf-container {
+  @apply relative mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 pb-10 pt-8 sm:px-6 lg:px-10 lg:pb-14 lg:pt-12;
+}
+
+/* --- Yüzeyler: panel > kart > kutucuk -------------------------------------
+   Cam etkisi üç şeyden gelir: eğimli parlaklık geçişi, doygunluk artıran
+   backdrop blur ve üstteki ince ışık kenarı. Üçü birden olmadan düz görünür. */
+@utility sf-panel {
+  @apply rounded-panel border p-6 text-ink sm:p-8;
+  border-color: var(--sf-edge);
+  background-color: var(--sf-glass-1);
+  box-shadow: var(--sf-shadow-panel);
+  backdrop-filter: var(--sf-glass-blur);
+  -webkit-backdrop-filter: var(--sf-glass-blur);
+}
+@utility sf-card {
+  @apply overflow-hidden rounded-card border text-ink;
+  border-color: var(--sf-edge);
+  background-color: var(--sf-glass-2);
+  box-shadow: var(--sf-shadow-card);
+  backdrop-filter: var(--sf-glass-blur);
+  -webkit-backdrop-filter: var(--sf-glass-blur);
+}
+@utility sf-card-header {
+  @apply border-b border-hairline px-6 py-5;
+}
+@utility sf-card-body {
+  @apply px-4 py-5 sm:px-6;
+}
+/* Kart içi kutucuk: cama gömülü görünür (yeşil yıkama + iç gölge) */
+@utility sf-tile {
+  @apply rounded-tile border p-4;
+  border-color: var(--sf-inset-border);
+  background-color: var(--sf-inset);
+}
+@utility sf-tile-lg {
+  @apply rounded-card border p-5;
+  border-color: var(--sf-inset-border);
+  background-color: var(--sf-inset);
+}
+@utility sf-empty {
+  @apply flex flex-col items-center justify-center rounded-card border border-dashed border-control-border px-6 py-14 text-center;
+  background-color: var(--sf-inset);
+}
+@utility sf-icon-badge {
+  @apply inline-flex items-center justify-center rounded-tile border border-accent-strong/45 bg-accent-strong/20 p-3 text-accent-ink;
+}
+
+/* --- Tipografi ------------------------------------------------------------- */
+@utility sf-eyebrow {
+  @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent-ink;
+}
+@utility sf-title-page {
+  @apply font-display text-4xl font-semibold tracking-tight text-ink sm:text-5xl;
+}
+@utility sf-title-section {
+  @apply text-xl font-semibold tracking-tight text-ink;
+}
+@utility sf-title-card {
+  @apply text-lg font-semibold tracking-tight text-ink;
+}
+@utility sf-lead {
+  @apply text-base leading-relaxed text-ink/75 sm:text-lg;
+}
+@utility sf-body {
+  @apply text-sm leading-relaxed text-ink/75;
+}
+@utility sf-muted {
+  @apply text-sm text-ink/60;
+}
+@utility sf-meta {
+  @apply text-xs text-ink/50;
+}
+@utility sf-label {
+  @apply text-xs font-semibold uppercase tracking-[0.16em] text-ink/60;
+}
+
+/* --- İstatistik kutuları --------------------------------------------------- */
+@utility sf-stat {
+  @apply rounded-card border p-5 transition-all duration-200;
+  border-color: var(--sf-edge);
+  background-color: var(--sf-glass-2);
+  box-shadow: var(--sf-shadow-card);
+  backdrop-filter: var(--sf-glass-blur);
+  -webkit-backdrop-filter: var(--sf-glass-blur);
+  &:hover {
+    border-color: var(--sf-line-strong);
+  }
+}
+@utility sf-stat-label {
+  @apply text-sm text-ink/65;
+}
+@utility sf-stat-value {
+  @apply text-3xl font-semibold tracking-tight text-brand-ink;
+}
+@utility sf-stat-note {
+  @apply text-xs leading-relaxed text-ink/50;
+}
+@utility sf-stat-sm-label {
+  @apply text-xs font-semibold uppercase tracking-[0.16em] text-ink/60;
+}
+@utility sf-stat-sm-value {
+  @apply mt-2 text-2xl font-semibold text-ink;
+}
+
+/* --- Form elemanları ------------------------------------------------------- */
+@utility sf-field {
+  @apply space-y-2;
+}
+@utility sf-input {
+  @apply w-full rounded-lg border border-hairline bg-control px-4 py-3 text-sm text-ink outline-none transition-colors duration-200 placeholder:text-ink/40 focus:border-accent-strong focus:bg-control-hover;
+}
+@utility sf-textarea {
+  @apply w-full resize-none rounded-lg border border-hairline bg-control px-4 py-3 text-sm leading-relaxed text-ink outline-none transition-colors duration-200 placeholder:text-ink/40 focus:border-accent-strong focus:bg-control-hover;
+}
+@utility sf-select {
+  @apply w-full appearance-none rounded-lg border border-hairline bg-control px-4 py-3 text-sm text-ink outline-none transition-colors duration-200 focus:border-accent-strong focus:bg-control-hover;
+}
+@utility sf-checkbox {
+  @apply h-4 w-4 rounded border-control-border bg-control accent-[#ffc703];
+}
+
+/* --- Küçük kontroller ------------------------------------------------------ */
+@utility sf-icon-button {
+  @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-control-border bg-control text-ink/70 transition-colors duration-200 hover:bg-control-hover hover:text-ink;
+}
+@utility sf-chip {
+  @apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium text-ink/75;
+  border-color: var(--sf-inset-border);
+  background-color: var(--sf-inset);
+}
+@utility sf-chip-accent {
+  @apply inline-flex items-center gap-2 rounded-full border border-accent-strong/50 bg-accent-strong/25 px-3 py-1 text-xs font-semibold text-accent-ink;
+}
+@utility sf-chip-success {
+  @apply inline-flex items-center gap-2 rounded-full border border-brand/35 bg-brand/15 px-3 py-1 text-xs font-semibold text-brand-ink;
+}
+@utility sf-alert-error {
+  @apply rounded-tile border border-destructive/35 bg-destructive/12 px-4 py-3 text-sm font-medium text-destructive;
+}
+@utility sf-progress-track {
+  @apply h-3 overflow-hidden rounded-full;
+  background-color: var(--sf-inset);
+}
+@utility sf-progress-bar {
+  @apply h-full rounded-full transition-all duration-500;
+  background-image: linear-gradient(
+    90deg,
+    var(--sf-yellow-400),
+    var(--sf-mint)
+  );
+}
+@utility sf-divider {
+  @apply border-t border-hairline;
+}
+@utility sf-spinner {
+  @apply h-5 w-5 animate-spin rounded-full border-2 border-brand border-t-transparent;
+}
+@utility sf-loading-pill {
+  @apply flex items-center gap-4 rounded-full border px-5 py-3;
+  border-color: var(--sf-edge);
+  background-color: var(--sf-glass-1);
+  box-shadow: var(--sf-shadow-card);
+  backdrop-filter: var(--sf-glass-blur);
+  -webkit-backdrop-filter: var(--sf-glass-blur);
+}
+
+/* --- Modal ----------------------------------------------------------------- */
+@utility sf-modal-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+  background-color: var(--sf-overlay);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+@utility sf-modal {
+  @apply max-h-[90vh] w-full overflow-y-auto rounded-panel border text-ink;
+  border-color: var(--sf-edge);
+  background-color: var(--sf-glass-modal);
+  box-shadow: var(--sf-shadow-panel);
+  backdrop-filter: var(--sf-glass-blur-strong);
+  -webkit-backdrop-filter: var(--sf-glass-blur-strong);
+}
+@utility sf-modal-header {
+  @apply flex items-start justify-between gap-4 border-b border-hairline px-6 py-5;
+}
+@utility sf-modal-body {
+  @apply space-y-4 px-6 py-5;
+}
+@utility sf-modal-footer {
+  @apply flex flex-col gap-3 border-t border-hairline px-6 py-5 sm:flex-row sm:items-center sm:justify-between;
+}
+
+/* --- Kitap kapağı ---------------------------------------------------------- */
+@utility sf-cover-thumb {
+  @apply flex h-20 w-14 shrink-0 items-center justify-center overflow-hidden rounded-tile border;
+  border-color: var(--sf-inset-border);
+  background-color: var(--sf-inset);
+}
+
+/* --- Koyu bağlam (kapak fotoğrafı üstü, navbar, welcome) ------------------- */
+@utility sf-on-dark-chip {
+  @apply inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-black/55 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-md;
+}
+@utility sf-on-dark-icon-button {
+  @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/25 bg-black/55 text-accent-strong backdrop-blur-md transition-colors duration-200 hover:bg-black/75 hover:text-accent-soft;
+}
+
+/* ============================================================================
+   Launch UI'dan gelen cam yardımcıları (geriye dönük uyumluluk)
+   ============================================================================ */
 @utility glass-1 {
   @apply border-border from-card/80 to-card/40 dark:border-border/10 dark:border-b-border/5 dark:border-t-border/20 dark:from-card/5 dark:to-card/0 border bg-linear-to-b;
 }
@@ -56,4 +320,12 @@
 }
 @utility fade-right-lg {
   mask-image: linear-gradient(to left, transparent 15%, black 100%);
+}
+
+/* --- Puanlama yıldızları ---------------------------------------------------- */
+@utility star-filled {
+  color: var(--sf-yellow-400);
+}
+@utility star-empty {
+  color: rgba(255, 255, 255, 0.25);
 }

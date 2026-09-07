@@ -26,14 +26,20 @@ const MONTHS = [
   { name: "Ara", monthIndex: 11 },
 ]
 
+/* Grafik renkleri temadan gelir; yüzey açık/koyu olduğunda kendiliğinden uyar. */
+const CHART_ACCENT = "var(--chart-1)"
+const CHART_SECOND = "var(--chart-2)"
+const CHART_TICK = "var(--sf-chart-tick)"
+const CHART_GRID = "var(--sf-chart-grid)"
+
 const chartConfig = {
   value: {
     label: "Books Read",
-    color: "#f59e0b",
+    color: CHART_ACCENT,
   },
   pages: {
     label: "Number of Pages",
-    color: "#3b82f6",
+    color: CHART_SECOND,
   },
 }
 
@@ -76,13 +82,13 @@ export function MyChart({ year }: { year: number }) {
   return (
     <ChartContainer config={chartConfig} className="h-[320px] w-full">
       <BarChart data={chartData} margin={{ top: 8, right: 8, left: -8, bottom: 0 }}>
-        <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="rgba(226,232,240,0.18)" />
+        <CartesianGrid vertical={false} strokeDasharray="3 3" stroke={CHART_GRID} />
         <XAxis
           dataKey="name"
           tickLine={false}
           axisLine={false}
           tickMargin={12}
-          tick={{ fill: "#e2e8f0", fontSize: 12 }}
+          tick={{ fill: CHART_TICK, fontSize: 12 }}
         />
         <YAxis
           yAxisId="left"
@@ -90,7 +96,7 @@ export function MyChart({ year }: { year: number }) {
           axisLine={false}
           tickMargin={8}
           tickFormatter={(value) => Math.round(value).toString()}
-          tick={{ fill: "#e2e8f0", fontSize: 12 }}
+          tick={{ fill: CHART_TICK, fontSize: 12 }}
         />
         <YAxis
           yAxisId="right"
@@ -99,10 +105,10 @@ export function MyChart({ year }: { year: number }) {
           tickMargin={8}
           tickFormatter={(value) => Math.round(value).toString()}
           orientation="right"
-          tick={{ fill: "#e2e8f0", fontSize: 12 }}
+          tick={{ fill: CHART_TICK, fontSize: 12 }}
         />
-        <Bar dataKey="value" fill="#f59e0b" yAxisId="left" />
-        <Bar dataKey="pages" fill="#3b82f6" yAxisId="right" />
+        <Bar dataKey="value" fill={CHART_ACCENT} yAxisId="left" radius={[6, 6, 0, 0]} />
+        <Bar dataKey="pages" fill={CHART_SECOND} yAxisId="right" radius={[6, 6, 0, 0]} />
         <ChartTooltip content={<ChartTooltipContent indicator="dashed" />} />
         <Legend content={<ChartLegendContent />} verticalAlign="bottom" />
       </BarChart>

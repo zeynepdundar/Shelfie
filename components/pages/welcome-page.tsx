@@ -9,14 +9,14 @@ interface WelcomeScreenProps {
 export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
   return (
     <main className="relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-transparent text-white">
-      {/* The existing bookshelf background remains visible behind this screen. */}
+      {/* Kitaplık arka planı body üzerinden gelir; burada sadece okunabilirlik katmanı var. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(8,18,22,0.65)_0%,rgba(8,18,22,0.45)_45%,rgba(8,18,22,0.15)_100%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(4,26,33,0.45)_0%,rgba(4,26,33,0.22)_50%,transparent_100%)]"
       />
 
       <header className="mx-auto flex w-full max-w-7xl items-center gap-3 px-6 py-8 sm:px-10 lg:px-16">
-        <span className="flex size-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-[#FFC703]">
+        <span className="flex size-10 items-center justify-center rounded-tile border border-white/20 bg-white/10 text-accent-strong backdrop-blur-md">
           <svg
             aria-hidden="true"
             viewBox="0 0 24 24"
@@ -39,28 +39,23 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
         className="mx-auto flex w-full max-w-7xl flex-1 items-center px-6 py-12 sm:px-10 sm:py-16 lg:px-16 lg:py-20"
       >
         <div className="max-w-xl">
-          <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-[#FFC703]">
-            YOUR READING LIFE, YEAR BY YEAR
-          </p>
+          <p className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-accent-strong">YOUR READING LIFE, YEAR BY YEAR</p>
 
-          <h1
-            id="welcome-heading"
-            className="text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl"
-          >
+          <h1 id="welcome-heading" className="text-4xl font-semibold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
             Every book becomes part of
-            <span className="block text-[#b8d8cf]">your story.</span>
+            <span className="block text-mint">your story.</span>
           </h1>
 
-          <p className="mt-6 max-w-md text-base leading-relaxed text-slate-300 sm:text-lg">
-            Keep track of the books you’ve read, save your favorites, and explore
-            your reading habits over time.
+          <p className="mt-6 max-w-md text-base leading-relaxed text-white/70 sm:text-lg">
+            Keep track of the books you&apos;ve read, save your favorites, and
+            explore your reading habits over time.
           </p>
 
           <Button
             type="button"
             onClick={onGetStarted}
             size="lg"
-            className="mt-9 h-12 w-full gap-3 rounded-full bg-[#FFC703] px-7 text-base font-semibold text-[#17282d] shadow-lg shadow-black/10 transition-colors hover:bg-[#E6B303] focus-visible:ring-2 focus-visible:ring-[#FFC703] focus-visible:ring-offset-4 focus-visible:ring-offset-[#101e23] sm:w-auto"
+            className="mt-9 w-full gap-3 sm:w-auto"
           >
             Get Started
             <svg
@@ -77,7 +72,6 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
             </svg>
           </Button>
         </div>
-
       </section>
     </main>
   );

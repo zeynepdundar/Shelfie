@@ -15,7 +15,6 @@ import { Book } from "@/types/book";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { addBook, fetchUserBooks, updateBook } from "@/lib/booksSlice";
 import {
-  ArrowUpRight,
   BookOpen,
   CalendarDays,
   Heart,
@@ -145,24 +144,10 @@ export function OverviewPage({ user }: OverviewPageProps) {
     newBook: Omit<Book, "id" | "dateAdded">
   ) => {
     try {
-      const result = await dispatch(addBook(newBook)).unwrap();
-      console.log("Kitap başarıyla eklendi:", result);
+      await dispatch(addBook(newBook)).unwrap();
       setShowAddBookModal(false);
     } catch (error) {
       console.error("Kitap eklenirken hata oluştu:", error);
-      const errorDetails =
-        error instanceof Error
-          ? {
-              message: error.message,
-              stack: error.stack,
-            }
-          : {
-              message: String(error),
-            };
-
-      console.error("Hata detayları:", {
-        ...errorDetails,
-      });
     }
   };
 
@@ -220,11 +205,11 @@ export function OverviewPage({ user }: OverviewPageProps) {
 
   if (status === "loading") {
     return (
-      <div className="relative min-h-screen px-4 py-16 text-white">
+      <div className="sf-page px-4 py-16">
         <div className="relative mx-auto flex min-h-[60vh] max-w-7xl items-center justify-center">
-          <div className="flex items-center gap-4 rounded-full border border-white/10 bg-white/5 px-5 py-3 backdrop-blur-xl">
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-amber-300 border-t-transparent" />
-            <span className="text-sm text-slate-200">Loading your reading dashboard...</span>
+          <div className="sf-loading-pill">
+            <span className="sf-spinner" />
+            <span className="sf-muted">Loading your reading dashboard...</span>
           </div>
         </div>
       </div>
@@ -235,117 +220,88 @@ export function OverviewPage({ user }: OverviewPageProps) {
     {
       title: t("stats.totalBooks"),
       value: books.length,
+      note: `${books.length - completedBooks.length} ${t("inProgressBooks")}`,
       icon: BookOpen,
-      accent: "from-amber-400/20 to-orange-400/5",
-      valueClass: "text-amber-200",
     },
     {
       title: t("completedThisYear"),
       value: selectedYearCompletedBooks.length,
       note: `${selectedYear}`,
       icon: Sparkles,
-      accent: "from-emerald-400/20 to-emerald-500/5",
-      valueClass: "text-emerald-200",
     },
     {
       title: t("pagesThisYear"),
       value: pagesThisSelectedYear.toLocaleString("tr-TR"),
       note: `${averagePagesPerCompletedBookInSelectedYear} avg / book`,
       icon: TrendingUp,
-      accent: "from-sky-400/20 to-sky-500/5",
-      valueClass: "text-sky-200",
     },
     {
       title: t("stats.favoriteBooks"),
       value: favoriteBooks.length,
       note: `${completionRate}% ${t("completionRate")}`,
       icon: Heart,
-      accent: "from-rose-400/20 to-rose-500/5",
-      valueClass: "text-rose-200",
     },
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden text-white">
-      <div aria-hidden className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:56px_56px] opacity-10" />
-
-      <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-        <section className="rounded-[2rem] border border-white/10 bg-white/10 p-6 shadow-2xl shadow-black/20 backdrop-blur-3xl sm:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl space-y-4">
-              <div className="space-y-3">
-                <h1 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-                  {t("welcome", { email: user?.email || "" })}
-                </h1>
-                <p className="max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
-                  {t("subtitle")}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Button onClick={handleAddBook} size="lg" variant="glow">
-                <Plus className="mr-2 h-4 w-4" />
-                {navT("addBook")}
-              </Button>
-            </div>
+    <div className="sf-page">
+      <div className="sf-container">
+        {/* Sayfa başlığı */}
+        <header className="sf-page-header">
+          <div>
+            <h1 className="sf-title-page">{navT("overview")}</h1>
+            <p className="sf-page-header-sub">{t("subtitle")}</p>
           </div>
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {summaryCards.map((card) => {
-              const Icon = card.icon;
+          <Button onClick={handleAddBook} size="lg" className="shrink-0">
+            <Plus className="mr-2 h-4 w-4" />
+            {navT("addBook")}
+          </Button>
+        </header>
 
-              return (
-                <div
-                  key={card.title}
-                  className={`rounded-3xl border border-white/10 bg-gradient-to-br ${card.accent} p-5 backdrop-blur-xl`}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="space-y-3">
-                      <p className="text-sm text-slate-300">{card.title}</p>
-                      <p className={`text-3xl font-semibold tracking-tight ${card.valueClass}`}>
-                        {card.value}
-                      </p>
-                      <p className="text-xs leading-relaxed text-slate-400">
-                        {card.note}
-                      </p>
-                    </div>
-                    <div className="rounded-2xl border border-white/10 bg-white/10 p-3 text-white/90">
-                      <Icon className="h-5 w-5" />
-                    </div>
+        {/* Özet istatistikler */}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {summaryCards.map((card) => {
+            const Icon = card.icon;
+
+            return (
+              <div key={card.title} className="sf-stat">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-2">
+                    <p className="sf-stat-label">{card.title}</p>
+                    <p className="sf-stat-value">{card.value}</p>
+                    <p className="sf-stat-note">{card.note}</p>
                   </div>
+                  <span className="sf-icon-badge">
+                    <Icon className="h-5 w-5" />
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-        </section>
+              </div>
+            );
+          })}
+        </div>
 
-        {status === "failed" && (
-          <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-100">
-            {error}
-          </div>
-        )}
+        {status === "failed" && <div className="sf-alert-error">{error}</div>}
 
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.8fr)]">
-          <Card className="overflow-hidden border-white/10 bg-white/10 shadow-2xl shadow-black/20 backdrop-blur-2xl">
-            <CardHeader className="border-b border-white/10 px-6 py-5">
+          {/* Yıllık grafik */}
+          <Card>
+            <CardHeader>
               <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div>
-                  <CardTitle className="text-xl text-white">
-                    {t("yearlyStats")}
-                  </CardTitle>
-                  <CardDescription className="mt-1 text-slate-300">
+                  <CardTitle>{t("yearlyStats")}</CardTitle>
+                  <CardDescription className="mt-1">
                     {t("yearlyStatsHint")}
                   </CardDescription>
                 </div>
 
-                <label className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs text-slate-200">
-                  <CalendarDays className="h-3.5 w-3.5 text-amber-300" />
-                  <span className="font-medium">{t("chartYear")}</span>
+                <label className="sf-chip gap-3 px-4 py-2">
+                  <CalendarDays className="h-3.5 w-3.5 text-accent-strong" />
+                  <span>{t("chartYear")}</span>
                   <select
                     value={selectedYear}
                     onChange={(event) => setSelectedYear(Number(event.target.value))}
-                    className="bg-transparent text-slate-100 outline-none"
+                    className="bg-transparent font-semibold text-ink outline-none"
                     aria-label={t("chartYear")}
                   >
                     {availableYears.map((year) => (
@@ -357,59 +313,54 @@ export function OverviewPage({ user }: OverviewPageProps) {
                 </label>
               </div>
             </CardHeader>
-            <CardContent className="px-4 py-5 sm:px-6">
-              <div className="rounded-[1.75rem] border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+            <CardContent>
+              <div className="sf-tile p-4">
                 <MyChart year={selectedYear} />
               </div>
             </CardContent>
           </Card>
 
           <div className="grid gap-6">
-            <Card className="border-white/10 bg-white/10 shadow-2xl shadow-black/20 backdrop-blur-2xl">
-              <CardHeader className="border-b border-white/10">
-                <CardTitle className="text-lg text-white">
-                  {t("completionRate")}
-                </CardTitle>
-                <CardDescription className="text-slate-300">
+            {/* Tamamlama oranı */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">{t("completionRate")}</CardTitle>
+                <CardDescription>
                   {completedBooks.length} / {books.length} books completed
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4 py-5">
+              <CardContent className="space-y-4">
                 <div className="flex items-end justify-between">
                   <div>
-                    <p className="text-4xl font-semibold text-amber-200">
+                    <p className="text-4xl font-semibold tracking-tight text-brand-ink">
                       {completionRate}%
                     </p>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <p className="sf-muted mt-1">
                       {t("stats.readThisMonth")}: {completedThisMonth.length}
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-                    <Sparkles className="h-5 w-5 text-amber-300" />
-                  </div>
+                  <span className="sf-icon-badge">
+                    <Sparkles className="h-5 w-5" />
+                  </span>
                 </div>
 
-                <div className="h-3 overflow-hidden rounded-full bg-white/10">
+                <div className="sf-progress-track">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-300 to-emerald-300 transition-all"
+                    className="sf-progress-bar"
                     style={{ width: `${completionRate}%` }}
                   />
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-xs uppercase tracking-[0.24em] text-slate-400">
-                      {t("completedThisYear")}
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold text-white">
+                  <div className="sf-tile">
+                    <p className="sf-stat-sm-label">{t("completedThisYear")}</p>
+                    <p className="sf-stat-sm-value">
                       {selectedYearCompletedBooks.length}
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-xs uppercase tracking-[0.24em] text-slate-400">
-                      {t("inProgressBooks")}
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold text-white">
+                  <div className="sf-tile">
+                    <p className="sf-stat-sm-label">{t("inProgressBooks")}</p>
+                    <p className="sf-stat-sm-value">
                       {Math.max(books.length - completedBooks.length, 0)}
                     </p>
                   </div>
@@ -417,46 +368,37 @@ export function OverviewPage({ user }: OverviewPageProps) {
               </CardContent>
             </Card>
 
-            <Card className="border-white/10 bg-white/10 shadow-2xl shadow-black/20 backdrop-blur-2xl">
-              <CardHeader className="border-b border-white/10">
-                <CardTitle className="text-lg text-white">
-                  {t("stats.totalPages")}
-                </CardTitle>
-                <CardDescription className="text-slate-300">
+            {/* Toplam sayfa */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">{t("stats.totalPages")}</CardTitle>
+                <CardDescription>
                   {averagePagesPerCompletedBook} avg pages per completed book
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4 py-5">
+              <CardContent className="space-y-4">
                 <div className="flex items-end justify-between">
                   <div>
-                    <p className="text-4xl font-semibold text-sky-200">
+                    <p className="text-4xl font-semibold tracking-tight text-brand-ink">
                       {totalPagesRead.toLocaleString("tr-TR")}
                     </p>
-                    <p className="mt-1 text-sm text-slate-400">
+                    <p className="sf-muted mt-1">
                       {t("pagesThisYear")}: {pagesThisSelectedYear.toLocaleString("tr-TR")}
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-                    <TrendingUp className="h-5 w-5 text-sky-300" />
-                  </div>
+                  <span className="sf-icon-badge">
+                    <TrendingUp className="h-5 w-5" />
+                  </span>
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-xs uppercase tracking-[0.24em] text-slate-400">
-                      {t("stats.favoriteBooks")}
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold text-white">
-                      {favoriteBooks.length}
-                    </p>
+                  <div className="sf-tile">
+                    <p className="sf-stat-sm-label">{t("stats.favoriteBooks")}</p>
+                    <p className="sf-stat-sm-value">{favoriteBooks.length}</p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-xs uppercase tracking-[0.24em] text-slate-400">
-                      {t("stats.readThisMonth")}
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold text-white">
-                      {completedThisMonth.length}
-                    </p>
+                  <div className="sf-tile">
+                    <p className="sf-stat-sm-label">{t("stats.readThisMonth")}</p>
+                    <p className="sf-stat-sm-value">{completedThisMonth.length}</p>
                   </div>
                 </div>
               </CardContent>
@@ -464,55 +406,43 @@ export function OverviewPage({ user }: OverviewPageProps) {
           </div>
         </div>
 
-        <Card className="overflow-hidden border-white/10 bg-white/10 shadow-2xl shadow-black/20 backdrop-blur-2xl">
-          <CardHeader className="border-b border-white/10 px-6 py-5">
+        {/* Son kitaplar */}
+        <Card>
+          <CardHeader>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <CardTitle className="text-xl text-white">
-                  {t("recentBooks")}
-                </CardTitle>
-                <CardDescription className="mt-1 text-slate-300">
+                <CardTitle>{t("recentBooks")}</CardTitle>
+                <CardDescription className="mt-1">
                   {t("recentBooksHint")}
                 </CardDescription>
               </div>
-              <div className="text-sm text-slate-400">
-                {books.length} books tracked
-              </div>
+              <div className="sf-muted">{books.length} books tracked</div>
             </div>
           </CardHeader>
 
-          <CardContent className="px-4 py-5 sm:px-6">
+          <CardContent>
             {books.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-[1.75rem] border border-dashed border-white/10 bg-white/5 px-6 py-16 text-center">
-                <div className="mb-4 rounded-full border border-white/10 bg-amber-400/10 p-4">
-                  <BookOpen className="h-7 w-7 text-amber-200" />
-                </div>
-                <h3 className="text-xl font-semibold text-white">
-                  {t("emptyTitle")}
-                </h3>
-                <p className="mt-2 max-w-lg text-sm leading-relaxed text-slate-300">
-                  {t("emptyBody")}
-                </p>
-                <Button
-                  onClick={handleAddBook}
-                  className="mt-6"
-                  size="lg"
-                  variant="glow"
-                >
+              <div className="sf-empty">
+                <span className="sf-icon-badge mb-4 rounded-full p-4">
+                  <BookOpen className="h-7 w-7" />
+                </span>
+                <h3 className="sf-title-section">{t("emptyTitle")}</h3>
+                <p className="sf-body mt-2 max-w-lg">{t("emptyBody")}</p>
+                <Button onClick={handleAddBook} className="mt-6" size="lg">
                   <Plus className="mr-2 h-4 w-4" />
                   {t("emptyAction")}
                 </Button>
               </div>
             ) : (
               <div className="space-y-3">
-                <div className="hidden items-center gap-4 px-4 pb-2 text-xs uppercase tracking-[0.24em] text-slate-300 md:grid md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto]">
-                  <div>{t("cover")}</div>
-                  <div>{t("title")}</div>
-                  <div>{t("pages")}</div>
-                  <div>{t("startDate")}</div>
-                  <div>{t("endDate")}</div>
-                  <div>{t("status.value")}</div>
-                  <div className="text-right">{t("favorite")}</div>
+                <div className="hidden items-center gap-4 px-4 pb-2 md:grid md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto]">
+                  <div className="sf-label">{t("cover")}</div>
+                  <div className="sf-label">{t("title")}</div>
+                  <div className="sf-label">{t("pages")}</div>
+                  <div className="sf-label">{t("startDate")}</div>
+                  <div className="sf-label">{t("endDate")}</div>
+                  <div className="sf-label">{t("status.value")}</div>
+                  <div className="sf-label text-right">{t("favorite")}</div>
                 </div>
 
                 {books.slice(0, 8).map((book) => {
@@ -521,10 +451,10 @@ export function OverviewPage({ user }: OverviewPageProps) {
                   return (
                     <div
                       key={book.id}
-                      className="grid gap-4 border-b border-white/10 px-4 py-4 last:border-b-0 md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto] md:items-center"
+                      className="grid gap-4 border-b border-hairline px-4 py-4 transition-colors last:border-b-0 hover:bg-control md:grid-cols-[auto_minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto] md:items-center"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="flex h-20 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/10 backdrop-blur-xl">
+                        <div className="sf-cover-thumb">
                           {coverUrl ? (
                             <img
                               src={coverUrl}
@@ -536,57 +466,43 @@ export function OverviewPage({ user }: OverviewPageProps) {
                               }}
                             />
                           ) : (
-                            <BookOpen className="h-6 w-6 text-slate-400" />
+                            <BookOpen className="h-6 w-6 text-ink/40" />
                           )}
                         </div>
 
                         <div className="min-w-0 md:hidden">
-                          <p className="truncate text-base font-semibold text-white">
+                          <p className="truncate text-base font-semibold text-ink">
                             {book.title}
                           </p>
-                          <p className="truncate text-sm text-slate-300">
-                            {book.author}
-                          </p>
-                          <p className="truncate text-sm text-slate-400">
+                          <p className="sf-body truncate">{book.author}</p>
+                          <p className="sf-meta truncate">
                             {book.pages} {t("pages")} · {formatDate(book.startDate)} · {formatDate(book.endDate)}
                           </p>
                         </div>
                       </div>
 
                       <div className="hidden min-w-0 md:block">
-                        <p className="truncate text-base font-semibold text-white">
+                        <p className="truncate text-base font-semibold text-ink">
                           {book.title}
                         </p>
-                        <p className="truncate text-sm text-slate-300">
-                          {book.author}
-                        </p>
+                        <p className="sf-body truncate">{book.author}</p>
                       </div>
 
-                      <div className="text-sm text-slate-200">
+                      <div className="sf-muted">
                         {book.pages} {t("pages")}
                       </div>
 
-                      <div className="text-sm text-slate-200">
-                        {formatDate(book.startDate)}
-                      </div>
+                      <div className="sf-muted">{formatDate(book.startDate)}</div>
 
-                      <div className="text-sm text-slate-200">
-                        {formatDate(book.endDate)}
-                      </div>
+                      <div className="sf-muted">{formatDate(book.endDate)}</div>
 
                       <div className="flex items-center gap-3">
                         <span
-                          className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ${
-                            book.isCompleted
-                              ? "bg-emerald-400/15 text-emerald-200"
-                              : "bg-amber-400/15 text-amber-200"
-                          }`}
+                          className={
+                            book.isCompleted ? "sf-chip-success" : "sf-chip-accent"
+                          }
                         >
-                          <span
-                            className={`h-2 w-2 rounded-full ${
-                              book.isCompleted ? "bg-emerald-300" : "bg-amber-300"
-                            }`}
-                          />
+                          <span className="h-2 w-2 rounded-full bg-current" />
                           {book.isCompleted
                             ? t("status.completed")
                             : t("status.inProgress")}
@@ -598,7 +514,7 @@ export function OverviewPage({ user }: OverviewPageProps) {
                           onClick={() =>
                             toggleFavorite(book.id, book.isFavorite || false)
                           }
-                          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-slate-200 backdrop-blur-xl transition-colors hover:border-rose-300/30 hover:bg-rose-400/15 hover:text-rose-200"
+                          className="sf-icon-button h-10 w-10"
                           title={
                             book.isFavorite
                               ? "Remove from favorites"
@@ -612,9 +528,7 @@ export function OverviewPage({ user }: OverviewPageProps) {
                         >
                           <Heart
                             className={`h-4 w-4 ${
-                              book.isFavorite
-                                ? "fill-current text-rose-300"
-                                : "text-slate-300"
+                              book.isFavorite ? "fill-current text-accent-ink" : ""
                             }`}
                           />
                         </button>

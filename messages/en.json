@@ -1,9 +1,13 @@
 {
   "nav": {
-    "overview": "Overview",
+    "overview": "Statistics",
     "treasures": "Treasures",
     "addBook": "Add Book",
-    "logout": "Log out"
+    "logout": "Log out",
+    "tagline": "READING JOURNAL",
+    "booksRead": "BOOKS READ",
+    "menu": "Menu",
+    "account": "ACCOUNT"
   },
   "overview": {
     "welcome": "Welcome, {email}!",
@@ -55,7 +59,7 @@
       "hint": "The books you marked with a heart.",
       "count": "{count} books",
       "emptyTitle": "No favorites yet",
-      "emptyBody": "Mark a book with a heart on the Overview page and it will show up here.",
+      "emptyBody": "Mark a book with a heart on the Statistics page and it will show up here.",
       "addQuote": "Add quote",
       "remove": "Remove from favorites"
     },
