@@ -223,8 +223,8 @@
 @utility sf-modal-overlay {
   @apply fixed inset-0 z-50 flex items-center justify-center p-4;
   background-color: var(--sf-overlay);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: var(--sf-overlay-blur);
+  -webkit-backdrop-filter: var(--sf-overlay-blur);
 }
 @utility sf-modal {
   @apply max-h-[90vh] w-full overflow-y-auto rounded-panel border text-ink;

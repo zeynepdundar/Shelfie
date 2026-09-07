@@ -19,17 +19,14 @@
   /* --- Marka yeşili skalası ------------------------------------------------ */
   --sf-green-900: #05242d;
   --sf-green-800: #062f3a;
-  --sf-green-700: #083f4d;
   --sf-green-600: #0a5b6f; /* navbar rengi — markanın çekirdeği */
   --sf-green-500: #0d7288;
   --sf-green-400: #158fa8;
 
   /* --- Marka sarısı skalası ------------------------------------------------ */
-  --sf-yellow-600: #c99a02;
   --sf-yellow-500: #e6b303; /* hover */
   --sf-yellow-400: #ffc703; /* ana vurgu */
   --sf-yellow-200: #ffe08a; /* koyu zeminde vurgulu metin */
-  --sf-yellow-100: #fff2c7;
 
   /* --- Yardımcı ton (welcome başlığındaki nane) ---------------------------- */
   --sf-mint: #b8d8cf;
@@ -37,7 +34,6 @@
 
   /* --- Durum renkleri (yalnızca anlam taşıdığında) ------------------------- */
   --sf-success: #7fd1b0;
-  --sf-warning: var(--sf-yellow-400);
   --sf-danger: #ff8f8f;
   --sf-danger-strong: #a81f1f;
 
@@ -51,10 +47,7 @@
   /* --- KOYU CAM (aktif) — giriş ekranıyla aynı dil ------------------------- */
   --sf-ink: #ffffff;
   --sf-text: var(--sf-ink);
-  --sf-text-secondary: rgba(255, 255, 255, 0.75);
   --sf-text-muted: rgba(255, 255, 255, 0.6);
-  --sf-text-faint: rgba(255, 255, 255, 0.45);
-  --sf-text-inverse: #0b2b33;
   --sf-text-on-accent: #17282d; /* sarı zemin üstündeki metin */
   --sf-accent-ink: var(--sf-yellow-400); /* vurgu metni */
   --sf-brand-ink: var(--sf-mint); /* rakamlar, ikincil vurgu */
@@ -69,11 +62,9 @@
   --sf-glass-blur-strong: blur(28px) saturate(1.2);
   /* Sidebar: arkadaki kitaplık tanınmayacak kadar dağılsın, geriye renk lekeleri kalsın */
   --sf-sidebar-blur: blur(72px) saturate(1.35);
-  --sf-glass-edge: none;
 
   /* Kart içi kutucuk (.glass): beyaz tül, daha parlak kenar */
   --sf-inset: rgba(255, 255, 255, 0.1);
-  --sf-inset-hover: rgba(255, 255, 255, 0.16);
   --sf-inset-border: rgba(255, 255, 255, 0.18);
   --sf-inset-blur: blur(20px) saturate(1.4);
 
@@ -86,7 +77,8 @@
   --sf-surface-2: rgba(12, 12, 13, 0.62);
   --sf-surface-3: rgba(255, 255, 255, 0.07);
   --sf-surface-hover: rgba(255, 255, 255, 0.14);
-  --sf-overlay: rgba(0, 0, 0, 0.72); /* modal arka planı */
+  --sf-overlay: rgba(0, 0, 0, 0.78); /* modal arka planı */
+  --sf-overlay-blur: blur(16px) saturate(0.9);
   --sf-modal: rgba(12, 12, 13, 0.9);
 
   --sf-edge: rgba(255, 255, 255, 0.1); /* cam kenarı (dış hat) */
@@ -128,6 +120,7 @@
   --sf-surface-3: rgba(10,91,111,0.08);
   --sf-surface-hover: rgba(10,91,111,0.14);
   --sf-overlay: rgba(4,26,33,0.62);
+  --sf-overlay-blur: blur(12px) saturate(0.95);
   --sf-modal: rgba(255,255,255,0.92);
   --sf-edge: rgba(255,255,255,0.55);
   --sf-line: rgba(10,91,111,0.14);
@@ -160,43 +153,23 @@
   --background: #0c0c0d;
   --foreground: var(--sf-ink);
   --card: var(--sf-surface-2);
-  --card-foreground: var(--sf-ink);
   --popover: var(--sf-modal);
   --popover-foreground: var(--sf-ink);
   --primary: var(--sf-yellow-400);
-  --primary-foreground: var(--sf-text-on-accent);
   --secondary: var(--sf-surface-3);
-  --secondary-foreground: var(--sf-ink);
   --muted: var(--sf-surface-3);
   --muted-foreground: var(--sf-text-muted);
   --accent: var(--sf-surface-hover);
   --accent-foreground: var(--sf-ink);
   --destructive: var(--sf-danger-on-glass);
-  --destructive-foreground: var(--sf-text-on-accent);
   --border: var(--sf-line);
   --input: var(--sf-line);
   --ring: var(--sf-yellow-400);
 
-  --brand: var(--sf-green-600);
-  --brand-foreground: var(--sf-yellow-400);
-  --light: var(--sf-mint);
-  --light-foreground: var(--sf-mint-strong);
-
   /* --- Grafik serileri (marka paletinden türetilmiştir) -------------------- */
   --chart-1: var(--sf-yellow-400);
   --chart-2: var(--sf-mint);
-  --chart-3: var(--sf-green-400);
-  --chart-4: var(--sf-yellow-200);
-  --chart-5: var(--sf-green-500);
 
-  --sidebar: var(--sf-surface-1);
-  --sidebar-foreground: var(--sf-ink);
-  --sidebar-primary: var(--sf-yellow-400);
-  --sidebar-primary-foreground: var(--sf-text-on-accent);
-  --sidebar-accent: var(--sf-surface-3);
-  --sidebar-accent-foreground: var(--sf-ink);
-  --sidebar-border: var(--sf-line);
-  --sidebar-ring: var(--sf-yellow-400);
 }
 
 /* Uygulama tek bir koyu cam görünüme sahiptir; .dark ile aynı token'lar geçerli. */
@@ -208,9 +181,7 @@
   /* Marka renkleri — bg-brand, text-accent, border-accent/30 ... */
   --color-brand: var(--sf-green-600);
   --color-brand-deep: var(--sf-green-800);
-  --color-brand-darkest: var(--sf-green-900);
   --color-brand-light: var(--sf-green-400);
-  --color-brand-foreground: var(--sf-yellow-400);
 
   --color-accent-soft: var(--sf-yellow-200);
   --color-accent-strong: var(--sf-yellow-400);
@@ -220,58 +191,32 @@
   --color-ink: var(--sf-ink);
   --color-accent-ink: var(--sf-accent-ink);
   --color-brand-ink: var(--sf-brand-ink);
-  --color-edge: var(--sf-edge);
   --color-control: var(--sf-control-bg);
   --color-control-hover: var(--sf-control-bg-hover);
   --color-control-border: var(--sf-control-border);
   --color-mint: var(--sf-mint);
-  --color-success: var(--sf-success);
-  --color-danger: var(--sf-danger);
 
-  --color-surface-1: var(--sf-surface-1);
-  --color-surface-2: var(--sf-surface-2);
-  --color-surface-3: var(--sf-surface-3);
   --color-hairline: var(--sf-line);
 
   /* shadcn köprüsü */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-light: var(--light);
-  --color-light-foreground: var(--light-foreground);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 
   /* Tipografi */
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-body: "Inter", system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
   /* Sayfa başlıkları ve marka için serif görüntü yazı tipi */
   --font-display: "Fraunces", Georgia, serif;
@@ -287,50 +232,19 @@
   --radius-panel: var(--sf-radius-panel);
 
   --spacing-container: 1280px;
-  --spacing-container-lg: 1536px;
 
   --shadow-md: 0 4px 6px -1px var(--shadow), 0 2px 4px -2px var(--shadow);
   --shadow-xl: 0 20px 25px -5px var(--shadow), 0 8px 10px -6px var(--shadow);
-  --shadow-2xl: 0 25px 50px -12px var(--shadow);
   --shadow-card: var(--sf-shadow-card);
   --shadow-panel: var(--sf-shadow-panel);
   --shadow-accent: var(--sf-shadow-accent);
-  --shadow-mockup: -12px 16px 48px var(--shadow-strong);
 
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
-  --animate-appear: appear 0.6s forwards ease-out;
-  --animate-appear-zoom: appear-zoom 0.6s forwards ease-out;
-
-  @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
-  }
   @keyframes accordion-up {
     from {
       height: var(--radix-accordion-content-height);
     }
     to {
       height: 0;
-    }
-  }
-  @keyframes appear {
-    0% {
-      opacity: 0;
-      transform: translateY(1rem);
-      filter: blur(0.5rem);
-    }
-    50% {
-      filter: blur(0);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
     }
   }
   @keyframes appear-zoom {
