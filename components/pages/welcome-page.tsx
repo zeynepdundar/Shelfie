@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { Button } from "@/components/ui/button";
 
 interface WelcomeScreenProps {
@@ -16,20 +18,8 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
       />
 
       <header className="mx-auto flex w-full max-w-7xl items-center gap-3 px-6 py-8 sm:px-10 lg:px-16">
-        <span className="flex size-10 items-center justify-center rounded-tile border border-white/20 bg-white/10 text-accent-strong backdrop-blur-md">
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-5"
-          >
-            <path d="M12 6c-3-2-6-2-9-1v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Z" />
-            <path d="M12 6v14" />
-          </svg>
+        <span className="flex size-10 items-center justify-center rounded-tile border border-white/20 bg-white/10 backdrop-blur-md">
+          <Image src="/logo-books.svg" alt="" width={22} height={22} />
         </span>
         <span className="text-lg font-semibold tracking-tight">Shelfie</span>
       </header>

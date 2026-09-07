@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -52,12 +53,21 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <>
       <div className="mb-10">
-        <p
-          className="mb-0.5 text-2xl font-light italic text-white"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          Shelfie
-        </p>
+        <div className="mb-0.5 flex items-center gap-2">
+          <Image
+            src="/logo-books.svg"
+            alt=""
+            width={22}
+            height={22}
+            className="shrink-0"
+          />
+          <p
+            className="text-2xl font-light italic text-white"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Shelfie
+          </p>
+        </div>
 
         <p className="text-xs uppercase tracking-widest text-white/40">
           {t("tagline")}
@@ -153,7 +163,8 @@ export function SidebarMobileBar() {
       className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 md:hidden"
       style={darkGlassStyle}
     >
-      <Link href={`/${locale}`} className="flex flex-col">
+      <Link href={`/${locale}`} className="flex items-center gap-2">
+        <Image src="/logo-books.svg" alt="" width={20} height={20} />
         <span
           className="text-lg font-light italic text-white"
           style={{ fontFamily: "var(--font-display)" }}

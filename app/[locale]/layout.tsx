@@ -10,6 +10,11 @@ import { HomeLayout } from "@/components/layout/HomeLayout";
 export const metadata: Metadata = {
   title: "Shelfie",
   description: "Track your reading journey",
+  icons: {
+    icon: "/logo-books.svg",
+    shortcut: "/logo-books.svg",
+    apple: "/logo-books.svg",
+  },
 };
 
 export default async function RootLayout({
