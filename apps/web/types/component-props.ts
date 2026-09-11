@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { AuthUser } from "@/lib/authSlice";
-import { Book } from "./book";
+import type { Book } from "@shelfie/types";
 
 export interface HomeLayoutProps {
   children: ReactNode;

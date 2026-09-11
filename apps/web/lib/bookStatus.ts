@@ -1,4 +1,4 @@
-import { Book } from "@/types/book";
+import type { Book } from "@shelfie/types";
 
 export type BookStatusKey = "completed" | "wantToRead" | "inProgress";
 

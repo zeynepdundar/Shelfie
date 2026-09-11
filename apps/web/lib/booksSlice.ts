@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { auth } from "@/lib/firebase";
 import { doc, setDoc, getDoc, updateDoc, deleteDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { Book, Quote } from "@/types/book";
+import type { Book, Quote } from "@shelfie/types";
 
 /* Tek kaynak: types/book.ts. Burada tekrar tanımlanmıyor, sadece yeniden ihraç
    ediliyor ki eski importlar çalışmaya devam etsin. */

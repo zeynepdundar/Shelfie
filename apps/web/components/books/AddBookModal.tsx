@@ -1,7 +1,7 @@
 'use client';
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { GoogleBook } from "@/types/book";
+import type { GoogleBook } from "@shelfie/types";
 import { AddBookModalProps } from "@/types/component-props";
 import { BookCover } from "@/components/books/BookCover";
 import { Search, X } from "lucide-react";

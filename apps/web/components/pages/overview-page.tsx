@@ -5,7 +5,7 @@ import { AuthUser } from "@/lib/authSlice";
 import { Button } from "@/components/ui/button";
 import { AddBookModal } from "@/components/books/AddBookModal";
 import { BookCover } from "@/components/books/BookCover";
-import { Book } from "@/types/book";
+import type { Book } from "@shelfie/types";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { addBook, fetchUserBooks, updateBook } from "@/lib/booksSlice";
 import { getBookStatus } from "@/lib/bookStatus";

@@ -14,7 +14,7 @@ import { useSelector } from "react-redux"
 import { useTranslations } from "next-intl"
 
 import { RootState } from "@/lib/store"
-import { Book } from "@/types/book"
+import type { Book } from "@shelfie/types"
 import { ChartContainer, ChartLegendContent } from "@/components/ui/chart"
 
 const MONTHS = [

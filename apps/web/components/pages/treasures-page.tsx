@@ -17,7 +17,7 @@ import {
 import { AppDispatch, RootState } from '@/lib/store';
 import { addBook, fetchUserBooks, updateBook } from '@/lib/booksSlice';
 import { AuthUser } from '@/lib/authSlice';
-import { Book, Quote } from '@/types/book';
+import type { Book, Quote } from '@shelfie/types';
 import { Button } from '@/components/ui/button';
 import { AddBookModal } from '@/components/books/AddBookModal';
 import { BookCard } from '@/components/books/BookCard';
