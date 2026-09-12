@@ -5,14 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { useSelector } from "react-redux";
 import { Menu } from "lucide-react";
 
-import type { RootState } from "@/lib/store";
-import { useAppDispatch } from "@/lib/hooks";
-import { signOutUser } from "@/lib/authSlice";
 import { Button } from "@/components/ui/button";
-import { darkGlassStyle, glassStyle } from "@/components/ui/glass";
+import { darkGlassStyle } from "@/components/ui/glass";
+import { UserMenu } from "@/components/layout/UserMenu";
 import {
   Sheet,
   SheetContent,
@@ -24,35 +21,18 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const locale = useLocale();
   const t = useTranslations("nav");
-  const dispatch = useAppDispatch();
 
-  const readCount = useSelector(
-    (state: RootState) =>
-      state.books.books.filter((book) => book.isCompleted).length,
-  );
-
-  const otherLocale = locale === "tr" ? "en" : "tr";
   const withoutLocale =
-    pathname.replace(/^\/(en|tr)(?=\/|$)/, "").replace(/\/+$/, "") ||
-    "/";
-
-  const switchLocaleHref = `/${otherLocale}${
-    withoutLocale === "/" ? "" : withoutLocale
-  }`;
+    pathname.replace(/^\/(en|tr)(?=\/|$)/, "").replace(/\/+$/, "") || "/";
 
   const views = [
     { path: "/", label: `📊 ${t("overview")}` },
     { path: "/treasures", label: `💎 ${t("treasures")}` },
   ];
 
-  function handleSignOut() {
-    dispatch(signOutUser());
-    onNavigate?.();
-  }
-
   return (
     <>
-      <div className="mb-10">
+      <div className="mb-10 flex flex-col items-center text-center">
         <div className="mb-0.5 flex items-center gap-2">
           <Image
             src="/logo-books.svg"
@@ -69,7 +49,7 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
           </p>
         </div>
 
-        <p className="text-xs uppercase tracking-widest text-white/40">
+        <p className="-mr-[0.1em] text-xs uppercase tracking-widest text-white/40">
           {t("tagline")}
         </p>
       </div>
@@ -96,43 +76,8 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
         })}
       </nav>
 
-      <div className="mb-6 flex flex-col gap-1">
-        <p className="mb-1 px-4 text-xs uppercase tracking-widest text-white/30">
-          {t("account")}
-        </p>
+      <UserMenu onNavigate={onNavigate} />
 
-        <Link
-          href={switchLocaleHref}
-          onClick={onNavigate}
-          className="rounded-xl px-4 py-2 text-left text-sm text-white/40 transition-colors duration-200 hover:bg-white/[0.06] hover:text-white/70"
-        >
-          {otherLocale.toUpperCase()}
-        </Link>
-
-        <button
-          type="button"
-          onClick={handleSignOut}
-          className="rounded-xl px-4 py-2 text-left text-sm text-white/40 transition-colors duration-200 hover:bg-white/[0.06] hover:text-white/70"
-        >
-          {t("logout")}
-        </button>
-      </div>
-
-      <div
-        className="mt-auto rounded-2xl p-4 text-center"
-        style={glassStyle}
-      >
-        <p
-          className="text-2xl font-light text-white"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          {readCount}
-        </p>
-
-        <p className="text-xs uppercase tracking-widest text-white/45">
-          {t("booksRead")}
-        </p>
-      </div>
     </>
   );
 }

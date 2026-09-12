@@ -7,7 +7,8 @@
     "tagline": "READING JOURNAL",
     "booksRead": "BOOKS READ",
     "menu": "Menu",
-    "account": "ACCOUNT"
+    "account": "ACCOUNT",
+    "accountPage": "My Account"
   },
   "overview": {
     "welcome": "Welcome, {email}!",
@@ -107,6 +108,21 @@
       "remove": "Remove from reading list",
       "stat": "Reading list",
       "addBook": "Add Book"
+    }
+  },
+  "account": {
+    "title": "My Account",
+    "subtitle": "Details of the account you are signed in with.",
+    "booksCompleted": "{count} books completed",
+    "notSet": "Not set",
+    "fields": {
+      "displayName": "Display name",
+      "email": "Email",
+      "uid": "User ID"
+    },
+    "details": {
+      "title": "Account details",
+      "hint": "These come from your sign-in provider."
     }
   }
 }

@@ -7,7 +7,8 @@
     "tagline": "KİTAP GÜNLÜĞÜ",
     "booksRead": "KİTAP OKUNDU",
     "menu": "Menü",
-    "account": "HESAP"
+    "account": "HESAP",
+    "accountPage": "Hesabım"
   },
   "overview": {
     "welcome": "Hoş geldin, {email}!",
@@ -107,6 +108,21 @@
       "remove": "Okuma listesinden çıkar",
       "stat": "Okuma listesi",
       "addBook": "Kitap Ekle"
+    }
+  },
+  "account": {
+    "title": "Hesabım",
+    "subtitle": "Giriş yaptığın hesabın bilgileri.",
+    "booksCompleted": "{count} kitap tamamlandı",
+    "notSet": "Belirtilmemiş",
+    "fields": {
+      "displayName": "Görünen ad",
+      "email": "E-posta",
+      "uid": "Kullanıcı ID"
+    },
+    "details": {
+      "title": "Hesap bilgileri",
+      "hint": "Bu bilgiler giriş sağlayıcından geliyor."
     }
   }
 }

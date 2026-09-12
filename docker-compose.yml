@@ -1,0 +1,23 @@
+# Yerel geliştirme veritabanı. `docker compose up -d` ile açılır.
+# Bağlantı dizesi: postgresql://shelfie:shelfie@localhost:5432/shelfie
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: shelfie-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: shelfie
+      POSTGRES_PASSWORD: shelfie
+      POSTGRES_DB: shelfie
+    ports:
+      - "5432:5432"
+    volumes:
+      - shelfie-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shelfie -d shelfie"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  shelfie-postgres:

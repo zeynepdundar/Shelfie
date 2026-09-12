@@ -6,45 +6,26 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ============================================================================
-   SHELFIE TEMA — TEK KAYNAK
-   Marka renkleri:
-     • Yeşil  #0a5b6f  (navbar)
-     • Sarı   #FFC703  (welcome / birincil aksiyon)
-   Uygulamanın tamamı bu iki renk + nötr cam yüzeyler üzerine kuruludur.
-   Yeni bir renk eklemek yerine buradaki token'lardan birini kullanın.
-   ============================================================================ */
 
 :root {
-  /* --- Marka yeşili skalası ------------------------------------------------ */
   --sf-green-900: #05242d;
   --sf-green-800: #062f3a;
-  --sf-green-600: #0a5b6f; /* navbar rengi — markanın çekirdeği */
+  --sf-green-600: #0a5b6f;
   --sf-green-500: #0d7288;
   --sf-green-400: #158fa8;
 
-  /* --- Marka sarısı skalası ------------------------------------------------ */
   --sf-yellow-500: #e6b303; /* hover */
   --sf-yellow-400: #ffc703; /* ana vurgu */
   --sf-yellow-200: #ffe08a; /* koyu zeminde vurgulu metin */
 
-  /* --- Yardımcı ton (welcome başlığındaki nane) ---------------------------- */
   --sf-mint: #b8d8cf;
   --sf-mint-strong: #8fc4b6;
 
-  /* --- Durum renkleri (yalnızca anlam taşıdığında) ------------------------- */
   --sf-success: #7fd1b0;
   --sf-danger: #ff8f8f;
   --sf-danger-strong: #a81f1f;
 
-  /* ==========================================================================
-     YÜZEY TEMASI ("skin")
-     Tüm sayfaların cam yüzeyi, metin rengi ve kontrol renkleri buradan gelir.
-     Aşağıdaki iki set birbirinin yerine geçebilir: aktif olan KOYU CAM.
-     Açık cama dönmek için "AÇIK CAM" bloğundaki değerleri buraya kopyala.
-     ========================================================================== */
 
-  /* --- KOYU CAM (aktif) — giriş ekranıyla aynı dil ------------------------- */
   --sf-ink: #ffffff;
   --sf-text: var(--sf-ink);
   --sf-text-muted: rgba(255, 255, 255, 0.6);
@@ -52,8 +33,7 @@
   --sf-accent-ink: var(--sf-yellow-400); /* vurgu metni */
   --sf-brand-ink: var(--sf-mint); /* rakamlar, ikincil vurgu */
 
-  /* Cam reçeteleri — referans tasarımdaki .glass-dark / .glass ile aynı:
-     düz yarı saydam renk + doygunluk artıran blur + ince beyaz kenar. */
+
   --sf-glass-1: rgba(10, 8, 6, 0.62); /* panel / sayfa yüzeyi */
   --sf-glass-2: rgba(10, 8, 6, 0.55); /* kart  (.glass-dark) */
   --sf-glass-sidebar: rgba(10, 8, 6, 0.55); /* kartla aynı: arkadaki kitaplık bulanık görünsün */

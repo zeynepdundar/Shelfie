@@ -1,21 +1,29 @@
-import Fastify, { type FastifyInstance } from "fastify";
-import cors from "@fastify/cors";
+import express, { type Express } from "express";
+import cors from "cors";
 
 import { env } from "./env.js";
-import { healthRoutes } from "./routes/health.js";
-import { bookRoutes } from "./routes/books.js";
+import { requireAuth } from "./middleware/auth.js";
+import { errorHandler, notFoundHandler } from "./middleware/error.js";
+import { healthRouter } from "./routes/health.js";
+import { booksRouter } from "./routes/books.js";
 
 /**
- * Uygulamayı kurar ama dinlemeye başlamaz — böylece testlerde de
- * aynı örnek kullanılabilir.
+ * Uygulamayı kurar ama dinlemeye başlamaz — testlerde de aynı örnek kullanılır.
+ * Veritabanı ve Firebase bağlantıları tembel olduğu için burada hiçbir dış
+ * servise bağlanılmaz.
  */
-export async function buildApp(): Promise<FastifyInstance> {
-  const app = Fastify({ logger: true });
+export function createApp(): Express {
+  const app = express();
 
-  await app.register(cors, { origin: env.corsOrigins });
+  app.disable("x-powered-by");
+  app.use(cors({ origin: env.corsOrigins }));
+  app.use(express.json({ limit: "1mb" }));
 
-  await app.register(healthRoutes);
-  await app.register(bookRoutes, { prefix: "/api/books" });
+  app.use(healthRouter);
+  app.use("/api/books", requireAuth, booksRouter);
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   return app;
 }
