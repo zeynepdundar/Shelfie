@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { auth } from "@/lib/firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, User } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updateProfile, User } from "firebase/auth";
 
 export type AuthStatus = "idle" | "loading" | "authenticated" | "unauthenticated";
 
@@ -63,6 +63,28 @@ export const signUpWithEmailPassword = createAsyncThunk(
   }
 );
 
+/**
+ * Görünen adı Firebase profilinde günceller.
+ * onAuthStateChanged bu değişiklikte tetiklenmediği için dönen değerle
+ * store'daki kullanıcı elle tazelenir.
+ */
+export const updateDisplayName = createAsyncThunk(
+  "auth/updateDisplayName",
+  async (displayName: string, { rejectWithValue }) => {
+    try {
+      const current = auth.currentUser;
+      if (!current) throw new Error("Oturum bulunamadı");
+
+      const trimmed = displayName.trim();
+      await updateProfile(current, { displayName: trimmed || null });
+
+      return trimmed || null;
+    } catch (err: any) {
+      return rejectWithValue(err?.message || "Görünen ad güncellenemedi");
+    }
+  }
+);
+
 export const signOutUser = createAsyncThunk("auth/signOutUser", async () => {
   await signOut(auth);
   return null;
@@ -109,6 +131,16 @@ const authSlice = createSlice({
       .addCase(signUpWithEmailPassword.rejected, (state, action) => {
         state.status = "unauthenticated";
         state.error = (action.payload as string) || "Kayıt başarısız";
+      })
+      .addCase(updateDisplayName.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(updateDisplayName.fulfilled, (state, action) => {
+        if (state.user) state.user.displayName = action.payload;
+      })
+      .addCase(updateDisplayName.rejected, (state, action) => {
+        state.error =
+          (action.payload as string) || "Görünen ad güncellenemedi";
       })
       .addCase(signOutUser.pending, (state) => {
         state.status = "loading";

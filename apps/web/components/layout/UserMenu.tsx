@@ -2,10 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useSelector } from "react-redux";
-import { ChevronsUpDown, LogOut, Languages, UserRound } from "lucide-react";
+import { ChevronUp, LogOut, UserRound } from "lucide-react";
 
 import type { RootState } from "@/lib/store";
 import { useAppDispatch } from "@/lib/hooks";
@@ -23,19 +22,11 @@ function initials(name: string) {
 export function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
   const t = useTranslations("nav");
   const locale = useLocale();
-  const pathname = usePathname();
   const dispatch = useAppDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const otherLocale = locale === "tr" ? "en" : "tr";
-  const withoutLocale =
-    pathname.replace(/^\/(en|tr)(?=\/|$)/, "").replace(/\/+$/, "") || "/";
-  const switchLocaleHref = `/${otherLocale}${
-    withoutLocale === "/" ? "" : withoutLocale
-  }`;
 
   // Dışarı tıklama ve Escape ile kapansın
   useEffect(() => {
@@ -60,7 +51,8 @@ export function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
 
   if (!user) return null;
 
-  const name = user.displayName || user.email || "";
+  // Menüde tek satır: ad varsa ad, yoksa e-posta. İkisi birden gösterilmiyor.
+  const label = user.displayName || user.email || "";
   const itemClass =
     "flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-white/70 transition-colors duration-200 hover:bg-white/10 hover:text-white";
 
@@ -70,13 +62,34 @@ export function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
   }
 
   return (
-    <div ref={containerRef} className="relative mt-auto">
+    // Hesap alanı gezinmeden ince bir çizgiyle ayrılır; kutu içine alınmaz ki
+    // üstteki düz gezinme satırlarıyla aynı dili konuşsun.
+    <div ref={containerRef} className="relative mt-auto border-t border-white/15 pt-3">
       {open && (
         <div
           role="menu"
+          aria-label={t("accountPage")}
           className="absolute bottom-full left-0 right-0 mb-2 flex flex-col gap-0.5 rounded-xl p-1.5"
           style={glassStyle}
         >
+          {/* Kimlik bloğu: tetikleyici tek satır kaldığı için hangi hesapta
+              olunduğu buradan okunur. Ad yoksa yalnızca e-posta görünür. */}
+          {(user.displayName || user.email) && (
+            <>
+              <div className="px-3 pb-2 pt-1.5">
+                {user.displayName && (
+                  <p className="truncate text-sm font-medium text-white">
+                    {user.displayName}
+                  </p>
+                )}
+                {user.email && (
+                  <p className="truncate text-xs text-white/45">{user.email}</p>
+                )}
+              </div>
+              <div className="mx-1 mb-1 h-px bg-white/10" />
+            </>
+          )}
+
           <Link
             href={`/${locale}/account`}
             onClick={close}
@@ -87,15 +100,7 @@ export function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
             {t("accountPage")}
           </Link>
 
-          <Link
-            href={switchLocaleHref}
-            onClick={close}
-            role="menuitem"
-            className={itemClass}
-          >
-            <Languages className="h-4 w-4" />
-            {otherLocale.toUpperCase()}
-          </Link>
+          <div className="mx-1 my-1 h-px bg-white/10" />
 
           <button
             type="button"
@@ -117,23 +122,23 @@ export function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
         onClick={() => setOpen((value) => !value)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex w-full items-center gap-3 rounded-2xl p-3 text-left transition-colors duration-200 hover:bg-white/[0.06]"
-        style={glassStyle}
+        className={`flex w-full items-center gap-2.5 rounded-xl px-4 py-2.5 text-left transition-colors duration-200 hover:bg-white/[0.08] ${
+          open ? "bg-white/[0.08]" : ""
+        }`}
       >
-        <Avatar name={name} photoURL={user.photoURL} />
+        {/* Üstteki gezinme satırları birer glifle başlıyor; bu ikon hesap
+            satırını da aynı hizaya oturtuyor. */}
+        <UserRound className="h-4 w-4 shrink-0 text-white/45" />
 
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-medium text-white">
-            {name}
-          </span>
-          {user.displayName && user.email && (
-            <span className="block truncate text-xs text-white/45">
-              {user.email}
-            </span>
-          )}
+        <span className="min-w-0 flex-1 truncate text-sm font-medium text-white">
+          {label}
         </span>
 
-        <ChevronsUpDown className="h-4 w-4 shrink-0 text-white/40" />
+        <ChevronUp
+          className={`h-4 w-4 shrink-0 text-white/50 transition-transform duration-200 ${
+            open ? "rotate-180" : ""
+          }`}
+        />
       </button>
     </div>
   );

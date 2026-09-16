@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import ReduxProvider from '@/components/providers/redux-provider';
+import { AuthProvider } from '@/components/providers/auth-provider';
 import '../globals.css';
 import { HomeLayout } from "@/components/layout/HomeLayout";
 
@@ -32,7 +33,9 @@ export default async function RootLayout({
       <body className="font-sans">
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ReduxProvider>
-            <HomeLayout>{children}</HomeLayout>
+            <AuthProvider>
+              <HomeLayout>{children}</HomeLayout>
+            </AuthProvider>
           </ReduxProvider>
         </NextIntlClientProvider>
       </body>

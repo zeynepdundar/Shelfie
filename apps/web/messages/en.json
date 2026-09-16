@@ -8,7 +8,9 @@
     "booksRead": "BOOKS READ",
     "menu": "Menu",
     "account": "ACCOUNT",
-    "accountPage": "My Account"
+    "accountPage": "My Account",
+    "checkingSession": "Checking your session...",
+    "language": "Language"
   },
   "overview": {
     "welcome": "Welcome, {email}!",
@@ -117,12 +119,20 @@
     "notSet": "Not set",
     "fields": {
       "displayName": "Display name",
-      "email": "Email",
-      "uid": "User ID"
+      "email": "Email"
     },
     "details": {
       "title": "Account details",
       "hint": "These come from your sign-in provider."
+    },
+    "editName": "Edit display name",
+    "namePlaceholder": "Your name",
+    "save": "Save",
+    "cancel": "Cancel",
+    "nameError": "Could not update display name",
+    "preferences": {
+      "title": "Preferences",
+      "hint": "How the app appears to you."
     }
   }
 }
