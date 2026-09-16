@@ -5,6 +5,8 @@ import type { GoogleBook } from "@shelfie/types";
 import { AddBookModalProps } from "@/types/component-props";
 import { BookCover } from "@/components/books/BookCover";
 import { Search, X } from "lucide-react";
+import { useTranslations } from "next-intl";
+import type { BookStatusKey } from "@/lib/bookStatus";
 
 export function AddBookModal({
   isOpen,
@@ -12,6 +14,8 @@ export function AddBookModal({
   onAddBook,
   defaultWantToRead = false,
 }: AddBookModalProps) {
+  const t = useTranslations("addBook");
+  const statusT = useTranslations("book.status");
   const [activeTab, setActiveTab] = useState<'form' | 'search'>('form');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<GoogleBook[]>([]);
@@ -23,12 +27,10 @@ export function AddBookModal({
     title: '',
     author: '',
     pages: '',
-    dateRead: '',
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date().toISOString().split('T')[0],
-    isCompleted: false,
     isFavorite: false,
-    wantToRead: defaultWantToRead
+    status: (defaultWantToRead ? "wantToRead" : "inProgress") as BookStatusKey
   });
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY || '';
@@ -38,12 +40,10 @@ export function AddBookModal({
       title: '',
       author: '',
       pages: '',
-      dateRead: '',
       startDate: new Date().toISOString().split('T')[0],
       endDate: new Date().toISOString().split('T')[0],
-      isCompleted: false,
       isFavorite: false,
-      wantToRead: defaultWantToRead
+      status: (defaultWantToRead ? "wantToRead" : "inProgress") as BookStatusKey
     });
     setFormError(null);
   };
@@ -84,13 +84,13 @@ export function AddBookModal({
 
     const bookData = {
       title: selectedBook.volumeInfo.title,
-      author: selectedBook.volumeInfo.authors?.join(', ') || 'Bilinmeyen Yazar',
+      author: selectedBook.volumeInfo.authors?.join(', ') || t("unknownAuthor"),
       pages: selectedBook.volumeInfo.pageCount || 0,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      dateRead: formData.isCompleted ? formData.endDate : null,
-      isCompleted: formData.isCompleted,
-      wantToRead: formData.wantToRead,
+      ...(formData.status !== "wantToRead" && { startDate: formData.startDate }),
+      ...(formData.status === "completed" && { endDate: formData.endDate }),
+      dateRead: formData.status === "completed" ? formData.endDate : null,
+      isCompleted: formData.status === "completed",
+      wantToRead: formData.status === "wantToRead",
       coverUrl: selectedBook.volumeInfo.imageLinks?.thumbnail || undefined,
       dateAdded: new Date().toISOString().split('T')[0]
     };
@@ -113,7 +113,7 @@ export function AddBookModal({
     e.preventDefault();
 
     if (!formData.title || !formData.author || !formData.pages) {
-      setFormError('Lütfen kitap adı, yazar ve sayfa sayısını doldurun.');
+      setFormError(t("requiredError"));
       return;
     }
 
@@ -121,12 +121,12 @@ export function AddBookModal({
       title: formData.title,
       author: formData.author,
       pages: parseInt(formData.pages),
-      dateRead: formData.dateRead || null,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
-      isCompleted: formData.isCompleted,
+      dateRead: formData.status === "completed" ? formData.endDate : null,
+      ...(formData.status !== "wantToRead" && { startDate: formData.startDate }),
+      ...(formData.status === "completed" && { endDate: formData.endDate }),
+      isCompleted: formData.status === "completed",
       isFavorite: formData.isFavorite,
-      wantToRead: formData.wantToRead,
+      wantToRead: formData.status === "wantToRead",
       dateAdded: new Date().toISOString().split('T')[0]
     };
 
@@ -154,20 +154,47 @@ export function AddBookModal({
         : 'text-ink/55 hover:text-ink'
     }`;
 
+  const statusOptions: BookStatusKey[] = ["wantToRead", "inProgress", "completed"];
+
+  const statusClass = (value: BookStatusKey) =>
+    `flex-1 rounded-full px-3 py-2 text-sm font-semibold transition-colors duration-200 ${
+      formData.status === value
+        ? 'bg-accent-strong text-on-accent shadow-sm'
+        : 'text-ink/55 hover:text-ink'
+    }`;
+
+  /** Kitabın hangi bölüme ekleneceğini seçtiren üçlü kontrol. */
+  const renderStatusPicker = () => (
+    <div className="sf-field">
+      <span className="sf-label">{t("fields.status")}</span>
+      <div className="flex gap-1 sf-tile rounded-full p-1">
+        {statusOptions.map((value) => (
+          <button
+            key={value}
+            type="button"
+            aria-pressed={formData.status === value}
+            onClick={() => setFormData({ ...formData, status: value })}
+            className={statusClass(value)}
+          >
+            {statusT(value)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="sf-modal-overlay" role="dialog" aria-modal="true" onClick={onClose}>
       <div className="sf-modal max-w-lg" onClick={(e) => e.stopPropagation()}>
         <div className="sf-modal-header">
           <div>
-            <h2 className="sf-title-section">Yeni Kitap Ekle</h2>
-            <p className="sf-muted mt-1">
-              Elle ekle ya da Google Books&apos;ta ara.
-            </p>
+            <h2 className="sf-title-section">{t("title")}</h2>
+            <p className="sf-muted mt-1">{t("subtitle")}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Kapat"
+            aria-label={t("close")}
             className="sf-icon-button"
           >
             <X className="h-4 w-4" />
@@ -188,11 +215,11 @@ export function AddBookModal({
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate">{selectedBook.volumeInfo.title}</h3>
                     <p className="sf-body truncate">
-                      {selectedBook.volumeInfo.authors?.join(', ') || 'Bilinmeyen Yazar'}
+                      {selectedBook.volumeInfo.authors?.join(', ') || t("unknownAuthor")}
                     </p>
                     {selectedBook.volumeInfo.pageCount && (
                       <p className="sf-meta">
-                        {selectedBook.volumeInfo.pageCount} sayfa
+                        {t("pageCount", { count: selectedBook.volumeInfo.pageCount })}
                       </p>
                     )}
                   </div>
@@ -200,63 +227,47 @@ export function AddBookModal({
               </div>
 
               <form id="date-form" onSubmit={handleDateFormSubmit} className="space-y-4">
-                <div className="sf-field">
-                  <label htmlFor="sd-start" className="sf-label">
-                    Okuma Başlangıç Tarihi *
-                  </label>
-                  <input
-                    id="sd-start"
-                    type="date"
-                    value={formData.startDate}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="sf-input"
-                    required
-                  />
-                </div>
+                {renderStatusPicker()}
 
-                <div className="sf-field">
-                  <label htmlFor="sd-end" className="sf-label">
-                    Okuma Bitiş Tarihi
-                  </label>
-                  <input
-                    id="sd-end"
-                    type="date"
-                    value={formData.endDate}
-                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                    className="sf-input"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <label className="flex items-center gap-3 text-sm text-ink/80">
+                {formData.status !== "wantToRead" && (
+                  <div className="sf-field">
+                    <label htmlFor="sd-start" className="sf-label">
+                      {t("fields.readingStartDate")}
+                    </label>
                     <input
-                      type="checkbox"
-                      checked={formData.isCompleted}
-                      onChange={(e) => setFormData({ ...formData, isCompleted: e.target.checked })}
-                      className="sf-checkbox"
+                      id="sd-start"
+                      type="date"
+                      value={formData.startDate}
+                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                      className="sf-input"
+                      required
                     />
-                    Kitabı tamamladım
-                  </label>
+                  </div>
+                )}
 
-                  <label className="flex items-center gap-3 text-sm text-ink/80">
+                {formData.status === "completed" && (
+                  <div className="sf-field">
+                    <label htmlFor="sd-end" className="sf-label">
+                      {t("fields.readingEndDate")}
+                    </label>
                     <input
-                      type="checkbox"
-                      checked={formData.wantToRead}
-                      onChange={(e) => setFormData({ ...formData, wantToRead: e.target.checked })}
-                      className="sf-checkbox"
+                      id="sd-end"
+                      type="date"
+                      value={formData.endDate}
+                      onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                      className="sf-input"
                     />
-                    Sonra okumak istiyorum
-                  </label>
-                </div>
+                  </div>
+                )}
               </form>
             </div>
 
             <div className="sf-modal-footer sm:justify-end">
               <Button type="button" variant="outline" onClick={handleBackToSearch}>
-                Geri
+                {t("back")}
               </Button>
               <Button type="submit" form="date-form">
-                Kitabı Ekle
+                {t("submit")}
               </Button>
             </div>
           </>
@@ -268,10 +279,10 @@ export function AddBookModal({
             <div className="px-6 pt-5">
               <div className="flex gap-1 sf-tile rounded-full p-1">
                 <button type="button" onClick={() => setActiveTab('form')} className={tabClass('form')}>
-                  Manuel Ekle
+                  {t("tabs.manual")}
                 </button>
                 <button type="button" onClick={() => setActiveTab('search')} className={tabClass('search')}>
-                  Arama Yap
+                  {t("tabs.search")}
                 </button>
               </div>
             </div>
@@ -284,31 +295,31 @@ export function AddBookModal({
 
                   <form id="manual-form" onSubmit={handleFormSubmit} className="space-y-4">
                     <div className="sf-field">
-                      <label htmlFor="mf-title" className="sf-label">Kitap Adı *</label>
+                      <label htmlFor="mf-title" className="sf-label">{t("fields.bookTitle")} *</label>
                       <input
                         id="mf-title"
                         type="text"
                         value={formData.title}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         className="sf-input"
-                        placeholder="Kitap adını girin"
+                        placeholder={t("fields.bookTitlePlaceholder")}
                       />
                     </div>
 
                     <div className="sf-field">
-                      <label htmlFor="mf-author" className="sf-label">Yazar *</label>
+                      <label htmlFor="mf-author" className="sf-label">{t("fields.author")} *</label>
                       <input
                         id="mf-author"
                         type="text"
                         value={formData.author}
                         onChange={(e) => setFormData({ ...formData, author: e.target.value })}
                         className="sf-input"
-                        placeholder="Yazar adını girin"
+                        placeholder={t("fields.authorPlaceholder")}
                       />
                     </div>
 
                     <div className="sf-field">
-                      <label htmlFor="mf-pages" className="sf-label">Sayfa Sayısı *</label>
+                      <label htmlFor="mf-pages" className="sf-label">{t("fields.pages")} *</label>
                       <input
                         id="mf-pages"
                         type="number"
@@ -316,74 +327,58 @@ export function AddBookModal({
                         value={formData.pages}
                         onChange={(e) => setFormData({ ...formData, pages: e.target.value })}
                         className="sf-input"
-                        placeholder="Sayfa sayısını girin"
+                        placeholder={t("fields.pagesPlaceholder")}
                       />
                     </div>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div className="sf-field">
-                        <label htmlFor="mf-start" className="sf-label">Başlangıç Tarihi</label>
-                        <input
-                          id="mf-start"
-                          type="date"
-                          value={formData.startDate}
-                          onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                          className="sf-input"
-                        />
+                    {renderStatusPicker()}
+
+                    {formData.status !== "wantToRead" && (
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="sf-field">
+                          <label htmlFor="mf-start" className="sf-label">{t("fields.startDate")}</label>
+                          <input
+                            id="mf-start"
+                            type="date"
+                            value={formData.startDate}
+                            onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                            className="sf-input"
+                          />
+                        </div>
+
+                        {formData.status === "completed" && (
+                          <div className="sf-field">
+                            <label htmlFor="mf-end" className="sf-label">{t("fields.endDate")}</label>
+                            <input
+                              id="mf-end"
+                              type="date"
+                              value={formData.endDate}
+                              onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                              className="sf-input"
+                            />
+                          </div>
+                        )}
                       </div>
+                    )}
 
-                      <div className="sf-field">
-                        <label htmlFor="mf-end" className="sf-label">Bitiş Tarihi</label>
-                        <input
-                          id="mf-end"
-                          type="date"
-                          value={formData.endDate}
-                          onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                          className="sf-input"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 pt-1">
-                      <label className="flex items-center gap-3 text-sm text-ink/80">
-                        <input
-                          type="checkbox"
-                          checked={formData.isCompleted}
-                          onChange={(e) => setFormData({ ...formData, isCompleted: e.target.checked })}
-                          className="sf-checkbox"
-                        />
-                        Kitabı tamamladım
-                      </label>
-
-                      <label className="flex items-center gap-3 text-sm text-ink/80">
-                        <input
-                          type="checkbox"
-                          checked={formData.isFavorite}
-                          onChange={(e) => setFormData({ ...formData, isFavorite: e.target.checked })}
-                          className="sf-checkbox"
-                        />
-                        Favori kitabım
-                      </label>
-
-                      <label className="flex items-center gap-3 text-sm text-ink/80">
-                        <input
-                          type="checkbox"
-                          checked={formData.wantToRead}
-                          onChange={(e) => setFormData({ ...formData, wantToRead: e.target.checked })}
-                          className="sf-checkbox"
-                        />
-                        Sonra okumak istiyorum
-                      </label>
-                    </div>
-                  </form>
+                    <label className="flex items-center gap-3 pt-1 text-sm text-ink/80">
+                      <input
+                        type="checkbox"
+                        checked={formData.isFavorite}
+                        onChange={(e) => setFormData({ ...formData, isFavorite: e.target.checked })}
+                        className="sf-checkbox"
+                      />
+                      {t("fields.favorite")}
+                    </label>
+                                    </form>
                 </div>
 
                 <div className="sf-modal-footer sm:justify-end">
                   <Button type="button" variant="outline" onClick={onClose}>
-                    İptal
+                    {t("cancel")}
                   </Button>
                   <Button type="submit" form="manual-form">
-                    Kitap Ekle
+                    {t("submit")}
                   </Button>
                 </div>
               </>
@@ -394,7 +389,7 @@ export function AddBookModal({
               <>
                 <div className="sf-modal-body">
                   <form onSubmit={handleSearchSubmit} className="sf-field">
-                    <label htmlFor="sf-search" className="sf-label">Kitap Ara</label>
+                    <label htmlFor="sf-search" className="sf-label">{t("search.label")}</label>
                     <div className="flex gap-2">
                       <input
                         id="sf-search"
@@ -402,18 +397,18 @@ export function AddBookModal({
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="sf-input flex-1"
-                        placeholder="Kitap adı veya yazar girin"
+                        placeholder={t("search.placeholder")}
                       />
                       <Button type="submit" disabled={isSearching} className="shrink-0">
                         <Search className="mr-2 h-4 w-4" />
-                        {isSearching ? 'Aranıyor...' : 'Ara'}
+                        {isSearching ? t("search.searching") : t("search.submit")}
                       </Button>
                     </div>
                   </form>
 
                   {searchResults.length > 0 && (
                     <div className="space-y-3">
-                      <p className="sf-label">Arama Sonuçları</p>
+                      <p className="sf-label">{t("search.results")}</p>
                       {searchResults.map((book) => (
                         <button
                           key={book.id}
@@ -430,10 +425,12 @@ export function AddBookModal({
                             <div className="min-w-0 flex-1">
                               <h3 className="truncate">{book.volumeInfo.title}</h3>
                               <p className="sf-body truncate">
-                                {book.volumeInfo.authors?.join(', ') || 'Bilinmeyen Yazar'}
+                                {book.volumeInfo.authors?.join(', ') || t("unknownAuthor")}
                               </p>
                               {book.volumeInfo.pageCount && (
-                                <p className="sf-meta">{book.volumeInfo.pageCount} sayfa</p>
+                                <p className="sf-meta">
+                                  {t("pageCount", { count: book.volumeInfo.pageCount })}
+                                </p>
                               )}
                             </div>
                           </div>
@@ -443,13 +440,13 @@ export function AddBookModal({
                   )}
 
                   {searchResults.length === 0 && searchQuery && !isSearching && (
-                    <p className="sf-muted py-4 text-center">Kitap bulunamadı</p>
+                    <p className="sf-muted py-4 text-center">{t("search.noResults")}</p>
                   )}
                 </div>
 
                 <div className="sf-modal-footer sm:justify-end">
                   <Button type="button" variant="outline" onClick={onClose}>
-                    İptal
+                    {t("cancel")}
                   </Button>
                 </div>
               </>

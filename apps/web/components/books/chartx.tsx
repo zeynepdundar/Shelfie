@@ -61,7 +61,7 @@ function getBookDate(book: Book) {
 
 export function MyChart({ year }: { year: number }) {
   const { books } = useSelector((state: RootState) => state.books)
-  const t = useTranslations("overview.chart")
+  const t = useTranslations("stats.chart")
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   const chartData = useMemo(

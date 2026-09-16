@@ -1,58 +1,16 @@
 {
   "nav": {
-    "overview": "İstatistikler",
     "treasures": "Hazinem",
     "addBook": "+ Kitap Ekle",
     "logout": "Çıkış Yap",
     "tagline": "KİTAP GÜNLÜĞÜ",
-    "booksRead": "KİTAP OKUNDU",
     "menu": "Menü",
     "account": "HESAP",
     "accountPage": "Hesabım",
     "checkingSession": "Oturum kontrol ediliyor...",
-    "language": "Dil"
-  },
-  "overview": {
-    "welcome": "Hoş geldin, {email}!",
-    "subtitle": "Okuma yolculuğuna devam etmek için kitaplarını yönet.",
-    "stats": {
-      "totalBooks": "Toplam Kitap",
-      "readThisMonth": "Bu Ay Okunan",
-      "totalPages": "Toplam Sayfa",
-      "favoriteBooks": "Favori Kitaplar"
-    },
-    "completionRate": "Tamamlama Oranı",
-    "inProgressBooks": "Devam Eden",
-    "completedThisYear": "Bu Yıl Tamamlanan",
-    "pagesThisYear": "Bu Yıl Okunan Sayfa",
-    "recentBooks": "Son Kitaplar",
-    "recentBooksHint": "Kitaplığındaki en son kayıtlar.",
-    "noBooks": "Henüz kitap yok.",
-    "emptyTitle": "Kitaplığın ilk kitabını bekliyor.",
-    "emptyBody": "Kartını ve okuma listenin canlanmasını görmek için bir kitap ekle.",
-    "emptyAction": "İlk kitabını ekle",
-    "status": {
-      "completed": "Tamamlandı",
-      "inProgress": "Devam ediyor",
-      "value": "Durum",
-      "wantToRead": "Okumak İstiyorum"
-    },
-    "yearlyStats": "Yıllık Okuma İstatistikleri",
-    "yearlyStatsHint": "Yıl boyunca tamamlanan kitaplar ve okunan sayfalar.",
-    "chartYear": "Yıl",
-    "cover": "Kapak",
-    "title": "Başlık",
-    "author": "Yazar",
-    "pages": "Sayfa",
-    "startDate": "Başlama",
-    "endDate": "Bitiş",
-    "favorite": "Favori",
-    "chart": {
-      "monthBooks": "{count} kitap",
-      "totalPages": "Toplam Sayfa",
-      "booksThatMonth": "O Ay Okunanlar",
-      "none": "Kitap yok"
-    }
+    "language": "Dil",
+    "library": "Kütüphane",
+    "stats": "İstatistikler"
   },
   "treasures": {
     "title": "Edebi Hazinelerin",
@@ -61,7 +19,6 @@
     "stats": {
       "favorites": "Favori kitap",
       "quotes": "Kayıtlı alıntı",
-      "books": "Kitaplıktaki kitap",
       "quotedBooks": "Alıntısı olan kitap"
     },
     "favorites": {
@@ -100,16 +57,6 @@
       "bookPlaceholder": "Bir kitap seç",
       "noBooks": "Önce kitaplığına bir kitap ekle, sonra ondan alıntı kaydedebilirsin.",
       "savedOn": "{date} tarihinde kaydedildi"
-    },
-    "readingList": {
-      "title": "Okuma Listem",
-      "hint": "Sonra okumak üzere kaydettiğin kitaplar.",
-      "count": "{count} kitap",
-      "emptyTitle": "Okuma listen boş",
-      "emptyBody": "Kitap eklerken \"Sonra okumak istiyorum\" seçeneğini işaretle, burada biriksin.",
-      "remove": "Okuma listesinden çıkar",
-      "stat": "Okuma listesi",
-      "addBook": "Kitap Ekle"
     }
   },
   "account": {
@@ -133,6 +80,108 @@
     "preferences": {
       "title": "Tercihler",
       "hint": "Uygulamanın sana nasıl görüneceği."
+    }
+  },
+  "book": {
+    "status": {
+      "completed": "Tamamlandı",
+      "inProgress": "Devam ediyor",
+      "wantToRead": "Okumak İstiyorum"
+    }
+  },
+  "addBook": {
+    "title": "Yeni Kitap Ekle",
+    "subtitle": "Elle ekle ya da Google Books'ta ara.",
+    "close": "Kapat",
+    "tabs": {
+      "manual": "Manuel Ekle",
+      "search": "Arama Yap"
+    },
+    "fields": {
+      "status": "Durum",
+      "bookTitle": "Kitap Adı",
+      "bookTitlePlaceholder": "Kitap adını girin",
+      "author": "Yazar",
+      "authorPlaceholder": "Yazar adını girin",
+      "pages": "Sayfa Sayısı",
+      "pagesPlaceholder": "Sayfa sayısını girin",
+      "startDate": "Başlangıç Tarihi",
+      "endDate": "Bitiş Tarihi",
+      "readingStartDate": "Okuma Başlangıç Tarihi",
+      "readingEndDate": "Okuma Bitiş Tarihi",
+      "favorite": "Favori kitabım"
+    },
+    "search": {
+      "label": "Kitap Ara",
+      "placeholder": "Kitap adı veya yazar girin",
+      "submit": "Ara",
+      "searching": "Aranıyor...",
+      "results": "Arama Sonuçları",
+      "noResults": "Kitap bulunamadı"
+    },
+    "unknownAuthor": "Bilinmeyen Yazar",
+    "pageCount": "{count} sayfa",
+    "requiredError": "Lütfen kitap adı, yazar ve sayfa sayısını doldurun.",
+    "back": "Geri",
+    "cancel": "İptal",
+    "submit": "Kitap Ekle"
+  },
+  "library": {
+    "title": "Kütüphanem",
+    "subtitle": "Eklediğin bütün kitaplar.",
+    "bookCount": "{count} kitap",
+    "filters": {
+      "all": "Tümü",
+      "inProgress": "Okunuyor",
+      "completed": "Okundu"
+    },
+    "columns": {
+      "cover": "Kapak",
+      "title": "Başlık",
+      "author": "Yazar",
+      "pages": "Sayfa",
+      "startDate": "Başlama",
+      "endDate": "Bitiş",
+      "status": "Durum",
+      "favorite": "Favori"
+    },
+    "emptyTitle": "Kitaplığın ilk kitabını bekliyor.",
+    "emptyBody": "Kartını ve okuma listenin canlanmasını görmek için bir kitap ekle.",
+    "emptyAction": "İlk kitabını ekle",
+    "emptyFiltered": "Bu filtreye uyan kitap yok.",
+    "wantToRead": {
+      "title": "Okumak İstediklerim",
+      "hint": "Sıradaki kitapların.",
+      "empty": "Okuma listen boş.",
+      "start": "Okumaya başla",
+      "show": "Göster",
+      "hide": "Gizle"
+    },
+    "reading": {
+      "title": "Okuduklarım",
+      "hint": "Şu an okuduğun ve bitirdiğin kitaplar.",
+      "empty": "Henüz okumaya başladığın bir kitap yok.",
+      "finish": "Bitirdim"
+    }
+  },
+  "stats": {
+    "subtitle": "Okuma alışkanlıklarının yıllara ve aylara dağılımı.",
+    "stats": {
+      "totalBooks": "Toplam Kitap",
+      "favoriteBooks": "Favori Kitaplar"
+    },
+    "completionRate": "Tamamlama Oranı",
+    "inProgressBooks": "Devam Eden",
+    "completedThisYear": "Bu Yıl Tamamlanan",
+    "pagesThisYear": "Bu Yıl Okunan Sayfa",
+    "yearlyStats": "Yıllık Okuma İstatistikleri",
+    "yearlyStatsHint": "Yıl boyunca tamamlanan kitaplar ve okunan sayfalar.",
+    "chartYear": "Yıl",
+    "chart": {
+      "monthBooks": "{count} kitap",
+      "totalPages": "Toplam Sayfa",
+      "booksThatMonth": "O Ay Okunanlar",
+      "none": "Kitap yok"
     }
   }
 }

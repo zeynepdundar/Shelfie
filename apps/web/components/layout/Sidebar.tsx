@@ -11,6 +11,11 @@ import { Button } from "@/components/ui/button";
 import { darkGlassStyle } from "@/components/ui/glass";
 import { UserMenu } from "@/components/layout/UserMenu";
 import {
+  LibraryIcon,
+  StatsIcon,
+  TreasuresIcon,
+} from "@/components/icons/nav-icons";
+import {
   Sheet,
   SheetContent,
   SheetTitle,
@@ -26,8 +31,9 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
     pathname.replace(/^\/(en|tr)(?=\/|$)/, "").replace(/\/+$/, "") || "/";
 
   const views = [
-    { path: "/", label: `📊 ${t("overview")}` },
-    { path: "/treasures", label: `💎 ${t("treasures")}` },
+    { path: "/", label: t("library"), Icon: LibraryIcon },
+    { path: "/stats", label: t("stats"), Icon: StatsIcon },
+    { path: "/treasures", label: t("treasures"), Icon: TreasuresIcon },
   ];
 
   return (
@@ -57,6 +63,7 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
       <nav className="mb-6 flex flex-col gap-1">
         {views.map((view) => {
           const isActive = withoutLocale === view.path;
+          const Icon = view.Icon;
 
           return (
             <Link
@@ -64,12 +71,17 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
               href={`/${locale}${view.path === "/" ? "" : view.path}`}
               onClick={onNavigate}
               aria-current={isActive ? "page" : undefined}
-              className={`rounded-xl px-4 py-2.5 text-left text-sm transition-colors duration-200 ${
+              className={`group flex items-center gap-3 rounded-xl px-4 py-2.5 text-left text-sm transition-colors duration-200 ${
                 isActive
                   ? "bg-white/15 font-medium text-white"
                   : "text-white/50 hover:bg-white/[0.08] hover:text-white/80"
               }`}
             >
+              <Icon
+                className={`h-6 w-6 shrink-0 transition-opacity duration-200 ${
+                  isActive ? "opacity-100" : "opacity-60 group-hover:opacity-90"
+                }`}
+              />
               {view.label}
             </Link>
           );

@@ -1,58 +1,16 @@
 {
   "nav": {
-    "overview": "Statistics",
     "treasures": "Treasures",
     "addBook": "Add Book",
     "logout": "Log out",
     "tagline": "READING JOURNAL",
-    "booksRead": "BOOKS READ",
     "menu": "Menu",
     "account": "ACCOUNT",
     "accountPage": "My Account",
     "checkingSession": "Checking your session...",
-    "language": "Language"
-  },
-  "overview": {
-    "welcome": "Welcome, {email}!",
-    "subtitle": "Manage your books to continue your reading journey.",
-    "stats": {
-      "totalBooks": "Total Books",
-      "readThisMonth": "Read This Month",
-      "totalPages": "Total Pages",
-      "favoriteBooks": "Favorite Books"
-    },
-    "completionRate": "Completion Rate",
-    "inProgressBooks": "In Progress",
-    "completedThisYear": "Completed This Year",
-    "pagesThisYear": "Pages This Year",
-    "recentBooks": "Recent Books",
-    "recentBooksHint": "Latest entries from your shelf.",
-    "noBooks": "No books yet.",
-    "emptyTitle": "Your shelf is waiting for its first book.",
-    "emptyBody": "Add a title to start seeing your chart and reading list come alive.",
-    "emptyAction": "Add your first book",
-    "status": {
-      "completed": "Completed",
-      "inProgress": "In progress",
-      "value": "Status",
-      "wantToRead": "Want to Read"
-    },
-    "yearlyStats": "Yearly Reading Statistics",
-    "yearlyStatsHint": "Completed books and pages read across the year.",
-    "chartYear": "Year",
-    "cover": "Cover",
-    "title": "Title",
-    "author": "Author",
-    "pages": "Pages",
-    "startDate": "Start Date",
-    "endDate": "End Date",
-    "favorite": "Favorite",
-    "chart": {
-      "monthBooks": "{count} books",
-      "totalPages": "Total Pages",
-      "booksThatMonth": "Read That Month",
-      "none": "No books"
-    }
+    "language": "Language",
+    "library": "Library",
+    "stats": "Statistics"
   },
   "treasures": {
     "title": "Your Literary Treasures",
@@ -61,7 +19,6 @@
     "stats": {
       "favorites": "Favorite books",
       "quotes": "Saved quotes",
-      "books": "Books on the shelf",
       "quotedBooks": "Books with quotes"
     },
     "favorites": {
@@ -100,16 +57,6 @@
       "bookPlaceholder": "Select a book",
       "noBooks": "Add a book to your shelf first, then you can save quotes from it.",
       "savedOn": "Saved on {date}"
-    },
-    "readingList": {
-      "title": "Reading List",
-      "hint": "Books you saved to read later.",
-      "count": "{count} books",
-      "emptyTitle": "Your reading list is empty",
-      "emptyBody": "Tick \"Want to read later\" when adding a book and it will collect here.",
-      "remove": "Remove from reading list",
-      "stat": "Reading list",
-      "addBook": "Add Book"
     }
   },
   "account": {
@@ -133,6 +80,108 @@
     "preferences": {
       "title": "Preferences",
       "hint": "How the app appears to you."
+    }
+  },
+  "book": {
+    "status": {
+      "completed": "Completed",
+      "inProgress": "In progress",
+      "wantToRead": "Want to Read"
+    }
+  },
+  "addBook": {
+    "title": "Add a New Book",
+    "subtitle": "Add it by hand or search Google Books.",
+    "close": "Close",
+    "tabs": {
+      "manual": "Add Manually",
+      "search": "Search"
+    },
+    "fields": {
+      "status": "Status",
+      "bookTitle": "Title",
+      "bookTitlePlaceholder": "Enter the book title",
+      "author": "Author",
+      "authorPlaceholder": "Enter the author name",
+      "pages": "Page Count",
+      "pagesPlaceholder": "Enter the page count",
+      "startDate": "Start Date",
+      "endDate": "Finish Date",
+      "readingStartDate": "Reading Start Date",
+      "readingEndDate": "Reading Finish Date",
+      "favorite": "One of my favorites"
+    },
+    "search": {
+      "label": "Search Books",
+      "placeholder": "Enter a title or author",
+      "submit": "Search",
+      "searching": "Searching...",
+      "results": "Search Results",
+      "noResults": "No books found"
+    },
+    "unknownAuthor": "Unknown Author",
+    "pageCount": "{count} pages",
+    "requiredError": "Please fill in the title, author and page count.",
+    "back": "Back",
+    "cancel": "Cancel",
+    "submit": "Add Book"
+  },
+  "library": {
+    "title": "My Library",
+    "subtitle": "Every book you have added.",
+    "bookCount": "{count} books",
+    "filters": {
+      "all": "All",
+      "inProgress": "Reading",
+      "completed": "Read"
+    },
+    "columns": {
+      "cover": "Cover",
+      "title": "Title",
+      "author": "Author",
+      "pages": "Pages",
+      "startDate": "Started",
+      "endDate": "Finished",
+      "status": "Status",
+      "favorite": "Favorite"
+    },
+    "emptyTitle": "Your shelf is waiting for its first book.",
+    "emptyBody": "Add a title to start seeing your chart and reading list come alive.",
+    "emptyAction": "Add your first book",
+    "emptyFiltered": "No books match this filter.",
+    "wantToRead": {
+      "title": "Want to Read",
+      "hint": "What is up next.",
+      "empty": "Your reading list is empty.",
+      "start": "Start reading",
+      "show": "Show",
+      "hide": "Hide"
+    },
+    "reading": {
+      "title": "My Reading",
+      "hint": "Books you are reading and have finished.",
+      "empty": "You have not started a book yet.",
+      "finish": "Mark as finished"
+    }
+  },
+  "stats": {
+    "subtitle": "How your reading is spread across years and months.",
+    "stats": {
+      "totalBooks": "Total Books",
+      "favoriteBooks": "Favorite Books"
+    },
+    "completionRate": "Completion Rate",
+    "inProgressBooks": "In Progress",
+    "completedThisYear": "Completed This Year",
+    "pagesThisYear": "Pages This Year",
+    "yearlyStats": "Yearly Reading Statistics",
+    "yearlyStatsHint": "Completed books and pages read across the year.",
+    "chartYear": "Year",
+    "chart": {
+      "monthBooks": "{count} books",
+      "totalPages": "Total Pages",
+      "booksThatMonth": "Read That Month",
+      "none": "No books"
     }
   }
 }

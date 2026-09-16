@@ -8,18 +8,15 @@ import {
   ChevronRight,
   Heart,
   Quote as QuoteIcon,
-  Bookmark,
-  BookmarkX,
   Plus,
   X,
 } from 'lucide-react';
 
 import { AppDispatch, RootState } from '@/lib/store';
-import { addBook, fetchUserBooks, updateBook } from '@/lib/booksSlice';
+import { fetchUserBooks, updateBook } from '@/lib/booksSlice';
 import { AuthUser } from '@/lib/authSlice';
-import type { Book, Quote } from '@shelfie/types';
+import type { Quote } from '@shelfie/types';
 import { Button } from '@/components/ui/button';
-import { AddBookModal } from '@/components/books/AddBookModal';
 import { BookCard } from '@/components/books/BookCard';
 import { BOOK_STATUS_TONE, getBookStatus } from '@/lib/bookStatus';
 import {
@@ -49,12 +46,11 @@ function formatDate(value?: string) {
 
 export function TreasuresPage({ user }: TreasuresPageProps) {
   const t = useTranslations('treasures');
-  const statusT = useTranslations('overview');
+  const statusT = useTranslations('book.status');
   const dispatch = useDispatch<AppDispatch>();
   const { books, status } = useSelector((state: RootState) => state.books);
 
   const shelfRef = useRef<HTMLDivElement>(null);
-  const readingListRef = useRef<HTMLDivElement>(null);
   const quotesRef = useRef<HTMLDivElement>(null);
   const quoteTextRef = useRef<HTMLTextAreaElement>(null);
 
@@ -65,7 +61,6 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
   const [quoteNotes, setQuoteNotes] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [justAddedId, setJustAddedId] = useState<string | null>(null);
-  const [showAddBookModal, setShowAddBookModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -75,11 +70,6 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
 
   const favoriteBooks = useMemo(
     () => books.filter((book) => book.isFavorite),
-    [books],
-  );
-
-  const readingList = useMemo(
-    () => books.filter((book) => book.wantToRead && !book.isCompleted),
     [books],
   );
 
@@ -154,33 +144,13 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
     return () => window.clearTimeout(timeout);
   }, [justAddedId]);
 
-  const scrollShelf = (
-    ref: React.RefObject<HTMLDivElement | null>,
-    direction: 'left' | 'right',
-  ) => {
-    const node = ref.current;
+  const scrollShelf = (direction: 'left' | 'right') => {
+    const node = shelfRef.current;
     if (!node) return;
     node.scrollBy({
       left: direction === 'left' ? -340 : 340,
       behavior: 'smooth',
     });
-  };
-
-  const handleAddBook = async (newBook: Omit<Book, 'id' | 'dateAdded'>) => {
-    try {
-      await dispatch(addBook(newBook)).unwrap();
-      setShowAddBookModal(false);
-    } catch (error) {
-      console.error('Error adding book:', error);
-    }
-  };
-
-  const removeFromReadingList = async (bookId: string) => {
-    try {
-      await dispatch(updateBook({ bookId, updates: { wantToRead: false } }));
-    } catch (error) {
-      console.error('Error updating reading list:', error);
-    }
   };
 
   const toggleFavorite = async (bookId: string, currentFavorite: boolean) => {
@@ -236,7 +206,6 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
     { title: t('stats.favorites'), value: favoriteBooks.length },
     { title: t('stats.quotes'), value: allQuotes.length },
     { title: t('stats.quotedBooks'), value: quotedBooksCount },
-    { title: t('readingList.stat'), value: readingList.length },
   ];
 
   return (
@@ -251,7 +220,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
         </header>
 
         {/* Özet istatistikler */}
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {summaryCards.map((card) => (
             <StatCard
               key={card.title}
@@ -275,7 +244,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                   <div className="hidden gap-2 md:flex">
                     <button
                       type="button"
-                      onClick={() => scrollShelf(shelfRef, 'left')}
+                      onClick={() => scrollShelf('left')}
                       aria-label="Scroll left"
                       className="sf-icon-button"
                     >
@@ -283,7 +252,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                     </button>
                     <button
                       type="button"
-                      onClick={() => scrollShelf(shelfRef, 'right')}
+                      onClick={() => scrollShelf('right')}
                       aria-label="Scroll right"
                       className="sf-icon-button"
                     >
@@ -315,7 +284,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                     coverUrl={book.coverUrl}
                     rating={book.rating}
                     status={{
-                      label: statusT(`status.${getBookStatus(book)}`),
+                      label: statusT(getBookStatus(book)),
                       tone: BOOK_STATUS_TONE[getBookStatus(book)],
                     }}
                     onClick={() => openQuoteForm(book.id)}
@@ -331,85 +300,6 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                         className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white/70 backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white"
                       >
                         <Heart className="h-3.5 w-3.5 fill-current" />
-                      </button>
-                    }
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </GlassCard>
-
-        {/* Okuma listesi */}
-        <GlassCard>
-          <GlassCardHeader
-            title={t('readingList.title')}
-            description={t('readingList.hint')}
-            action={
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-white/60">
-                  {t('readingList.count', { count: readingList.length })}
-                </span>
-                <Button onClick={() => setShowAddBookModal(true)} size="sm">
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t('readingList.addBook')}
-                </Button>
-                {readingList.length > 2 && (
-                  <div className="hidden gap-2 md:flex">
-                    <button
-                      type="button"
-                      onClick={() => scrollShelf(readingListRef, 'left')}
-                      aria-label="Scroll left"
-                      className="sf-icon-button"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => scrollShelf(readingListRef, 'right')}
-                      aria-label="Scroll right"
-                      className="sf-icon-button"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            }
-          />
-
-          <div>
-            {readingList.length === 0 ? (
-              <EmptyState
-                icon={Bookmark}
-                title={t('readingList.emptyTitle')}
-                description={t('readingList.emptyBody')}
-              />
-            ) : (
-              <div
-                ref={readingListRef}
-                className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-color:rgba(255,255,255,0.2)_transparent] [scrollbar-width:thin]"
-              >
-                {readingList.map((book) => (
-                  <BookCard
-                    key={book.id}
-                    title={book.title}
-                    author={book.author}
-                    coverUrl={book.coverUrl}
-                    rating={book.rating}
-                    status={{
-                      label: statusT('status.wantToRead'),
-                      tone: 'neutral',
-                    }}
-                    action={
-                      <button
-                        type="button"
-                        onClick={() => removeFromReadingList(book.id)}
-                        title={t('readingList.remove')}
-                        aria-label={t('readingList.remove')}
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white/70 backdrop-blur-md transition-colors hover:bg-black/70 hover:text-white"
-                      >
-                        <BookmarkX className="h-3.5 w-3.5" />
                       </button>
                     }
                   />
@@ -516,15 +406,6 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
           </div>
         </GlassCard>
       </div>
-
-      {showAddBookModal && (
-        <AddBookModal
-          isOpen={showAddBookModal}
-          onClose={() => setShowAddBookModal(false)}
-          onAddBook={handleAddBook}
-          defaultWantToRead
-        />
-      )}
 
       {/* Alıntı ekleme modalı */}
       {showQuoteForm && (

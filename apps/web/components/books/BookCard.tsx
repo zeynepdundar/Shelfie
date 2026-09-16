@@ -33,6 +33,8 @@ export interface BookCardProps {
   status?: { label: string; tone: "success" | "accent" | "neutral" };
   /** Kartın sağ üstünde beliren küçük aksiyon (favoriden çıkar vb.). */
   action?: ReactNode;
+  /** Kartın altında tam genişlikte duran ana aksiyon (ör. "Okumaya başla"). */
+  primaryAction?: ReactNode;
   onClick?: () => void;
   className?: string;
 }
@@ -45,6 +47,7 @@ export function BookCard({
   rating,
   status,
   action,
+  primaryAction,
   onClick,
   className,
 }: BookCardProps) {
@@ -98,6 +101,8 @@ export function BookCard({
           {typeof rating === "number" && rating > 0 && <Rating value={rating} />}
         </div>
       </div>
+
+      {primaryAction && <div className="mt-auto pt-1">{primaryAction}</div>}
 
       {action && (
         <div className="absolute right-2 top-2 opacity-0 transition-opacity duration-200 focus-within:opacity-100 group-hover:opacity-100">

@@ -1,11 +1,14 @@
 'use client';
-import { useState } from "react";
-import { Login } from "@/components/auth/login";
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
-import { WelcomeScreen } from "@/components/pages/welcome-page";
-import { OverviewPage } from "@/components/pages/overview-page";
 
+import { useState } from "react";
+import { useSelector } from "react-redux";
+
+import { RootState } from "@/lib/store";
+import { Login } from "@/components/auth/login";
+import { WelcomeScreen } from "@/components/pages/welcome-page";
+import { LibraryPage } from "@/components/pages/library-page";
+
+/** Kök sayfa: giriş yapıldıysa Kütüphane, yapılmadıysa karşılama/giriş akışı. */
 export default function Home() {
   const [showLogin, setShowLogin] = useState(false);
   const user = useSelector((state: RootState) => state.auth.user);
@@ -14,7 +17,7 @@ export default function Home() {
   );
 
   if (isAuthenticated) {
-    return <OverviewPage user={user} />;
+    return <LibraryPage user={user} />;
   }
 
   if (showLogin) {
