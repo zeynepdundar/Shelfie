@@ -117,7 +117,10 @@
       "submit": "Search",
       "searching": "Searching...",
       "results": "Search Results",
-      "noResults": "No books found"
+      "noResults": "No books found",
+      "error": "Search is unavailable right now. Please try again later.",
+      "missingKey": "Book search is off: no Google Books API key is configured.",
+      "busy": "Google Books is busy right now. Please try again in a few seconds."
     },
     "unknownAuthor": "Unknown Author",
     "pageCount": "{count} pages",

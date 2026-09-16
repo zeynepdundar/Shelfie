@@ -4,6 +4,12 @@ import { Button } from "@/components/ui/button";
 import type { GoogleBook } from "@shelfie/types";
 import { AddBookModalProps } from "@/types/component-props";
 import { BookCover } from "@/components/books/BookCover";
+import {
+  GoogleBooksError,
+  MissingApiKeyError,
+  hasGoogleBooksKey,
+  searchGoogleBooks,
+} from "@/lib/googleBooks";
 import { Search, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { BookStatusKey } from "@/lib/bookStatus";
@@ -20,6 +26,7 @@ export function AddBookModal({
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<GoogleBook[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [selectedBook, setSelectedBook] = useState<GoogleBook | null>(null);
   const [showDateForm, setShowDateForm] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -32,8 +39,6 @@ export function AddBookModal({
     isFavorite: false,
     status: (defaultWantToRead ? "wantToRead" : "inProgress") as BookStatusKey
   });
-
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY || '';
 
   const resetForm = () => {
     setFormData({
@@ -52,16 +57,19 @@ export function AddBookModal({
     if (!searchQuery.trim()) return;
 
     setIsSearching(true);
+    setSearchError(null);
     try {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(searchQuery)}&key=${apiKey}&maxResults=4`
-      );
-      const data = await response.json();
-
-      setSearchResults(data.items || []);
+      setSearchResults(await searchGoogleBooks(searchQuery));
     } catch (error) {
       console.error('Kitap arama hatası:', error);
       setSearchResults([]);
+      setSearchError(
+        error instanceof MissingApiKeyError
+          ? t("search.missingKey")
+          : error instanceof GoogleBooksError && error.isTransient
+            ? t("search.busy")
+            : t("search.error")
+      );
     } finally {
       setIsSearching(false);
     }
@@ -399,12 +407,24 @@ export function AddBookModal({
                         className="sf-input flex-1"
                         placeholder={t("search.placeholder")}
                       />
-                      <Button type="submit" disabled={isSearching} className="shrink-0">
+                      <Button
+                        type="submit"
+                        disabled={isSearching || !hasGoogleBooksKey}
+                        className="shrink-0"
+                      >
                         <Search className="mr-2 h-4 w-4" />
                         {isSearching ? t("search.searching") : t("search.submit")}
                       </Button>
                     </div>
                   </form>
+
+                  {!hasGoogleBooksKey && (
+                    <div className="sf-alert-error">{t("search.missingKey")}</div>
+                  )}
+
+                  {searchError && hasGoogleBooksKey && (
+                    <div className="sf-alert-error">{searchError}</div>
+                  )}
 
                   {searchResults.length > 0 && (
                     <div className="space-y-3">
@@ -439,7 +459,7 @@ export function AddBookModal({
                     </div>
                   )}
 
-                  {searchResults.length === 0 && searchQuery && !isSearching && (
+                  {searchResults.length === 0 && searchQuery && !isSearching && !searchError && (
                     <p className="sf-muted py-4 text-center">{t("search.noResults")}</p>
                   )}
                 </div>

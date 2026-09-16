@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BookOpen,
   Check,
@@ -19,6 +19,11 @@ import { Button } from "@/components/ui/button";
 import { AddBookModal } from "@/components/books/AddBookModal";
 import { BookCard } from "@/components/books/BookCard";
 import { BookCover } from "@/components/books/BookCover";
+import {
+  GoogleBooksError,
+  findBookCover,
+  hasGoogleBooksKey,
+} from "@/lib/googleBooks";
 import {
   EmptyState,
   GlassCard,
@@ -63,38 +68,35 @@ export function LibraryPage({ user }: LibraryPageProps) {
   const [showWantToRead, setShowWantToRead] = useState(true);
   const [showAddBookModal, setShowAddBookModal] = useState(false);
   const [coverCache, setCoverCache] = useState<Record<string, string>>({});
-
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY || "";
+  const attemptedCovers = useRef<Set<string>>(new Set());
+  // Google geçici olarak yanıt vermiyorsa bu oturumda kapak aramayı bırak.
+  const coverLookupPaused = useRef(false);
 
   useEffect(() => {
     if (user) dispatch(fetchUserBooks());
   }, [user, dispatch]);
 
   // Kapağı olmayan kitaplar için Google Books'tan bir kez kapak aranır.
+  // Denenen kitaplar işaretlenir; başarısız aramalar döngüye girmesin.
   useEffect(() => {
-    if (!apiKey || books.length === 0) return;
+    if (!hasGoogleBooksKey || coverLookupPaused.current) return;
 
     books.forEach((book) => {
-      if (!book.coverUrl && !coverCache[book.id]) {
-        void fetchBookCover(book.title, book.author, book.id);
-      }
-    });
-  }, [books, apiKey, coverCache]);
+      if (book.coverUrl || coverCache[book.id]) return;
+      if (attemptedCovers.current.has(book.id)) return;
 
-  const fetchBookCover = async (
+      attemptedCovers.current.add(book.id);
+      void loadBookCover(book.title, book.author, book.id);
+    });
+  }, [books, coverCache]);
+
+  const loadBookCover = async (
     title: string,
     author: string,
     bookId: string
   ) => {
     try {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-          `${title} ${author}`
-        )}&key=${apiKey}&maxResults=1`
-      );
-      const data = await response.json();
-      const coverUrl = data.items?.[0]?.volumeInfo?.imageLinks?.thumbnail;
-
+      const coverUrl = await findBookCover(title, author);
       if (!coverUrl) return;
 
       setCoverCache((prev) =>
@@ -102,7 +104,11 @@ export function LibraryPage({ user }: LibraryPageProps) {
       );
       dispatch(updateBook({ bookId, updates: { coverUrl } }));
     } catch (fetchError) {
-      console.error("Cover image fetch error:", fetchError);
+      // Kapak araması sayfanın çalışması için kritik değil: sessizce vazgeç.
+      if (fetchError instanceof GoogleBooksError && fetchError.isTransient) {
+        coverLookupPaused.current = true;
+      }
+      console.warn("Kapak bulunamadı:", fetchError);
     }
   };
 

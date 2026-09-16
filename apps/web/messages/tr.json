@@ -117,7 +117,10 @@
       "submit": "Ara",
       "searching": "Aranıyor...",
       "results": "Arama Sonuçları",
-      "noResults": "Kitap bulunamadı"
+      "noResults": "Kitap bulunamadı",
+      "error": "Arama şu anda yapılamadı. Lütfen sonra tekrar deneyin.",
+      "missingKey": "Kitap arama kapalı: Google Books API anahtarı tanımlı değil.",
+      "busy": "Google Books şu anda yoğun. Birkaç saniye sonra tekrar dener misin?"
     },
     "unknownAuthor": "Bilinmeyen Yazar",
     "pageCount": "{count} sayfa",
