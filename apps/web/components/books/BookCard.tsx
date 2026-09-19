@@ -39,7 +39,7 @@ export interface BookCardProps {
   className?: string;
 }
 
-/** Yatay listelerde kullanılan dikey kitap kartı: üstte kapak, altta bilgi. */
+/** Yatay raflarda kullanılan kitap kartı: solda kapak, sağda bilgi ve aksiyon. */
 export function BookCard({
   title,
   author,
@@ -56,7 +56,7 @@ export function BookCard({
   return (
     <article
       className={cn(
-        "group relative flex w-[148px] shrink-0 snap-start flex-col gap-3 rounded-xl p-3 transition-colors duration-200",
+        "group relative flex w-[296px] shrink-0 snap-start gap-4 rounded-xl p-3 transition-colors duration-200",
         interactive && "cursor-pointer hover:bg-white/[0.16]",
         className
       )}
@@ -75,37 +75,46 @@ export function BookCard({
       role={interactive ? "button" : undefined}
       tabIndex={interactive ? 0 : undefined}
     >
-      <BookCover src={coverUrl} size="lg" />
+      <BookCover src={coverUrl} size="card" />
 
-      <div className="min-w-0">
-        <h3 className="line-clamp-2 text-[0.9rem] font-semibold leading-snug text-white">
+      <div className="flex min-w-0 flex-1 flex-col py-0.5">
+        <h3
+          className={cn(
+            "line-clamp-2 text-[0.95rem] font-semibold leading-snug text-white",
+            action && "pr-7"
+          )}
+        >
           {title}
         </h3>
-        <p className="mt-1 truncate text-[0.78rem] text-white/50">{author}</p>
+        <p className="mt-1 truncate text-[0.8rem] text-white/55">{author}</p>
 
-        <div className="mt-2.5 flex flex-col items-start gap-1.5">
-          {status && (
-            <span
-              className={cn(
-                "inline-flex items-center rounded-full px-2 py-0.5 text-[0.7rem] font-medium",
-                status.tone === "success"
-                  ? "bg-mint/15 text-mint"
-                  : status.tone === "accent"
-                    ? "bg-accent-strong/20 text-accent-soft"
-                    : "bg-white/10 text-white/70"
-              )}
-            >
-              {status.label}
-            </span>
-          )}
-          {typeof rating === "number" && rating > 0 && <Rating value={rating} />}
-        </div>
+        {(status || (typeof rating === "number" && rating > 0)) && (
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {status && (
+              <span
+                className={cn(
+                  "inline-flex items-center rounded-full px-2 py-0.5 text-[0.7rem] font-medium",
+                  status.tone === "success"
+                    ? "bg-mint/15 text-mint"
+                    : status.tone === "accent"
+                      ? "bg-accent-strong/20 text-accent-soft"
+                      : "bg-white/10 text-white/70"
+                )}
+              >
+                {status.label}
+              </span>
+            )}
+            {typeof rating === "number" && rating > 0 && (
+              <Rating value={rating} />
+            )}
+          </div>
+        )}
+
+        {primaryAction && <div className="mt-auto pt-3">{primaryAction}</div>}
       </div>
 
-      {primaryAction && <div className="mt-auto pt-1">{primaryAction}</div>}
-
       {action && (
-        <div className="absolute right-2 top-2 opacity-0 transition-opacity duration-200 focus-within:opacity-100 group-hover:opacity-100">
+        <div className="absolute right-2.5 top-2.5 opacity-0 transition-opacity duration-200 focus-within:opacity-100 group-hover:opacity-100">
           {action}
         </div>
       )}

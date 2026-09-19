@@ -29,6 +29,15 @@ const SIZES = {
     icon: "h-4 w-4",
     shadow: "shadow-[0_6px_14px_-8px_rgba(0,0,0,0.8)]",
   },
+  /* Yatay kitap kartı (raf) içindeki kapak: sabit 2:3 */
+  card: {
+    frame: "h-[138px] w-[92px]",
+    radius: "rounded-l-[2px] rounded-r-[4px]",
+    spine: "w-[5px]",
+    spineEdge: "left-[5px]",
+    icon: "h-6 w-6",
+    shadow: "shadow-[0_8px_18px_-8px_rgba(0,0,0,0.85)]",
+  },
   lg: {
     frame: "aspect-[2/3] w-full",
     radius: "rounded-l-[2px] rounded-r-[4px]",

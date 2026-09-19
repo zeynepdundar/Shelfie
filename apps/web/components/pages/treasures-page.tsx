@@ -150,7 +150,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
     const node = shelfRef.current;
     if (!node) return;
     node.scrollBy({
-      left: direction === 'left' ? -340 : 340,
+      left: direction === 'left' ? -312 : 312,
       behavior: 'smooth',
     });
   };
