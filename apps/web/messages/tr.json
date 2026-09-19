@@ -56,7 +56,8 @@
       "bookLabel": "Kitap",
       "bookPlaceholder": "Bir kitap seç",
       "noBooks": "Önce kitaplığına bir kitap ekle, sonra ondan alıntı kaydedebilirsin.",
-      "savedOn": "{date} tarihinde kaydedildi"
+      "savedOn": "{date} tarihinde kaydedildi",
+      "saveError": "Alıntı kaydedilemedi. Lütfen tekrar dene."
     }
   },
   "account": {

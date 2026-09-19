@@ -322,3 +322,89 @@
 @utility star-empty {
   color: rgba(255, 255, 255, 0.25);
 }
+
+
+/* --- Alıntı: çizgili defter yaprağı ---------------------------------------- */
+/* Satır yüksekliği --paper-line; içerideki her metin satırı bu ızgaraya oturur
+   ki yazı çizgilerin üstünde dursun. Sol kenarda kırmızı kenar çizgisi.
+   Zemin hafif yarı saydam krem: cam kutunun içinde baskın durmasın. */
+.sf-paper {
+  --paper-line: 2rem;
+  --paper-margin: 2.75rem;
+  --paper-bg: rgba(253, 251, 245, 0.86);
+  --paper-rule: rgba(76, 117, 178, 0.22);
+  --paper-margin-rule: rgba(214, 76, 76, 0.4);
+  --paper-ink: #1f3566;
+
+  position: relative;
+  border-radius: 3px;
+  padding: var(--paper-line) 1.25rem calc(var(--paper-line) * 0.5) calc(var(--paper-margin) + 0.9rem);
+  color: var(--paper-ink);
+  font-family: var(--font-hand);
+  font-size: 1.5rem;
+  line-height: var(--paper-line);
+  background-color: var(--paper-bg);
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent calc(var(--paper-margin) - 1px),
+      var(--paper-margin-rule) calc(var(--paper-margin) - 1px),
+      var(--paper-margin-rule) calc(var(--paper-margin) + 1px),
+      transparent calc(var(--paper-margin) + 1px)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--paper-line) - 1px),
+      var(--paper-rule) calc(var(--paper-line) - 1px),
+      var(--paper-rule) var(--paper-line)
+    );
+  /* Çizgileri biraz yukarı kaydır: yazının tabanı çizgiye otursun */
+  background-position: 0 0, 0 -0.3rem;
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.12),
+    0 10px 22px -14px rgba(0, 0, 0, 0.5);
+  transform: rotate(var(--paper-tilt, 0deg));
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.sf-paper:nth-child(3n + 1) { --paper-tilt: -0.6deg; }
+.sf-paper:nth-child(3n + 2) { --paper-tilt: 0.45deg; }
+.sf-paper:nth-child(3n) { --paper-tilt: -0.2deg; }
+.sf-paper:hover {
+  --paper-tilt: 0deg;
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.12),
+    0 16px 30px -14px rgba(0, 0, 0, 0.6);
+}
+
+/* Üstte yarı saydam bant — kâğıt panoya yapıştırılmış gibi */
+.sf-paper::before {
+  content: "";
+  position: absolute;
+  top: -0.6rem;
+  left: 50%;
+  width: 5.5rem;
+  height: 1.35rem;
+  transform: translateX(-50%) rotate(-2deg);
+  background: rgba(255, 199, 3, 0.45);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+}
+/* Yeni eklenen alıntı: bant tam sarı, kâğıt rengi aynı kalır */
+.sf-paper[data-new="true"]::before { background: rgba(255, 199, 3, 0.9); }
+
+/* Kurşun kalem notu ve künye satırları aynı çizgi ızgarasında kalır */
+.sf-paper-pencil {
+  color: rgba(55, 55, 60, 0.7);
+  font-size: 1.3rem;
+}
+.sf-paper-meta {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: rgba(31, 53, 102, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-paper { transition: none; }
+}

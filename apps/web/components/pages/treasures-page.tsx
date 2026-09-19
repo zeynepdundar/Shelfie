@@ -60,6 +60,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
   const [quotePage, setQuotePage] = useState('');
   const [quoteNotes, setQuoteNotes] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [justAddedId, setJustAddedId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -115,6 +116,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
     setQuoteText('');
     setQuotePage('');
     setQuoteNotes('');
+    setSaveError(null);
   }, []);
 
   useEffect(() => {
@@ -167,22 +169,26 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
     if (!selectedBook || !quoteText.trim()) return;
 
     const parsedPage = Number.parseInt(quotePage, 10);
+    const trimmedNotes = quoteNotes.trim();
+    // Firestore `undefined` alanları reddediyor; boş opsiyonel alanlar hiç eklenmemeli.
     const newQuote: Quote = {
       id: Date.now().toString(),
       text: quoteText.trim(),
-      page: Number.isNaN(parsedPage) ? undefined : parsedPage,
       dateAdded: new Date().toISOString(),
-      notes: quoteNotes.trim() || undefined,
+      ...(Number.isNaN(parsedPage) ? {} : { page: parsedPage }),
+      ...(trimmedNotes ? { notes: trimmedNotes } : {}),
     };
 
     setIsSaving(true);
+    setSaveError(null);
     try {
+      // unwrap(): thunk reddedilirse hata fırlatır, catch'e düşer.
       await dispatch(
         updateBook({
           bookId: selectedBook.id,
           updates: { quotes: [...(selectedBook.quotes || []), newQuote] },
         }),
-      );
+      ).unwrap();
       closeQuoteForm();
       setJustAddedId(newQuote.id);
       window.setTimeout(() => {
@@ -193,12 +199,14 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
       }, 60);
     } catch (error) {
       console.error('Error adding quote:', error);
+      setSaveError(t('modal.saveError'));
     } finally {
       setIsSaving(false);
     }
   };
 
-  if (status === 'loading') {
+  // Sadece ilk yüklemede tam sayfa loader; kayıt sırasında modal açık kalsın.
+  if (status === 'loading' && books.length === 0) {
     return <PageLoading label={t('loading')} />;
   }
 
@@ -341,7 +349,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                 }
               />
             ) : (
-              <div className="gap-5 [column-fill:balance] sm:columns-2">
+              <div className="gap-6 px-1 pt-1 [column-fill:balance] sm:columns-2">
                 {allQuotes.map((quote) => {
                   const addedAt = formatDate(quote.dateAdded);
                   const isNew = quote.id === justAddedId;
@@ -349,54 +357,41 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                   return (
                     <figure
                       key={quote.id}
-                      className={`mb-5 break-inside-avoid rounded-card border p-6 backdrop-blur-md transition-all duration-500 ${
-                        isNew
-                          ? 'border-accent-strong bg-accent-strong/15 ring-2 ring-accent-strong/40'
-                          : 'border-control-border bg-control hover:bg-control-hover'
-                      }`}
+                      data-new={isNew}
+                      className="sf-paper mb-7 mt-3 inline-block w-full break-inside-avoid"
                     >
-                      <span
-                        aria-hidden
-                        className="block font-serif text-5xl leading-none text-accent-ink/35"
-                      >
-                        &ldquo;
-                      </span>
-
-                      <blockquote className="-mt-3 text-[0.975rem] leading-relaxed text-ink/85">
-                        {quote.text}
+                      <blockquote className="whitespace-pre-line break-words">
+                        &ldquo;{quote.text}&rdquo;
                       </blockquote>
 
                       {quote.notes && (
-                        <p className="sf-body sf-tile mt-4">
-                          <span className="font-semibold text-accent-ink">
-                            {t('quotes.note')}:
-                          </span>{' '}
-                          {quote.notes}
+                        <p className="sf-paper-pencil">
+                          {t('quotes.note')}: {quote.notes}
                         </p>
                       )}
 
-                      <figcaption className="mt-5 flex items-end justify-between gap-4 border-t border-hairline pt-4">
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-ink">
-                            {quote.bookTitle}
-                          </p>
-                          <p className="sf-meta truncate">{quote.bookAuthor}</p>
-                        </div>
-                        <div className="flex shrink-0 items-center gap-2">
+                      <figcaption className="mt-8 text-right">
+                        <p className="truncate font-semibold">
+                          — {quote.bookTitle}
+                        </p>
+                        <p className="sf-paper-meta flex h-8 items-center justify-end gap-2 truncate">
+                          {quote.bookAuthor ? (
+                            <span className="truncate">{quote.bookAuthor}</span>
+                          ) : null}
                           {quote.page ? (
-                            <span className="sf-chip px-2.5">
-                              {t('quotes.page', { page: quote.page })}
+                            <span className="shrink-0">
+                              · {t('quotes.page', { page: quote.page })}
                             </span>
                           ) : null}
                           {addedAt ? (
                             <span
-                              className={`text-xs ${isNew ? 'font-semibold text-accent-ink' : 'text-ink/45'}`}
+                              className="shrink-0"
                               title={t('modal.savedOn', { date: addedAt })}
                             >
-                              {addedAt}
+                              · {addedAt}
                             </span>
                           ) : null}
-                        </div>
+                        </p>
                       </figcaption>
                     </figure>
                   );
@@ -511,6 +506,14 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                       className="sf-input"
                     />
                   </div>
+                </div>
+              </div>
+            )}
+
+            {saveError && (
+              <div className="px-6 pb-2">
+                <div className="sf-alert-error" role="alert">
+                  {saveError}
                 </div>
               </div>
             )}

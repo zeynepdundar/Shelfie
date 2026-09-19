@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500;600&family=Caveat:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "../styles/utils.css";
 
@@ -200,6 +200,8 @@
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
   /* Sayfa başlıkları ve marka için serif görüntü yazı tipi */
   --font-display: "Fraunces", Georgia, serif;
+  /* Alıntı defter yaprakları için el yazısı */
+  --font-hand: "Caveat", "Segoe Print", "Bradley Hand", cursive;
 
   /* Yarıçap */
   --radius-sm: calc(var(--radius) - 4px);

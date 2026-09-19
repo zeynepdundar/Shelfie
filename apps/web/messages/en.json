@@ -56,7 +56,8 @@
       "bookLabel": "Book",
       "bookPlaceholder": "Select a book",
       "noBooks": "Add a book to your shelf first, then you can save quotes from it.",
-      "savedOn": "Saved on {date}"
+      "savedOn": "Saved on {date}",
+      "saveError": "Couldn't save the quote. Please try again."
     }
   },
   "account": {
