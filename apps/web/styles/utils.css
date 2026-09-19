@@ -53,7 +53,7 @@
   @apply mt-2 max-w-2xl text-sm text-ink/70 sm:text-base;
 }
 @utility sf-container {
-  @apply relative mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 pb-10 pt-8 sm:px-6 lg:px-10 lg:pb-14 lg:pt-12;
+  @apply relative mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 pb-10 pt-8 sm:px-6 lg:px-10 lg:pb-14 lg:pt-12;
 }
 
 /* --- Yüzeyler: panel > kart > kutucuk -------------------------------------
@@ -176,7 +176,42 @@
 
 /* --- Küçük kontroller ------------------------------------------------------ */
 @utility sf-icon-button {
-  @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-control-border bg-control text-ink/70 transition-colors duration-200 hover:bg-control-hover hover:text-ink;
+  @apply inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 text-white/80 transition-colors duration-200 hover:bg-black/60 hover:text-white;
+  background-color: rgba(10, 8, 6, 0.5);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+}
+
+/* --- Bölüm başlığı kontrolleri --------------------------------------------
+   SectionHeader'ın sağındaki her şey aynı koyu cam hapı kullanır; hem
+   fotoğrafın üstünde hem cam kartın içinde okunur. */
+/* Sayaç / bilgi hapı: "12 kitap", yıl seçici */
+@utility sf-pill {
+  @apply inline-flex items-center gap-2 rounded-full border border-white/15 px-3.5 py-1.5 text-sm font-medium text-white;
+  background-color: rgba(10, 8, 6, 0.5);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+}
+/* Tıklanabilir hap: göster/gizle gibi ikincil aksiyonlar */
+@utility sf-pill-button {
+  @apply inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3.5 py-1.5 text-sm font-medium text-white/85 transition-colors duration-200 hover:bg-black/65 hover:text-white;
+  background-color: rgba(10, 8, 6, 0.5);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+}
+/* Seçenek grubu: filtreler, dil seçimi. Aktif öğe aria-pressed / aria-current ile */
+@utility sf-segmented {
+  @apply inline-flex flex-wrap items-center gap-1 rounded-full border border-white/15 p-1;
+  background-color: rgba(10, 8, 6, 0.5);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+}
+@utility sf-segmented-item {
+  @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-white/70 transition-colors duration-200 hover:bg-white/10 hover:text-white;
+  &[aria-pressed="true"],
+  &[aria-current="true"] {
+    @apply bg-white/15 font-medium text-white;
+  }
 }
 @utility sf-chip {
   @apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium text-ink/75;

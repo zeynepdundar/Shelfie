@@ -114,6 +114,49 @@ export function GlassCardHeader({
   );
 }
 
+interface SectionHeaderProps {
+  title: ReactNode;
+  description?: ReactNode;
+  /** Sağdaki kontroller: sayaç (sf-pill), filtre (sf-segmented), buton... */
+  action?: ReactNode;
+  className?: string;
+}
+
+/**
+ * Sayfa bölümlerinin başlığı — BÜTÜN SAYFALARDA AYNI.
+ * Kartın içinde değil, kartın üstünde, doğrudan kitaplık fotoğrafının
+ * üzerinde durur. Okunaklı kalsın diye güçlü gölge, büyük/kalın başlık ve
+ * tam beyaz alt metin kullanır. Altındaki içerik ya serbest nesnelerdir
+ * (kitap kartları, alıntı yaprakları) ya da bir GlassCard (tablo, grafik, form).
+ */
+export function SectionHeader({
+  title,
+  description,
+  action,
+  className,
+}: SectionHeaderProps) {
+  return (
+    <div
+      className={cn(
+        "mb-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between",
+        className
+      )}
+    >
+      <div className="min-w-0 [text-shadow:0_0_2px_rgba(0,0,0,0.9),0_1px_4px_rgba(0,0,0,0.9),0_4px_24px_rgba(0,0,0,0.8)]">
+        <h2 className="text-2xl font-bold tracking-tight text-white">
+          {title}
+        </h2>
+        {description && (
+          <p className="mt-1 text-sm font-medium text-white">{description}</p>
+        )}
+      </div>
+      {action && (
+        <div className="flex flex-wrap items-center gap-2">{action}</div>
+      )}
+    </div>
+  );
+}
+
 interface IconBadgeProps {
   icon: LucideIcon;
   className?: string;

@@ -11,7 +11,8 @@ import type { RootState } from "@/lib/store";
 import { useAppDispatch } from "@/lib/hooks";
 import { signOutUser, updateDisplayName } from "@/lib/authSlice";
 import { Button } from "@/components/ui/button";
-import { GlassCard, GlassCardHeader } from "@/components/ui/glass";
+import { GlassCard, SectionHeader } from "@/components/ui/glass";
+import { AuthPanel } from "@/components/auth/auth-panel";
 import { Avatar } from "@/components/layout/UserMenu";
 import { isBookFinished } from "@/lib/bookStatus";
 
@@ -33,7 +34,7 @@ function LanguageField() {
     pathname.replace(/^\/(en|tr)(?=\/|$)/, "").replace(/\/+$/, "") || "/";
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 sm:justify-end">
+    <div className="sf-segmented">
       {LOCALES.map((option) => {
         const isActive = option.code === locale;
 
@@ -42,11 +43,7 @@ function LanguageField() {
             key={option.code}
             href={`/${option.code}${withoutLocale === "/" ? "" : withoutLocale}`}
             aria-current={isActive ? "true" : undefined}
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors duration-200 ${
-              isActive
-                ? "bg-white/15 font-medium text-white"
-                : "text-white/60 hover:bg-white/10 hover:text-white"
-            }`}
+            className="sf-segmented-item"
           >
             {isActive && <Check className="h-3.5 w-3.5 text-accent-ink" />}
             {option.label}
@@ -170,7 +167,10 @@ export function AccountPage() {
 
   if (!user) return null;
 
-  const name = user.displayName || user.email || "";
+  const name = user.isAnonymous
+    ? user.displayName || t("guestName")
+    : user.displayName || user.email || "";
+  const signInMethods = user.isAnonymous ? ["anonymous"] : user.providers;
   const completed = books.filter((book) => isBookFinished(book)).length;
 
   return (
@@ -192,6 +192,7 @@ export function AccountPage() {
                   {name}
                 </p>
                 <p className="mt-0.5 text-sm text-white/50">
+                  {user.isAnonymous && <>{t("guestNote")} · </>}
                   {t("booksCompleted", { count: completed })}
                 </p>
               </div>
@@ -208,48 +209,81 @@ export function AccountPage() {
           </div>
         </GlassCard>
 
-        <GlassCard>
-          <GlassCardHeader
-            size="md"
+        {/* Misafir hesap: Google ya da e-posta bağlanınca aynı uid kalıcı olur */}
+        {user.isAnonymous && (
+          <section className="min-w-0">
+            <SectionHeader
+              title={t("upgrade.title")}
+              description={t("upgrade.hint")}
+            />
+            <GlassCard className="p-6">
+              <div className="max-w-md">
+                <AuthPanel mode="upgrade" />
+              </div>
+              <p className="mt-5 border-t border-white/10 pt-4 text-sm text-white/60">
+                {t("upgrade.warning")}
+              </p>
+            </GlassCard>
+          </section>
+        )}
+
+        <section className="min-w-0">
+          <SectionHeader
             title={t("details.title")}
             description={t("details.hint")}
           />
 
-          <dl className="flex flex-col">
-            <div className="flex flex-col gap-1 border-b border-white/10 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
-              <dt className="text-sm text-white/50">
-                {t("fields.displayName")}
-              </dt>
-              <dd className="min-w-0 sm:text-right">
-                <DisplayNameField value={user.displayName} />
-              </dd>
-            </div>
+          <GlassCard className="py-2">
+            <dl className="flex flex-col">
+              <div className="flex flex-col gap-1 border-b border-white/10 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+                <dt className="text-sm text-white/50">
+                  {t("fields.displayName")}
+                </dt>
+                <dd className="min-w-0 sm:text-right">
+                  <DisplayNameField value={user.displayName} />
+                </dd>
+              </div>
 
-            <div className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
-              <dt className="text-sm text-white/50">{t("fields.email")}</dt>
-              <dd className="truncate text-sm text-white sm:text-right">
-                {user.email || t("notSet")}
-              </dd>
-            </div>
-          </dl>
-        </GlassCard>
+              <div className="flex flex-col gap-1 border-b border-white/10 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+                <dt className="text-sm text-white/50">{t("signInMethod")}</dt>
+                <dd className="flex flex-wrap gap-1.5 sm:justify-end">
+                  {signInMethods.map((method) => (
+                    <span key={method} className="sf-chip">
+                      {t.has(`providers.${method}`)
+                        ? t(`providers.${method}`)
+                        : method}
+                    </span>
+                  ))}
+                </dd>
+              </div>
 
-        <GlassCard>
-          <GlassCardHeader
-            size="md"
+              <div className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+                <dt className="text-sm text-white/50">{t("fields.email")}</dt>
+                <dd className="truncate text-sm text-white sm:text-right">
+                  {user.email || t("notSet")}
+                </dd>
+              </div>
+            </dl>
+          </GlassCard>
+        </section>
+
+        <section className="min-w-0">
+          <SectionHeader
             title={t("preferences.title")}
             description={t("preferences.hint")}
           />
 
-          <dl className="flex flex-col">
-            <div className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
-              <dt className="text-sm text-white/50">{navT("language")}</dt>
-              <dd className="min-w-0">
-                <LanguageField />
-              </dd>
-            </div>
-          </dl>
-        </GlassCard>
+          <GlassCard className="py-2">
+            <dl className="flex flex-col">
+              <div className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+                <dt className="text-sm text-white/50">{navT("language")}</dt>
+                <dd className="min-w-0 sm:text-right">
+                  <LanguageField />
+                </dd>
+              </div>
+            </dl>
+          </GlassCard>
+        </section>
       </div>
     </div>
   );

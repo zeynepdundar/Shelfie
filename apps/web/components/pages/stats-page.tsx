@@ -10,8 +10,7 @@ import { useTranslations } from "next-intl";
 import { MyChart } from "../books/chartx";
 import {
   GlassCard,
-  GlassCardHeader,
-  GlassInset,
+  SectionHeader,
   PageLoading,
   StatCard,
 } from "@/components/ui/glass";
@@ -154,13 +153,13 @@ export function StatsPage({ user }: StatsPageProps) {
 
         {status === "failed" && <div className="sf-alert-error">{error}</div>}
 
-        {/* Yıllık grafik */}
-        <GlassCard>
-          <GlassCardHeader
+        {/* Yıllık grafik — başlık dışarıda, grafik cam kartın içinde */}
+        <section className="min-w-0">
+          <SectionHeader
             title={t("yearlyStats")}
             description={t("yearlyStatsHint")}
             action={
-              <label className="inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-sm text-white/80">
+              <label className="sf-pill">
                 <CalendarDays className="h-3.5 w-3.5 text-accent-strong" />
                 <span>{t("chartYear")}</span>
                 <select
@@ -178,10 +177,10 @@ export function StatsPage({ user }: StatsPageProps) {
               </label>
             }
           />
-          <GlassInset>
+          <GlassCard>
             <MyChart year={selectedYear} />
-          </GlassInset>
-        </GlassCard>
+          </GlassCard>
+        </section>
       </div>
     </div>
   );

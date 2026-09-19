@@ -29,8 +29,8 @@ import {
 import {
   EmptyState,
   GlassCard,
-  GlassCardHeader,
   PageLoading,
+  SectionHeader,
 } from "@/components/ui/glass";
 import { isBookFinished } from "@/lib/bookStatus";
 
@@ -207,14 +207,14 @@ export function LibraryPage({ user }: LibraryPageProps) {
 
         {status === "failed" && <div className="sf-alert-error">{error}</div>}
 
-        {/* Okumak İstediklerim — yatay raf, sayfayı uzatmasın diye katlanabilir */}
-        <GlassCard>
-          <GlassCardHeader
+        {/* Okumak İstediklerim — kitap kartları doğrudan arka planda (Favoriler gibi) */}
+        <section className="min-w-0">
+          <SectionHeader
             title={t("wantToRead.title")}
             description={t("wantToRead.hint")}
             action={
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-white/60">
+              <>
+                <span className="sf-pill">
                   {t("bookCount", { count: wantToRead.length })}
                 </span>
                 {wantToRead.length > 0 && (
@@ -222,7 +222,7 @@ export function LibraryPage({ user }: LibraryPageProps) {
                     type="button"
                     onClick={() => setShowWantToRead((value) => !value)}
                     aria-expanded={showWantToRead}
-                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+                    className="sf-pill-button"
                   >
                     {showWantToRead ? t("wantToRead.hide") : t("wantToRead.show")}
                     <ChevronDown
@@ -232,15 +232,17 @@ export function LibraryPage({ user }: LibraryPageProps) {
                     />
                   </button>
                 )}
-              </div>
+              </>
             }
           />
 
           {wantToRead.length === 0 ? (
-            <p className="sf-muted px-1 pb-1">{t("wantToRead.empty")}</p>
+            <GlassCard className="py-4">
+              <p className="sf-muted">{t("wantToRead.empty")}</p>
+            </GlassCard>
           ) : (
             showWantToRead && (
-              <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-color:rgba(255,255,255,0.2)_transparent] [scrollbar-width:thin]">
+              <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-color:rgba(255,255,255,0.3)_transparent] [scrollbar-width:thin]">
                 {wantToRead.map((book) => (
                   <BookCard
                     key={book.id}
@@ -262,38 +264,30 @@ export function LibraryPage({ user }: LibraryPageProps) {
               </div>
             )
           )}
-        </GlassCard>
+        </section>
 
-        {/* Okuduklarım — tablo */}
-        <GlassCard>
-          <GlassCardHeader
+        {/* Okuduklarım — başlık dışarıda, tablo cam kartın içinde */}
+        <section className="min-w-0">
+          <SectionHeader
             title={t("reading.title")}
             description={t("reading.hint")}
             action={
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex flex-wrap gap-1.5">
-                  {READING_FILTERS.map((key) => {
-                    const isActive = key === filter;
-
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => setFilter(key)}
-                        aria-pressed={isActive}
-                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors duration-200 ${
-                          isActive
-                            ? "bg-white/15 font-medium text-white"
-                            : "text-white/60 hover:bg-white/10 hover:text-white"
-                        }`}
-                      >
-                        {t(`filters.${key}`)}
-                        <span className="text-xs text-white/40">
-                          {counts[key]}
-                        </span>
-                      </button>
-                    );
-                  })}
+              <>
+                <div className="sf-segmented" role="group">
+                  {READING_FILTERS.map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setFilter(key)}
+                      aria-pressed={key === filter}
+                      className="sf-segmented-item"
+                    >
+                      {t(`filters.${key}`)}
+                      <span className="text-xs text-white/50">
+                        {counts[key]}
+                      </span>
+                    </button>
+                  ))}
                 </div>
                 <Button
                   size="sm"
@@ -305,125 +299,127 @@ export function LibraryPage({ user }: LibraryPageProps) {
                   <Download className="mr-1.5 h-4 w-4" />
                   {t("reading.export")}
                 </Button>
-              </div>
+              </>
             }
           />
 
-          {reading.length === 0 ? (
-            <EmptyState
-              icon={BookOpen}
-              title={t("reading.empty")}
-              description={books.length === 0 ? t("emptyBody") : undefined}
-              action={
-                books.length === 0 ? (
-                  <Button onClick={() => setShowAddBookModal(true)} size="lg">
-                    <Plus className="mr-2 h-4 w-4" />
-                    {t("emptyAction")}
-                  </Button>
-                ) : undefined
-              }
-            />
-          ) : visibleReading.length === 0 ? (
-            <EmptyState icon={BookOpen} title={t("emptyFiltered")} />
-          ) : (
-            <div className="space-y-3">
-              <div className="hidden items-center gap-4 px-4 pb-2 md:grid md:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,0.7fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto]">
-                <div className="sf-label">{t("columns.cover")}</div>
-                <div className="sf-label">{t("columns.title")}</div>
-                <div className="sf-label">{t("columns.pages")}</div>
-                <div className="sf-label">{t("columns.startDate")}</div>
-                <div className="sf-label">{t("columns.endDate")}</div>
-                <div className="sf-label">{t("columns.status")}</div>
-                <div className="sf-label text-right">
-                  {t("columns.favorite")}
+          <GlassCard>
+            {reading.length === 0 ? (
+              <EmptyState
+                icon={BookOpen}
+                title={t("reading.empty")}
+                description={books.length === 0 ? t("emptyBody") : undefined}
+                action={
+                  books.length === 0 ? (
+                    <Button onClick={() => setShowAddBookModal(true)} size="lg">
+                      <Plus className="mr-2 h-4 w-4" />
+                      {t("emptyAction")}
+                    </Button>
+                  ) : undefined
+                }
+              />
+            ) : visibleReading.length === 0 ? (
+              <EmptyState icon={BookOpen} title={t("emptyFiltered")} />
+            ) : (
+              <div className="space-y-3">
+                <div className="hidden items-center gap-4 px-4 pb-2 md:grid md:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,0.7fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto]">
+                  <div className="sf-label">{t("columns.cover")}</div>
+                  <div className="sf-label">{t("columns.title")}</div>
+                  <div className="sf-label">{t("columns.pages")}</div>
+                  <div className="sf-label">{t("columns.startDate")}</div>
+                  <div className="sf-label">{t("columns.endDate")}</div>
+                  <div className="sf-label">{t("columns.status")}</div>
+                  <div className="sf-label text-right">
+                    {t("columns.favorite")}
+                  </div>
                 </div>
-              </div>
 
-              {visibleReading.map((book) => {
-                const coverUrl = book.coverUrl || coverCache[book.id];
+                {visibleReading.map((book) => {
+                  const coverUrl = book.coverUrl || coverCache[book.id];
 
-                return (
-                  <div
-                    key={book.id}
-                    className="grid gap-4 border-b border-hairline px-4 py-4 transition-colors last:border-b-0 hover:bg-control md:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,0.7fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto] md:items-center"
-                  >
-                    <div className="flex items-center gap-4">
-                      <BookCover
-                        src={coverUrl}
-                        alt={`${book.title} cover`}
-                        size="sm"
-                      />
+                  return (
+                    <div
+                      key={book.id}
+                      className="grid gap-4 border-b border-hairline px-4 py-4 transition-colors last:border-b-0 hover:bg-control md:grid-cols-[auto_minmax(0,1.5fr)_minmax(0,0.7fr)_minmax(0,0.8fr)_minmax(0,0.8fr)_auto_auto] md:items-center"
+                    >
+                      <div className="flex items-center gap-4">
+                        <BookCover
+                          src={coverUrl}
+                          alt={`${book.title} cover`}
+                          size="sm"
+                        />
 
-                      <div className="min-w-0 md:hidden">
+                        <div className="min-w-0 md:hidden">
+                          <p className="truncate text-base font-semibold text-ink">
+                            {book.title}
+                          </p>
+                          <p className="sf-body truncate">{book.author}</p>
+                          <p className="sf-meta truncate">
+                            {book.pages} {t("columns.pages")} ·{" "}
+                            {formatDate(book.startDate)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="hidden min-w-0 md:block">
                         <p className="truncate text-base font-semibold text-ink">
                           {book.title}
                         </p>
                         <p className="sf-body truncate">{book.author}</p>
-                        <p className="sf-meta truncate">
-                          {book.pages} {t("columns.pages")} ·{" "}
-                          {formatDate(book.startDate)}
-                        </p>
+                      </div>
+
+                      <div className="sf-muted">{book.pages}</div>
+
+                      <div className="sf-muted">{formatDate(book.startDate)}</div>
+
+                      <div className="sf-muted">
+                        {isBookFinished(book)
+                          ? formatDate(book.endDate || book.dateRead)
+                          : "-"}
+                      </div>
+
+                      <div className="flex items-center">
+                        {isBookFinished(book) ? (
+                          <span className="sf-chip-success">
+                            <span className="h-2 w-2 rounded-full bg-current" />
+                            {statusT("completed")}
+                          </span>
+                        ) : (
+                          <Button
+                            size="xs"
+                            variant="outline"
+                            onClick={() => markAsFinished(book.id)}
+                          >
+                            <Check className="mr-1.5 h-3.5 w-3.5" />
+                            {t("reading.finish")}
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-end">
+                        <button
+                          onClick={() =>
+                            toggleFavorite(book.id, book.isFavorite || false)
+                          }
+                          className="sf-icon-button h-10 w-10"
+                          title={t("columns.favorite")}
+                          aria-label={t("columns.favorite")}
+                          aria-pressed={Boolean(book.isFavorite)}
+                        >
+                          <Heart
+                            className={`h-4 w-4 ${
+                              book.isFavorite ? "fill-current text-accent-ink" : ""
+                            }`}
+                          />
+                        </button>
                       </div>
                     </div>
-
-                    <div className="hidden min-w-0 md:block">
-                      <p className="truncate text-base font-semibold text-ink">
-                        {book.title}
-                      </p>
-                      <p className="sf-body truncate">{book.author}</p>
-                    </div>
-
-                    <div className="sf-muted">{book.pages}</div>
-
-                    <div className="sf-muted">{formatDate(book.startDate)}</div>
-
-                    <div className="sf-muted">
-                      {isBookFinished(book)
-                        ? formatDate(book.endDate || book.dateRead)
-                        : "-"}
-                    </div>
-
-                    <div className="flex items-center">
-                      {isBookFinished(book) ? (
-                        <span className="sf-chip-success">
-                          <span className="h-2 w-2 rounded-full bg-current" />
-                          {statusT("completed")}
-                        </span>
-                      ) : (
-                        <Button
-                          size="xs"
-                          variant="outline"
-                          onClick={() => markAsFinished(book.id)}
-                        >
-                          <Check className="mr-1.5 h-3.5 w-3.5" />
-                          {t("reading.finish")}
-                        </Button>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-end">
-                      <button
-                        onClick={() =>
-                          toggleFavorite(book.id, book.isFavorite || false)
-                        }
-                        className="sf-icon-button h-10 w-10"
-                        title={t("columns.favorite")}
-                        aria-label={t("columns.favorite")}
-                        aria-pressed={Boolean(book.isFavorite)}
-                      >
-                        <Heart
-                          className={`h-4 w-4 ${
-                            book.isFavorite ? "fill-current text-accent-ink" : ""
-                          }`}
-                        />
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </GlassCard>
+                  );
+                })}
+              </div>
+            )}
+          </GlassCard>
+        </section>
       </div>
 
       {showAddBookModal && (

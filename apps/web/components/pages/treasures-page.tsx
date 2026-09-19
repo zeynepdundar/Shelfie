@@ -24,8 +24,8 @@ import { BOOK_STATUS_TONE, getBookStatus } from '@/lib/bookStatus';
 import {
   EmptyState,
   GlassCard,
-  GlassCardHeader,
   PageLoading,
+  SectionHeader,
   StatCard,
 } from '@/components/ui/glass';
 
@@ -37,11 +37,6 @@ type QuoteWithBook = Quote & { bookTitle?: string; bookAuthor?: string };
 
 /** Alıntılar kademeli gösterilir: önce bu kadar, sonra her tıkta bir o kadar daha. */
 const QUOTES_PAGE_SIZE = 12;
-
-/** Cam kutusu olmayan bölüm başlıkları: fotoğrafın üstünde okunaklı kalsın diye
-    güçlü gölge, büyük/kalın başlık, tam beyaz alt metin. */
-const SECTION_HEADER_CLASS =
-  '[text-shadow:0_0_2px_rgba(0,0,0,0.9),0_1px_4px_rgba(0,0,0,0.9),0_4px_24px_rgba(0,0,0,0.8)] [&_h2]:text-2xl [&_h2]:font-bold [&_p]:font-medium [&_p]:text-white';
 
 function formatDate(value?: string) {
   if (!value) return null;
@@ -262,13 +257,12 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
 
         {/* Favori rafı — cam kutusuz; kartlar koyu cam kalır */}
         <section className="min-w-0">
-          <GlassCardHeader
-            className={SECTION_HEADER_CLASS}
+          <SectionHeader
             title={t('favorites.title')}
             description={t('favorites.hint')}
             action={
               <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.9)]">
+                <span className="sf-pill">
                   {t('favorites.count', { count: favoriteBooks.length })}
                 </span>
                 {favoriteBooks.length > 2 && (
@@ -345,13 +339,12 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
         {/* Alıntılar */}
         {/* Cam kutu yok: yapraklar doğrudan kitaplık arka planının üstünde durur */}
         <section ref={quotesRef} className="min-w-0 scroll-mt-6">
-          <GlassCardHeader
-            className={SECTION_HEADER_CLASS}
+          <SectionHeader
             title={t('quotes.title')}
             description={t('quotes.hint')}
             action={
               <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-white">
+                <span className="sf-pill">
                   {t('quotes.count', { count: allQuotes.length })}
                 </span>
                 <Button

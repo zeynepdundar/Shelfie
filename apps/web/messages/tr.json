@@ -10,7 +10,8 @@
     "checkingSession": "Oturum kontrol ediliyor...",
     "language": "Dil",
     "library": "Kütüphane",
-    "stats": "İstatistikler"
+    "stats": "İstatistikler",
+    "guest": "Misafir"
   },
   "treasures": {
     "title": "Edebi Hazinelerin",
@@ -83,6 +84,19 @@
     "preferences": {
       "title": "Tercihler",
       "hint": "Uygulamanın sana nasıl görüneceği."
+    },
+    "guestName": "Misafir",
+    "guestNote": "Hesabın bu tarayıcıda duruyor.",
+    "signInMethod": "Giriş yöntemi",
+    "providers": {
+      "anonymous": "Misafir",
+      "password": "E-posta",
+      "google.com": "Google"
+    },
+    "upgrade": {
+      "title": "Hesabını kalıcı yap",
+      "hint": "Google ya da e-posta bağla; kitapların ve alıntıların olduğu gibi kalır, başka cihazdan da girebilirsin.",
+      "warning": "Misafir oturumundan çıkarsan bu hesaba ve kitaplarına bir daha ulaşamazsın."
     }
   },
   "book": {
@@ -190,6 +204,59 @@
       "totalPages": "Toplam Sayfa",
       "booksThatMonth": "O Ay Okunanlar",
       "none": "Kitap yok"
+    }
+  },
+  "auth": {
+    "title": "Shelfie'ye hoş geldin",
+    "subtitle": "Giriş yap ya da birkaç saniyede hesap oluştur.",
+    "back": "Geri",
+    "google": {
+      "continue": "Google ile devam et",
+      "link": "Google hesabını bağla"
+    },
+    "orEmail": "veya e-posta ile",
+    "tabs": {
+      "signIn": "Giriş yap",
+      "signUp": "Hesap oluştur"
+    },
+    "email": "E-posta",
+    "emailPlaceholder": "ornek@site.com",
+    "password": "Şifre",
+    "passwordHint": "En az 6 karakter.",
+    "forgotPassword": "Şifremi unuttum",
+    "submit": {
+      "signIn": "Giriş yap",
+      "signUp": "Hesap oluştur",
+      "link": "E-postayla kaydet"
+    },
+    "working": "Bekleyin...",
+    "resetSent": "Şifre sıfırlama bağlantısı {email} adresine gönderildi.",
+    "guest": {
+      "continue": "Hesap açmadan misafir olarak devam et",
+      "hint": "Kitaplarını sonra bir hesaba bağlayabilirsin."
+    },
+    "errors": {
+      "invalid-credential": "E-posta veya şifre hatalı.",
+      "user-not-found": "Bu e-postayla kayıtlı hesap yok.",
+      "wrong-password": "Şifre hatalı.",
+      "invalid-email": "Geçersiz e-posta adresi.",
+      "missing-password": "Şifreyi yaz.",
+      "weak-password": "Şifre en az 6 karakter olmalı.",
+      "email-already-in-use": "Bu e-postayla zaten bir hesap var. Giriş yap sekmesini kullan.",
+      "credential-already-in-use": "Bu hesap zaten başka bir Shelfie hesabına bağlı. Misafir oturumundan çıkıp o hesapla giriş yapabilirsin; misafir olarak eklediklerin taşınmaz.",
+      "provider-already-linked": "Bu giriş yöntemi hesabına zaten bağlı.",
+      "too-many-requests": "Çok fazla deneme yapıldı. Biraz sonra tekrar dene.",
+      "user-disabled": "Bu hesap devre dışı bırakılmış.",
+      "network-request-failed": "Bağlantı hatası. İnternetini kontrol et.",
+      "popup-blocked": "Tarayıcı Google penceresini engelledi. Açılır pencerelere izin verip tekrar dene.",
+      "operation-not-allowed": "Bu giriş yöntemi şu an kapalı.",
+      "admin-restricted-operation": "Misafir girişi şu an kapalı. Lütfen hesapla giriş yap.",
+      "missing-email-for-reset": "Şifre sıfırlama için önce e-posta adresini yaz.",
+      "unknown": "Bir şeyler ters gitti. Tekrar dene.",
+      "configuration-not-found": "Firebase Authentication bu projede henüz başlatılmamış. Konsolda Authentication → Get started ile aç, sonra giriş yöntemlerini etkinleştir.",
+      "invalid-api-key": "Firebase API anahtarı geçersiz. lib/firebase.ts içindeki config'i kontrol et.",
+      "unauthorized-domain": "Bu adres Firebase'de yetkili değil. Authentication → Settings → Authorized domains listesine ekle.",
+      "unknownWithCode": "Bir şeyler ters gitti ({code}). Tekrar dene."
     }
   }
 }

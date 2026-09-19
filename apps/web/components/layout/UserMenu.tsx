@@ -52,7 +52,9 @@ export function UserMenu({ onNavigate }: { onNavigate?: () => void }) {
   if (!user) return null;
 
   // Menüde tek satır: ad varsa ad, yoksa e-posta. İkisi birden gösterilmiyor.
-  const label = user.displayName || user.email || "";
+  const label = user.isAnonymous
+    ? user.displayName || t("guest")
+    : user.displayName || user.email || "";
   const itemClass =
     "flex items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm text-white/70 transition-colors duration-200 hover:bg-white/10 hover:text-white";
 

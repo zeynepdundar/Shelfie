@@ -51,10 +51,11 @@ const buttonVariants = cva(
           "hover:bg-control-hover",
         ].join(" "),
 
+        // Koyu cam: fotoğrafın üstünde de cam kartın içinde de okunur
         outline: [
-          "border border-control-border bg-control text-ink",
-          "backdrop-blur-md",
-          "hover:bg-control-hover hover:text-ink",
+          "border border-white/15 bg-black/45 text-white",
+          "backdrop-blur-xl",
+          "hover:bg-black/65 hover:text-white",
         ].join(" "),
 
         ghost: ["text-ink/70", "hover:bg-control-hover hover:text-ink"].join(" "),

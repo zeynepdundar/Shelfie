@@ -5,10 +5,19 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 interface WelcomeScreenProps {
+  /** Kayıt formu olmadan misafir olarak başlatır. */
   onGetStarted: () => void;
+  /** Hesabı olan kullanıcıyı giriş ekranına götürür. */
+  onSignIn: () => void;
+  /** Misafir hesabı açılırken true. */
+  starting?: boolean;
 }
 
-export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
+export function WelcomeScreen({
+  onGetStarted,
+  onSignIn,
+  starting = false,
+}: WelcomeScreenProps) {
   return (
     <main className="relative isolate flex min-h-dvh w-full flex-col overflow-hidden bg-transparent text-white">
       {/* Kitaplık arka planı body üzerinden gelir; burada sadece okunabilirlik katmanı var. */}
@@ -41,26 +50,41 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
             explore your reading habits over time.
           </p>
 
-          <Button
-            type="button"
-            onClick={onGetStarted}
-            size="lg"
-            className="mt-9 w-full gap-3 sm:w-auto"
-          >
-            Get Started
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="size-4"
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Button
+              type="button"
+              onClick={onGetStarted}
+              disabled={starting}
+              size="lg"
+              className="w-full gap-3 sm:w-auto"
             >
-              <path d="M5 12h14m-6-6 6 6-6 6" />
-            </svg>
-          </Button>
+              {starting ? "Starting..." : "Get Started"}
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="size-4"
+              >
+                <path d="M5 12h14m-6-6 6 6-6 6" />
+              </svg>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onSignIn}
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              I have an account
+            </Button>
+          </div>
+          <p className="mt-3 text-sm text-white/55">
+            No sign-up needed — save your shelf to an account whenever you like.
+          </p>
         </div>
       </section>
     </main>

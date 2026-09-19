@@ -3,13 +3,13 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBKTECLKdAgXJJcN9EWX1T7-XyOJQgaJGM",
-  authDomain: "book-folk.firebaseapp.com",
-  projectId: "book-folk",
-  storageBucket: "book-folk.appspot.com",
-  messagingSenderId: "679648887274",
-  appId: "1:679648887274:web:af926ea54e536cb2343293",
-  measurementId: "G-EVDZEMZF2B",
+  apiKey: "AIzaSyCY7ZnqQ2Bz5IQQJIhVzyAKYriUghrQ_y8",
+  authDomain: "shelfie-7bb6c.firebaseapp.com",
+  projectId: "shelfie-7bb6c",
+  storageBucket: "shelfie-7bb6c.firebasestorage.app",
+  messagingSenderId: "535811303475",
+  appId: "1:535811303475:web:7836ac602e863c94ef5b46",
+  measurementId: "G-G2095XEX3P"
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
