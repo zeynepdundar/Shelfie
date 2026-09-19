@@ -38,7 +38,9 @@
       "emptyBody": "Bir kitap seç ve aklında kalan satırları kaydet.",
       "page": "s. {page}",
       "note": "Not",
-      "addQuote": "Alıntı ekle"
+      "addQuote": "Alıntı ekle",
+      "showMore": "Daha fazla göster ({count} kaldı)",
+      "showLess": "Daha az göster"
     },
     "modal": {
       "title": "Alıntı ekle",

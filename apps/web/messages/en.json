@@ -38,7 +38,9 @@
       "emptyBody": "Pick a book and save the lines that stayed with you.",
       "page": "p. {page}",
       "note": "Note",
-      "addQuote": "Add quote"
+      "addQuote": "Add quote",
+      "showMore": "Show more ({count} left)",
+      "showLess": "Show less"
     },
     "modal": {
       "title": "Add a quote",

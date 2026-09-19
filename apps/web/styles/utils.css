@@ -329,19 +329,21 @@
    ki yazı çizgilerin üstünde dursun. Sol kenarda kırmızı kenar çizgisi.
    Zemin hafif yarı saydam krem: cam kutunun içinde baskın durmasın. */
 .sf-paper {
-  --paper-line: 2rem;
+  --paper-line: 1.75rem;
   --paper-margin: 2.75rem;
-  --paper-bg: rgba(253, 251, 245, 0.86);
+  --paper-bg: rgba(253, 251, 245, 0.95);
   --paper-rule: rgba(76, 117, 178, 0.22);
   --paper-margin-rule: rgba(214, 76, 76, 0.4);
   --paper-ink: #1f3566;
 
   position: relative;
   border-radius: 3px;
-  padding: var(--paper-line) 1.25rem calc(var(--paper-line) * 0.5) calc(var(--paper-margin) + 0.9rem);
+  padding: calc(var(--paper-line) * 1.5) 1.5rem var(--paper-line) calc(var(--paper-margin) + 1rem);
   color: var(--paper-ink);
-  font-family: var(--font-hand);
-  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.15rem;
   line-height: var(--paper-line);
   background-color: var(--paper-bg);
   background-image:
@@ -360,7 +362,7 @@
       var(--paper-rule) var(--paper-line)
     );
   /* Çizgileri biraz yukarı kaydır: yazının tabanı çizgiye otursun */
-  background-position: 0 0, 0 -0.3rem;
+  background-position: 0 0, 0 -0.2rem;
   box-shadow:
     0 1px 1px rgba(0, 0, 0, 0.12),
     0 10px 22px -14px rgba(0, 0, 0, 0.5);
@@ -393,13 +395,47 @@
 /* Yeni eklenen alıntı: bant tam sarı, kâğıt rengi aynı kalır */
 .sf-paper[data-new="true"]::before { background: rgba(255, 199, 3, 0.9); }
 
-/* Kurşun kalem notu ve künye satırları aynı çizgi ızgarasında kalır */
+/* Sol üstte büyük, soluk tırnak işareti */
+.sf-paper-mark {
+  position: absolute;
+  top: 0.35rem;
+  left: calc(var(--paper-margin) + 0.6rem);
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 3.25rem;
+  line-height: 1;
+  color: rgba(76, 117, 178, 0.28);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Not ve künye satırları sans; hepsi aynı çizgi ızgarasında kalır */
 .sf-paper-pencil {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.85rem;
   color: rgba(55, 55, 60, 0.7);
-  font-size: 1.3rem;
+}
+.sf-paper-caption {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+.sf-paper-caption-title {
+  font-style: italic;
+  font-weight: 500;
+  color: rgba(31, 53, 102, 0.85);
+}
+.sf-paper-caption-author {
+  color: rgba(31, 53, 102, 0.55);
 }
 .sf-paper-meta {
   font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 400;
   font-size: 0.72rem;
   letter-spacing: 0.02em;
   color: rgba(31, 53, 102, 0.55);

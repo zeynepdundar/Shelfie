@@ -4,8 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   Heart,
   Quote as QuoteIcon,
   Plus,
@@ -32,6 +34,9 @@ interface TreasuresPageProps {
 }
 
 type QuoteWithBook = Quote & { bookTitle?: string; bookAuthor?: string };
+
+/** Alıntılar kademeli gösterilir: önce bu kadar, sonra her tıkta bir o kadar daha. */
+const QUOTES_PAGE_SIZE = 12;
 
 function formatDate(value?: string) {
   if (!value) return null;
@@ -62,6 +67,7 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [justAddedId, setJustAddedId] = useState<string | null>(null);
+  const [visibleQuoteCount, setVisibleQuoteCount] = useState(QUOTES_PAGE_SIZE);
 
   useEffect(() => {
     if (user) {
@@ -99,6 +105,17 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
           new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime(),
       );
   }, [books]);
+
+  const visibleQuotes = useMemo(
+    () => allQuotes.slice(0, visibleQuoteCount),
+    [allQuotes, visibleQuoteCount],
+  );
+  const remainingQuoteCount = Math.max(allQuotes.length - visibleQuoteCount, 0);
+
+  const showLessQuotes = () => {
+    setVisibleQuoteCount(QUOTES_PAGE_SIZE);
+    quotesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const quotedBooksCount = useMemo(
     () => books.filter((book) => book.quotes && book.quotes.length > 0).length,
@@ -318,13 +335,15 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
         </GlassCard>
 
         {/* Alıntılar */}
-        <GlassCard ref={quotesRef} className="scroll-mt-6">
+        {/* Cam kutu yok: yapraklar doğrudan kitaplık arka planının üstünde durur */}
+        <section ref={quotesRef} className="min-w-0 scroll-mt-6">
           <GlassCardHeader
+            className="[text-shadow:0_0_2px_rgba(0,0,0,0.9),0_1px_4px_rgba(0,0,0,0.9),0_4px_24px_rgba(0,0,0,0.8)] [&_h2]:text-2xl [&_h2]:font-bold [&_p]:font-medium [&_p]:text-white"
             title={t('quotes.title')}
             description={t('quotes.hint')}
             action={
               <div className="flex items-center gap-4">
-                <span className="text-sm text-white/60">
+                <span className="text-sm font-medium text-white">
                   {t('quotes.count', { count: allQuotes.length })}
                 </span>
                 <Button
@@ -341,16 +360,19 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
 
           <div>
             {allQuotes.length === 0 ? (
-              <EmptyState
-                icon={QuoteIcon}
-                title={t('quotes.emptyTitle')}
-                description={
-                  books.length === 0 ? t('modal.noBooks') : t('quotes.emptyBody')
-                }
-              />
+              // Dış kutu olmadığı için boş durum kendi cam zeminiyle gelir
+              <GlassCard className="p-0">
+                <EmptyState
+                  icon={QuoteIcon}
+                  title={t('quotes.emptyTitle')}
+                  description={
+                    books.length === 0 ? t('modal.noBooks') : t('quotes.emptyBody')
+                  }
+                />
+              </GlassCard>
             ) : (
               <div className="gap-6 px-1 pt-1 [column-fill:balance] sm:columns-2">
-                {allQuotes.map((quote) => {
+                {visibleQuotes.map((quote) => {
                   const addedAt = formatDate(quote.dateAdded);
                   const isNew = quote.id === justAddedId;
 
@@ -360,8 +382,12 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                       data-new={isNew}
                       className="sf-paper mb-7 mt-3 inline-block w-full break-inside-avoid"
                     >
+                      <span aria-hidden className="sf-paper-mark">
+                        &ldquo;
+                      </span>
+
                       <blockquote className="whitespace-pre-line break-words">
-                        &ldquo;{quote.text}&rdquo;
+                        {quote.text}
                       </blockquote>
 
                       {quote.notes && (
@@ -370,36 +396,65 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
                         </p>
                       )}
 
-                      <figcaption className="mt-8 text-right">
-                        <p className="truncate font-semibold">
-                          — {quote.bookTitle}
-                        </p>
-                        <p className="sf-paper-meta flex h-8 items-center justify-end gap-2 truncate">
+                      <figcaption className="sf-paper-caption mt-7">
+                        <p className="truncate">
+                          <span className="sf-paper-caption-title">
+                            {quote.bookTitle}
+                          </span>
                           {quote.bookAuthor ? (
-                            <span className="truncate">{quote.bookAuthor}</span>
-                          ) : null}
-                          {quote.page ? (
-                            <span className="shrink-0">
-                              · {t('quotes.page', { page: quote.page })}
-                            </span>
-                          ) : null}
-                          {addedAt ? (
-                            <span
-                              className="shrink-0"
-                              title={t('modal.savedOn', { date: addedAt })}
-                            >
-                              · {addedAt}
+                            <span className="sf-paper-caption-author">
+                              {' · '}
+                              {quote.bookAuthor}
                             </span>
                           ) : null}
                         </p>
+                        {quote.page || addedAt ? (
+                          <p className="sf-paper-meta flex h-7 items-center gap-2 truncate">
+                            {quote.page ? (
+                              <span className="shrink-0">
+                                {t('quotes.page', { page: quote.page })}
+                              </span>
+                            ) : null}
+                            {quote.page && addedAt ? <span>·</span> : null}
+                            {addedAt ? (
+                              <span
+                                className="shrink-0"
+                                title={t('modal.savedOn', { date: addedAt })}
+                              >
+                                {addedAt}
+                              </span>
+                            ) : null}
+                          </p>
+                        ) : null}
                       </figcaption>
                     </figure>
                   );
                 })}
               </div>
             )}
+
+            {allQuotes.length > QUOTES_PAGE_SIZE && (
+              <div className="mt-2 flex justify-center">
+                {remainingQuoteCount > 0 ? (
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      setVisibleQuoteCount((count) => count + QUOTES_PAGE_SIZE)
+                    }
+                  >
+                    <ChevronDown className="mr-2 h-4 w-4" />
+                    {t('quotes.showMore', { count: remainingQuoteCount })}
+                  </Button>
+                ) : (
+                  <Button variant="outline" onClick={showLessQuotes}>
+                    <ChevronUp className="mr-2 h-4 w-4" />
+                    {t('quotes.showLess')}
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
-        </GlassCard>
+        </section>
       </div>
 
       {/* Alıntı ekleme modalı */}
