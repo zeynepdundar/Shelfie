@@ -24,6 +24,12 @@ function Rating({ value }: { value: number }) {
   );
 }
 
+const STATUS_TONES = {
+  success: "bg-mint/15 text-mint",
+  accent: "bg-accent-strong/20 text-accent-soft",
+  neutral: "bg-white/10 text-white/70",
+} as const;
+
 export interface BookCardProps {
   title: string;
   author: string;
@@ -52,6 +58,7 @@ export function BookCard({
   className,
 }: BookCardProps) {
   const interactive = typeof onClick === "function";
+  const hasRating = typeof rating === "number" && rating > 0;
 
   return (
     <article
@@ -88,25 +95,19 @@ export function BookCard({
         </h3>
         <p className="mt-1 truncate text-[0.8rem] text-white/55">{author}</p>
 
-        {(status || (typeof rating === "number" && rating > 0)) && (
+        {(status || hasRating) && (
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {status && (
               <span
                 className={cn(
                   "inline-flex items-center rounded-full px-2 py-0.5 text-[0.7rem] font-medium",
-                  status.tone === "success"
-                    ? "bg-mint/15 text-mint"
-                    : status.tone === "accent"
-                      ? "bg-accent-strong/20 text-accent-soft"
-                      : "bg-white/10 text-white/70"
+                  STATUS_TONES[status.tone]
                 )}
               >
                 {status.label}
               </span>
             )}
-            {typeof rating === "number" && rating > 0 && (
-              <Rating value={rating} />
-            )}
+            {hasRating && <Rating value={rating} />}
           </div>
         )}
 

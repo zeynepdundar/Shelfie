@@ -38,6 +38,11 @@ type QuoteWithBook = Quote & { bookTitle?: string; bookAuthor?: string };
 /** Alıntılar kademeli gösterilir: önce bu kadar, sonra her tıkta bir o kadar daha. */
 const QUOTES_PAGE_SIZE = 12;
 
+/** Cam kutusu olmayan bölüm başlıkları: fotoğrafın üstünde okunaklı kalsın diye
+    güçlü gölge, büyük/kalın başlık, tam beyaz alt metin. */
+const SECTION_HEADER_CLASS =
+  '[text-shadow:0_0_2px_rgba(0,0,0,0.9),0_1px_4px_rgba(0,0,0,0.9),0_4px_24px_rgba(0,0,0,0.8)] [&_h2]:text-2xl [&_h2]:font-bold [&_p]:font-medium [&_p]:text-white';
+
 function formatDate(value?: string) {
   if (!value) return null;
   const parsed = new Date(value);
@@ -255,14 +260,15 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
           ))}
         </div>
 
-        {/* Favori rafı */}
-        <GlassCard>
+        {/* Favori rafı — cam kutusuz; kartlar koyu cam kalır */}
+        <section className="min-w-0">
           <GlassCardHeader
+            className={SECTION_HEADER_CLASS}
             title={t('favorites.title')}
             description={t('favorites.hint')}
             action={
               <div className="flex items-center gap-3">
-                <span className="text-sm text-white/60">
+                <span className="text-sm font-medium text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.9)]">
                   {t('favorites.count', { count: favoriteBooks.length })}
                 </span>
                 {favoriteBooks.length > 2 && (
@@ -291,15 +297,17 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
 
           <div>
             {favoriteBooks.length === 0 ? (
-              <EmptyState
-                icon={Heart}
-                title={t('favorites.emptyTitle')}
-                description={t('favorites.emptyBody')}
-              />
+              <GlassCard className="p-0">
+                <EmptyState
+                  icon={Heart}
+                  title={t('favorites.emptyTitle')}
+                  description={t('favorites.emptyBody')}
+                />
+              </GlassCard>
             ) : (
               <div
                 ref={shelfRef}
-                className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-color:rgba(255,255,255,0.2)_transparent] [scrollbar-width:thin]"
+                className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-color:rgba(255,255,255,0.3)_transparent] [scrollbar-width:thin]"
               >
                 {favoriteBooks.map((book) => (
                   <BookCard
@@ -332,13 +340,13 @@ export function TreasuresPage({ user }: TreasuresPageProps) {
               </div>
             )}
           </div>
-        </GlassCard>
+        </section>
 
         {/* Alıntılar */}
         {/* Cam kutu yok: yapraklar doğrudan kitaplık arka planının üstünde durur */}
         <section ref={quotesRef} className="min-w-0 scroll-mt-6">
           <GlassCardHeader
-            className="[text-shadow:0_0_2px_rgba(0,0,0,0.9),0_1px_4px_rgba(0,0,0,0.9),0_4px_24px_rgba(0,0,0,0.8)] [&_h2]:text-2xl [&_h2]:font-bold [&_p]:font-medium [&_p]:text-white"
+            className={SECTION_HEADER_CLASS}
             title={t('quotes.title')}
             description={t('quotes.hint')}
             action={
