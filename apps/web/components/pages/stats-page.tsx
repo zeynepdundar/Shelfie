@@ -15,6 +15,7 @@ import {
   PageLoading,
   StatCard,
 } from "@/components/ui/glass";
+import { isBookFinished } from "@/lib/bookStatus";
 
 interface StatsPageProps {
   user: AuthUser | null;
@@ -83,7 +84,7 @@ export function StatsPage({ user }: StatsPageProps) {
     return Array.from(years).sort((left, right) => right - left);
   }, [books, currentYear]);
 
-  const completedBooks = books.filter((book) => book.isCompleted);
+  const completedBooks = books.filter((book) => isBookFinished(book));
   const favoriteBooks = books.filter((book) => book.isFavorite);
   const selectedYearCompletedBooks = completedBooks.filter((book) => {
     const bookDate = getBookDate(book);

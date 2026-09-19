@@ -16,6 +16,7 @@ import { useTranslations } from "next-intl"
 import { RootState } from "@/lib/store"
 import type { Book } from "@shelfie/types"
 import { ChartContainer, ChartLegendContent } from "@/components/ui/chart"
+import { isBookFinished } from "@/lib/bookStatus"
 
 const MONTHS = [
   { name: "Oca", monthIndex: 0 },
@@ -68,7 +69,7 @@ export function MyChart({ year }: { year: number }) {
     () =>
       MONTHS.map((month) => {
         const monthlyBooks = books.filter((book) => {
-          if (!book.isCompleted) {
+          if (!isBookFinished(book)) {
             return false
           }
 

@@ -13,6 +13,7 @@ import { signOutUser, updateDisplayName } from "@/lib/authSlice";
 import { Button } from "@/components/ui/button";
 import { GlassCard, GlassCardHeader } from "@/components/ui/glass";
 import { Avatar } from "@/components/layout/UserMenu";
+import { isBookFinished } from "@/lib/bookStatus";
 
 /**
  * Diller kendi adlarıyla listelenir — yanlış dilde kalan bir kullanıcı
@@ -170,7 +171,7 @@ export function AccountPage() {
   if (!user) return null;
 
   const name = user.displayName || user.email || "";
-  const completed = books.filter((book) => book.isCompleted).length;
+  const completed = books.filter((book) => isBookFinished(book)).length;
 
   return (
     <div className="sf-page">

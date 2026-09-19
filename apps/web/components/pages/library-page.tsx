@@ -5,6 +5,7 @@ import {
   BookOpen,
   Check,
   ChevronDown,
+  Download,
   Heart,
   Play,
   Plus,
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { AddBookModal } from "@/components/books/AddBookModal";
 import { BookCard } from "@/components/books/BookCard";
 import { BookCover } from "@/components/books/BookCover";
+import { booksToCsv, downloadCsv } from "@/lib/exportCsv";
 import {
   GoogleBooksError,
   findBookCover,
@@ -30,6 +32,7 @@ import {
   GlassCardHeader,
   PageLoading,
 } from "@/components/ui/glass";
+import { isBookFinished } from "@/lib/bookStatus";
 
 interface LibraryPageProps {
   user: AuthUser | null;
@@ -114,30 +117,39 @@ export function LibraryPage({ user }: LibraryPageProps) {
 
   /** İstek listesi: henüz başlanmamış kitaplar. */
   const wantToRead = useMemo(
-    () => books.filter((book) => book.wantToRead && !book.isCompleted),
+    () => books.filter((book) => book.wantToRead && !isBookFinished(book)),
     [books]
   );
 
   /** Okunanlar: başlanmış ya da bitirilmiş her şey. */
   const reading = useMemo(
-    () => books.filter((book) => !(book.wantToRead && !book.isCompleted)),
+    () => books.filter((book) => !(book.wantToRead && !isBookFinished(book))),
     [books]
   );
 
   const counts = useMemo(
     () => ({
       all: reading.length,
-      inProgress: reading.filter((book) => !book.isCompleted).length,
-      completed: reading.filter((book) => book.isCompleted).length,
+      inProgress: reading.filter((book) => !isBookFinished(book)).length,
+      completed: reading.filter((book) => isBookFinished(book)).length,
     }),
     [reading]
   );
 
   const visibleReading = useMemo(() => {
-    if (filter === "inProgress") return reading.filter((b) => !b.isCompleted);
-    if (filter === "completed") return reading.filter((b) => b.isCompleted);
+    if (filter === "inProgress") return reading.filter((b) => !isBookFinished(b));
+    if (filter === "completed") return reading.filter((b) => isBookFinished(b));
     return reading;
   }, [reading, filter]);
+
+  /** Tabloda o an görünen kitapları (filtreye göre) CSV olarak indirir. */
+  const exportReading = () => {
+    const suffix = filter === "all" ? "" : `-${filter}`;
+    downloadCsv(
+      `shelfie-reading${suffix}-${today()}.csv`,
+      booksToCsv(visibleReading)
+    );
+  };
 
   /** İstek listesinden çıkarır ve okumaya başlama tarihini yazar. */
   const startReading = (bookId: string) =>
@@ -258,29 +270,41 @@ export function LibraryPage({ user }: LibraryPageProps) {
             title={t("reading.title")}
             description={t("reading.hint")}
             action={
-              <div className="flex flex-wrap gap-1.5">
-                {READING_FILTERS.map((key) => {
-                  const isActive = key === filter;
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-wrap gap-1.5">
+                  {READING_FILTERS.map((key) => {
+                    const isActive = key === filter;
 
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => setFilter(key)}
-                      aria-pressed={isActive}
-                      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors duration-200 ${
-                        isActive
-                          ? "bg-white/15 font-medium text-white"
-                          : "text-white/60 hover:bg-white/10 hover:text-white"
-                      }`}
-                    >
-                      {t(`filters.${key}`)}
-                      <span className="text-xs text-white/40">
-                        {counts[key]}
-                      </span>
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setFilter(key)}
+                        aria-pressed={isActive}
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors duration-200 ${
+                          isActive
+                            ? "bg-white/15 font-medium text-white"
+                            : "text-white/60 hover:bg-white/10 hover:text-white"
+                        }`}
+                      >
+                        {t(`filters.${key}`)}
+                        <span className="text-xs text-white/40">
+                          {counts[key]}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={exportReading}
+                  disabled={visibleReading.length === 0}
+                  title={t("reading.exportHint")}
+                >
+                  <Download className="mr-1.5 h-4 w-4" />
+                  {t("reading.export")}
+                </Button>
               </div>
             }
           />
@@ -354,11 +378,13 @@ export function LibraryPage({ user }: LibraryPageProps) {
                     <div className="sf-muted">{formatDate(book.startDate)}</div>
 
                     <div className="sf-muted">
-                      {book.isCompleted ? formatDate(book.endDate) : "-"}
+                      {isBookFinished(book)
+                        ? formatDate(book.endDate || book.dateRead)
+                        : "-"}
                     </div>
 
                     <div className="flex items-center">
-                      {book.isCompleted ? (
+                      {isBookFinished(book) ? (
                         <span className="sf-chip-success">
                           <span className="h-2 w-2 rounded-full bg-current" />
                           {statusT("completed")}

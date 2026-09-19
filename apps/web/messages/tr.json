@@ -167,7 +167,9 @@
       "title": "Okuduklarım",
       "hint": "Şu an okuduğun ve bitirdiğin kitaplar.",
       "empty": "Henüz okumaya başladığın bir kitap yok.",
-      "finish": "Bitirdim"
+      "finish": "Bitirdim",
+      "export": "CSV indir",
+      "exportHint": "Bu listedeki kitapları CSV dosyası olarak indir"
     }
   },
   "stats": {

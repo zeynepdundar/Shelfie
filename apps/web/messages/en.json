@@ -167,7 +167,9 @@
       "title": "My Reading",
       "hint": "Books you are reading and have finished.",
       "empty": "You have not started a book yet.",
-      "finish": "Mark as finished"
+      "finish": "Mark as finished",
+      "export": "Export CSV",
+      "exportHint": "Download the books in this list as a CSV file"
     }
   },
   "stats": {
